@@ -41,7 +41,8 @@ Current version of project is implemented as a collection of standalone Kotlin l
 ![pic_test](kernelip/__img/Pipex.png)
 	* **Reordex** (**reorde**red e**x**ecution) - generator of (co)processors with superscalar out-of-order (OoO) microarchitecture. Supports switchable scoreboarding and register renaming. Translates to Cyclix KIP
 ![pic_test](kernelip/__img/Reordex.png)
-
+	* **Neuromorphix** (**neuromoph**ic e**x**ecution) - generator of neuromorphic accelerators with time-multiplexing neurons selecting. 
+![pic_test](kernelip/__img/neuromorphix.png)
 
 * Demo core generators based on KIP cores (location: /designs/coregen):
 	* **Taylor** - sine wave generator demonstrating usage of stalling and credit-based flow control mechanisms, based on Pipex KIP core. Location: /designs/rtl/taylor
@@ -50,6 +51,8 @@ Current version of project is implemented as a collection of standalone Kotlin l
 	* **Ariele** - full xbar generator, based on Pipex KIP core
 	* **Citadel** - OoO FPU coprocessor, based on Reordex KIP core
 	* **Agenda** - OoO RISC-V (RV32IM) CPU, based on Reordex KIP core
+![pic_test](designs/rtl/sigrun_tile/doc/agenda.png)
+	* **Leaky** - Spiking neural network accelerator with Leaky Integrate-and-Fire neurons, based on Neuromorphix KIP core
 ![pic_test](designs/rtl/sigrun_tile/doc/agenda.png)
 
 * Auxiliary reusable cores:
