@@ -1,6 +1,6 @@
 # Neuromorphix
 
-**Work in Progress**
+**Work-in-Progress**
 
 ## Overview
 

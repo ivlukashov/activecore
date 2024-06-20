@@ -53,7 +53,7 @@ Current version of project is implemented as a collection of standalone Kotlin l
 	* **Agenda** - OoO RISC-V (RV32IM) CPU, based on Reordex KIP core
 ![pic_test](designs/rtl/sigrun_tile/doc/agenda.png)
 	* **Leaky** - Spiking neural network accelerator with Leaky Integrate-and-Fire neurons, based on Neuromorphix KIP core
-![pic_test](designs/rtl/sigrun_tile/doc/agenda.png)
+
 
 * Auxiliary reusable cores:
 	* **UDM** - bus transactor controlled via UART interface. Supports bursts and bus timeouts. Communication library for Python 3 included. Lab work manual included: https://github.com/AntonovAlexander/activecore/blob/master/designs/rtl/udm/doc/udm_lab_manual.pdf. Location: /designs/rtl/udm
