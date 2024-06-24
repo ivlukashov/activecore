@@ -1,0 +1,615 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectRootManager" version="2" languageLevel="JDK_11" default="true" project-jdk-name="11" project-jdk-type="JavaSDK">
+    <output url="file://$PROJECT_DIR$/out" />
+  </component>
+  <component name="SVCompilerDirectivesDefines">
+    <option name="define">
+      <map>
+        <entry key="__Neuromorphic_design_h_">
+          <value>
+            <Define>
+              <option name="definitions">
+                <list>
+                  <Body>
+                    <option name="offset" value="299" />
+                    <option name="source" value="Neuromorphic_design.svh" />
+                  </Body>
+                </list>
+              </option>
+            </Define>
+          </value>
+        </entry>
+        <entry key="__genstructdel_genpmodule_riscv_1stage_genmcopipe_coproc_M_if_genstruct_fifo_wdata_">
+          <value>
+            <Define>
+              <option name="definitions">
+                <list>
+                  <Body>
+                    <option name="offset" value="1899" />
+                    <option name="source" value="riscv_1stage.svh" />
+                  </Body>
+                </list>
+              </option>
+            </Define>
+          </value>
+        </entry>
+        <entry key="__genstructdel_genpmodule_riscv_1stage_genmcopipe_coproc_custom0_if_genstruct_fifo_wdata_">
+          <value>
+            <Define>
+              <option name="definitions">
+                <list>
+                  <Body>
+                    <option name="offset" value="2344" />
+                    <option name="source" value="riscv_1stage.svh" />
+                  </Body>
+                </list>
+              </option>
+            </Define>
+          </value>
+        </entry>
+        <entry key="__genstructdel_genpmodule_riscv_1stage_genmcopipe_data_mem_genstruct_fifo_wdata_">
+          <value>
+            <Define>
+              <option name="definitions">
+                <list>
+                  <Body>
+                    <option name="offset" value="1150" />
+                    <option name="source" value="riscv_1stage.svh" />
+                  </Body>
+                </list>
+              </option>
+            </Define>
+          </value>
+        </entry>
+        <entry key="__genstructdel_genpmodule_riscv_1stage_genmcopipe_instr_mem_genstruct_fifo_wdata_">
+          <value>
+            <Define>
+              <option name="definitions">
+                <list>
+                  <Body>
+                    <option name="offset" value="720" />
+                    <option name="source" value="riscv_1stage.svh" />
+                  </Body>
+                </list>
+              </option>
+            </Define>
+          </value>
+        </entry>
+        <entry key="__genstructdel_genpmodule_riscv_2stage_genmcopipe_coproc_M_if_genstruct_fifo_wdata_">
+          <value>
+            <Define>
+              <option name="definitions">
+                <list>
+                  <Body>
+                    <option name="offset" value="1899" />
+                    <option name="source" value="riscv_2stage.svh" />
+                  </Body>
+                </list>
+              </option>
+            </Define>
+          </value>
+        </entry>
+        <entry key="__genstructdel_genpmodule_riscv_2stage_genmcopipe_coproc_custom0_if_genstruct_fifo_wdata_">
+          <value>
+            <Define>
+              <option name="definitions">
+                <list>
+                  <Body>
+                    <option name="offset" value="2344" />
+                    <option name="source" value="riscv_2stage.svh" />
+                  </Body>
+                </list>
+              </option>
+            </Define>
+          </value>
+        </entry>
+        <entry key="__genstructdel_genpmodule_riscv_2stage_genmcopipe_data_mem_genstruct_fifo_wdata_">
+          <value>
+            <Define>
+              <option name="definitions">
+                <list>
+                  <Body>
+                    <option name="offset" value="1150" />
+                    <option name="source" value="riscv_2stage.svh" />
+                  </Body>
+                </list>
+              </option>
+            </Define>
+          </value>
+        </entry>
+        <entry key="__genstructdel_genpmodule_riscv_2stage_genmcopipe_instr_mem_genstruct_fifo_wdata_">
+          <value>
+            <Define>
+              <option name="definitions">
+                <list>
+                  <Body>
+                    <option name="offset" value="720" />
+                    <option name="source" value="riscv_2stage.svh" />
+                  </Body>
+                </list>
+              </option>
+            </Define>
+          </value>
+        </entry>
+        <entry key="__genstructdel_genpmodule_riscv_3stage_genmcopipe_coproc_M_if_genstruct_fifo_wdata_">
+          <value>
+            <Define>
+              <option name="definitions">
+                <list>
+                  <Body>
+                    <option name="offset" value="1899" />
+                    <option name="source" value="riscv_3stage.svh" />
+                  </Body>
+                </list>
+              </option>
+            </Define>
+          </value>
+        </entry>
+        <entry key="__genstructdel_genpmodule_riscv_3stage_genmcopipe_coproc_custom0_if_genstruct_fifo_wdata_">
+          <value>
+            <Define>
+              <option name="definitions">
+                <list>
+                  <Body>
+                    <option name="offset" value="2344" />
+                    <option name="source" value="riscv_3stage.svh" />
+                  </Body>
+                </list>
+              </option>
+            </Define>
+          </value>
+        </entry>
+        <entry key="__genstructdel_genpmodule_riscv_3stage_genmcopipe_data_mem_genstruct_fifo_wdata_">
+          <value>
+            <Define>
+              <option name="definitions">
+                <list>
+                  <Body>
+                    <option name="offset" value="1150" />
+                    <option name="source" value="riscv_3stage.svh" />
+                  </Body>
+                </list>
+              </option>
+            </Define>
+          </value>
+        </entry>
+        <entry key="__genstructdel_genpmodule_riscv_3stage_genmcopipe_instr_mem_genstruct_fifo_wdata_">
+          <value>
+            <Define>
+              <option name="definitions">
+                <list>
+                  <Body>
+                    <option name="offset" value="720" />
+                    <option name="source" value="riscv_3stage.svh" />
+                  </Body>
+                </list>
+              </option>
+            </Define>
+          </value>
+        </entry>
+        <entry key="__genstructdel_genpmodule_riscv_4stage_genmcopipe_coproc_M_if_genstruct_fifo_wdata_">
+          <value>
+            <Define>
+              <option name="definitions">
+                <list>
+                  <Body>
+                    <option name="offset" value="1899" />
+                    <option name="source" value="riscv_4stage.svh" />
+                  </Body>
+                </list>
+              </option>
+            </Define>
+          </value>
+        </entry>
+        <entry key="__genstructdel_genpmodule_riscv_4stage_genmcopipe_coproc_custom0_if_genstruct_fifo_wdata_">
+          <value>
+            <Define>
+              <option name="definitions">
+                <list>
+                  <Body>
+                    <option name="offset" value="2344" />
+                    <option name="source" value="riscv_4stage.svh" />
+                  </Body>
+                </list>
+              </option>
+            </Define>
+          </value>
+        </entry>
+        <entry key="__genstructdel_genpmodule_riscv_4stage_genmcopipe_data_mem_genstruct_fifo_wdata_">
+          <value>
+            <Define>
+              <option name="definitions">
+                <list>
+                  <Body>
+                    <option name="offset" value="1150" />
+                    <option name="source" value="riscv_4stage.svh" />
+                  </Body>
+                </list>
+              </option>
+            </Define>
+          </value>
+        </entry>
+        <entry key="__genstructdel_genpmodule_riscv_4stage_genmcopipe_instr_mem_genstruct_fifo_wdata_">
+          <value>
+            <Define>
+              <option name="definitions">
+                <list>
+                  <Body>
+                    <option name="offset" value="720" />
+                    <option name="source" value="riscv_4stage.svh" />
+                  </Body>
+                </list>
+              </option>
+            </Define>
+          </value>
+        </entry>
+        <entry key="__genstructdel_genpmodule_riscv_5stage_genmcopipe_coproc_M_if_genstruct_fifo_wdata_">
+          <value>
+            <Define>
+              <option name="definitions">
+                <list>
+                  <Body>
+                    <option name="offset" value="1899" />
+                    <option name="source" value="riscv_5stage.svh" />
+                  </Body>
+                </list>
+              </option>
+            </Define>
+          </value>
+        </entry>
+        <entry key="__genstructdel_genpmodule_riscv_5stage_genmcopipe_coproc_custom0_if_genstruct_fifo_wdata_">
+          <value>
+            <Define>
+              <option name="definitions">
+                <list>
+                  <Body>
+                    <option name="offset" value="2344" />
+                    <option name="source" value="riscv_5stage.svh" />
+                  </Body>
+                </list>
+              </option>
+            </Define>
+          </value>
+        </entry>
+        <entry key="__genstructdel_genpmodule_riscv_5stage_genmcopipe_data_mem_genstruct_fifo_wdata_">
+          <value>
+            <Define>
+              <option name="definitions">
+                <list>
+                  <Body>
+                    <option name="offset" value="1150" />
+                    <option name="source" value="riscv_5stage.svh" />
+                  </Body>
+                </list>
+              </option>
+            </Define>
+          </value>
+        </entry>
+        <entry key="__genstructdel_genpmodule_riscv_5stage_genmcopipe_instr_mem_genstruct_fifo_wdata_">
+          <value>
+            <Define>
+              <option name="definitions">
+                <list>
+                  <Body>
+                    <option name="offset" value="720" />
+                    <option name="source" value="riscv_5stage.svh" />
+                  </Body>
+                </list>
+              </option>
+            </Define>
+          </value>
+        </entry>
+        <entry key="__genstructdel_genpmodule_riscv_6stage_genmcopipe_coproc_M_if_genstruct_fifo_wdata_">
+          <value>
+            <Define>
+              <option name="definitions">
+                <list>
+                  <Body>
+                    <option name="offset" value="1899" />
+                    <option name="source" value="riscv_6stage.svh" />
+                  </Body>
+                </list>
+              </option>
+            </Define>
+          </value>
+        </entry>
+        <entry key="__genstructdel_genpmodule_riscv_6stage_genmcopipe_coproc_custom0_if_genstruct_fifo_wdata_">
+          <value>
+            <Define>
+              <option name="definitions">
+                <list>
+                  <Body>
+                    <option name="offset" value="2344" />
+                    <option name="source" value="riscv_6stage.svh" />
+                  </Body>
+                </list>
+              </option>
+            </Define>
+          </value>
+        </entry>
+        <entry key="__genstructdel_genpmodule_riscv_6stage_genmcopipe_data_mem_genstruct_fifo_wdata_">
+          <value>
+            <Define>
+              <option name="definitions">
+                <list>
+                  <Body>
+                    <option name="offset" value="1150" />
+                    <option name="source" value="riscv_6stage.svh" />
+                  </Body>
+                </list>
+              </option>
+            </Define>
+          </value>
+        </entry>
+        <entry key="__genstructdel_genpmodule_riscv_6stage_genmcopipe_instr_mem_genstruct_fifo_wdata_">
+          <value>
+            <Define>
+              <option name="definitions">
+                <list>
+                  <Body>
+                    <option name="offset" value="720" />
+                    <option name="source" value="riscv_6stage.svh" />
+                  </Body>
+                </list>
+              </option>
+            </Define>
+          </value>
+        </entry>
+        <entry key="__genstructdel_riscv_1stage_Ext_coproc_struct_">
+          <value>
+            <Define>
+              <option name="definitions">
+                <list>
+                  <Body>
+                    <option name="offset" value="1543" />
+                    <option name="source" value="riscv_1stage.svh" />
+                  </Body>
+                </list>
+              </option>
+            </Define>
+          </value>
+        </entry>
+        <entry key="__genstructdel_riscv_1stage_busreq_mem_struct_">
+          <value>
+            <Define>
+              <option name="definitions">
+                <list>
+                  <Body>
+                    <option name="offset" value="374" />
+                    <option name="source" value="riscv_1stage.svh" />
+                  </Body>
+                </list>
+              </option>
+            </Define>
+          </value>
+        </entry>
+        <entry key="__genstructdel_riscv_2stage_Ext_coproc_struct_">
+          <value>
+            <Define>
+              <option name="definitions">
+                <list>
+                  <Body>
+                    <option name="offset" value="1543" />
+                    <option name="source" value="riscv_2stage.svh" />
+                  </Body>
+                </list>
+              </option>
+            </Define>
+          </value>
+        </entry>
+        <entry key="__genstructdel_riscv_2stage_busreq_mem_struct_">
+          <value>
+            <Define>
+              <option name="definitions">
+                <list>
+                  <Body>
+                    <option name="offset" value="374" />
+                    <option name="source" value="riscv_2stage.svh" />
+                  </Body>
+                </list>
+              </option>
+            </Define>
+          </value>
+        </entry>
+        <entry key="__genstructdel_riscv_3stage_Ext_coproc_struct_">
+          <value>
+            <Define>
+              <option name="definitions">
+                <list>
+                  <Body>
+                    <option name="offset" value="1543" />
+                    <option name="source" value="riscv_3stage.svh" />
+                  </Body>
+                </list>
+              </option>
+            </Define>
+          </value>
+        </entry>
+        <entry key="__genstructdel_riscv_3stage_busreq_mem_struct_">
+          <value>
+            <Define>
+              <option name="definitions">
+                <list>
+                  <Body>
+                    <option name="offset" value="374" />
+                    <option name="source" value="riscv_3stage.svh" />
+                  </Body>
+                </list>
+              </option>
+            </Define>
+          </value>
+        </entry>
+        <entry key="__genstructdel_riscv_4stage_Ext_coproc_struct_">
+          <value>
+            <Define>
+              <option name="definitions">
+                <list>
+                  <Body>
+                    <option name="offset" value="1543" />
+                    <option name="source" value="riscv_4stage.svh" />
+                  </Body>
+                </list>
+              </option>
+            </Define>
+          </value>
+        </entry>
+        <entry key="__genstructdel_riscv_4stage_busreq_mem_struct_">
+          <value>
+            <Define>
+              <option name="definitions">
+                <list>
+                  <Body>
+                    <option name="offset" value="374" />
+                    <option name="source" value="riscv_4stage.svh" />
+                  </Body>
+                </list>
+              </option>
+            </Define>
+          </value>
+        </entry>
+        <entry key="__genstructdel_riscv_5stage_Ext_coproc_struct_">
+          <value>
+            <Define>
+              <option name="definitions">
+                <list>
+                  <Body>
+                    <option name="offset" value="1543" />
+                    <option name="source" value="riscv_5stage.svh" />
+                  </Body>
+                </list>
+              </option>
+            </Define>
+          </value>
+        </entry>
+        <entry key="__genstructdel_riscv_5stage_busreq_mem_struct_">
+          <value>
+            <Define>
+              <option name="definitions">
+                <list>
+                  <Body>
+                    <option name="offset" value="374" />
+                    <option name="source" value="riscv_5stage.svh" />
+                  </Body>
+                </list>
+              </option>
+            </Define>
+          </value>
+        </entry>
+        <entry key="__genstructdel_riscv_6stage_Ext_coproc_struct_">
+          <value>
+            <Define>
+              <option name="definitions">
+                <list>
+                  <Body>
+                    <option name="offset" value="1543" />
+                    <option name="source" value="riscv_6stage.svh" />
+                  </Body>
+                </list>
+              </option>
+            </Define>
+          </value>
+        </entry>
+        <entry key="__genstructdel_riscv_6stage_busreq_mem_struct_">
+          <value>
+            <Define>
+              <option name="definitions">
+                <list>
+                  <Body>
+                    <option name="offset" value="374" />
+                    <option name="source" value="riscv_6stage.svh" />
+                  </Body>
+                </list>
+              </option>
+            </Define>
+          </value>
+        </entry>
+        <entry key="__riscv_1stage_h_">
+          <value>
+            <Define>
+              <option name="definitions">
+                <list>
+                  <Body>
+                    <option name="offset" value="292" />
+                    <option name="source" value="riscv_1stage.svh" />
+                  </Body>
+                </list>
+              </option>
+            </Define>
+          </value>
+        </entry>
+        <entry key="__riscv_2stage_h_">
+          <value>
+            <Define>
+              <option name="definitions">
+                <list>
+                  <Body>
+                    <option name="offset" value="292" />
+                    <option name="source" value="riscv_2stage.svh" />
+                  </Body>
+                </list>
+              </option>
+            </Define>
+          </value>
+        </entry>
+        <entry key="__riscv_3stage_h_">
+          <value>
+            <Define>
+              <option name="definitions">
+                <list>
+                  <Body>
+                    <option name="offset" value="292" />
+                    <option name="source" value="riscv_3stage.svh" />
+                  </Body>
+                </list>
+              </option>
+            </Define>
+          </value>
+        </entry>
+        <entry key="__riscv_4stage_h_">
+          <value>
+            <Define>
+              <option name="definitions">
+                <list>
+                  <Body>
+                    <option name="offset" value="292" />
+                    <option name="source" value="riscv_4stage.svh" />
+                  </Body>
+                </list>
+              </option>
+            </Define>
+          </value>
+        </entry>
+        <entry key="__riscv_5stage_h_">
+          <value>
+            <Define>
+              <option name="definitions">
+                <list>
+                  <Body>
+                    <option name="offset" value="292" />
+                    <option name="source" value="riscv_5stage.svh" />
+                  </Body>
+                </list>
+              </option>
+            </Define>
+          </value>
+        </entry>
+        <entry key="__riscv_6stage_h_">
+          <value>
+            <Define>
+              <option name="definitions">
+                <list>
+                  <Body>
+                    <option name="offset" value="292" />
+                    <option name="source" value="riscv_6stage.svh" />
+                  </Body>
+                </list>
+              </option>
+            </Define>
+          </value>
+        </entry>
+      </map>
+    </option>
+    <option name="version" value="195" />
+  </component>
+</project>

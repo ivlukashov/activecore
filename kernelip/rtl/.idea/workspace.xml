@@ -4,12 +4,12 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="243fdb8d-6bf2-402e-b537-a0dd07a844cc" name="Changes" comment="">
+    <list default="true" id="c6bc71d9-a473-441b-85b0-f919a5ed3c31" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/../../designs/coregen/leaky/src/lif.kt" beforeDir="false" afterPath="$PROJECT_DIR$/../../designs/coregen/leaky/src/lif.kt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../../designs/rtl/lif_acc/src/gen_accelerator.kt" beforeDir="false" afterPath="$PROJECT_DIR$/../../designs/rtl/lif_acc/src/gen_accelerator.kt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../../hwast/src/util.kt" beforeDir="false" afterPath="$PROJECT_DIR$/../../hwast/src/util.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Neuromorphic.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/Neuromorphic.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../neuromorhix/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../neuromorhix/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../neuromorhix/src/Neuromorphic.kt" beforeDir="false" afterPath="$PROJECT_DIR$/../neuromorhix/src/Neuromorphic.kt" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -31,38 +31,30 @@
     &quot;accountId&quot;: &quot;4b1fd9ef-ab22-4f36-a141-213c418c8761&quot;
   }
 }</component>
-  <component name="ProblemsViewState">
-    <option name="selectedTabId" value="ProjectErrors" />
-  </component>
   <component name="ProjectColorInfo">{
   &quot;customColor&quot;: &quot;&quot;,
-  &quot;associatedIndex&quot;: 1
+  &quot;associatedIndex&quot;: 8
 }</component>
-  <component name="ProjectId" id="2hi1inl1BSQULBQsjDz3hU2ZrTs" />
+  <component name="ProjectId" id="2huvgY3FKT9nfQVLkvaKXzGiIia" />
   <component name="ProjectViewState">
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
   <component name="PropertiesComponent">{
   &quot;keyToString&quot;: {
-    &quot;Kotlin.NeuromorphicKt.executor&quot;: &quot;Run&quot;,
     &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
     &quot;git-widget-placeholder&quot;: &quot;master&quot;,
-    &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,
-    &quot;last_opened_file_path&quot;: &quot;/Users/ivan/activecore/kernelip/neuromorhix&quot;,
-    &quot;project.structure.last.edited&quot;: &quot;Problems&quot;,
-    &quot;project.structure.proportion&quot;: &quot;0.0&quot;,
-    &quot;project.structure.side.proportion&quot;: &quot;0.2&quot;
+    &quot;kotlin-language-version-configured&quot;: &quot;true&quot;
   }
 }</component>
   <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
   <component name="TaskManager">
     <task active="true" id="Default" summary="Default task">
-      <changelist id="243fdb8d-6bf2-402e-b537-a0dd07a844cc" name="Changes" comment="" />
-      <created>1718062213077</created>
+      <changelist id="c6bc71d9-a473-441b-85b0-f919a5ed3c31" name="Changes" comment="" />
+      <created>1718456888732</created>
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
-      <updated>1718062213077</updated>
+      <updated>1718456888732</updated>
     </task>
     <servers />
   </component>

@@ -4,12 +4,10 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="243fdb8d-6bf2-402e-b537-a0dd07a844cc" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/../../designs/coregen/leaky/src/lif.kt" beforeDir="false" afterPath="$PROJECT_DIR$/../../designs/coregen/leaky/src/lif.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../designs/rtl/lif_acc/src/gen_accelerator.kt" beforeDir="false" afterPath="$PROJECT_DIR$/../../designs/rtl/lif_acc/src/gen_accelerator.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../hwast/src/util.kt" beforeDir="false" afterPath="$PROJECT_DIR$/../../hwast/src/util.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Neuromorphic.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/Neuromorphic.kt" afterDir="false" />
+    <list default="true" id="1f75f3f7-e626-4cc6-9f18-936bb8cac30e" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/../../../hwast/src/util.kt" beforeDir="false" afterPath="$PROJECT_DIR$/../../../hwast/src/util.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../kernelip/neuromorhix/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../../../kernelip/neuromorhix/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../kernelip/neuromorhix/src/Neuromorphic.kt" beforeDir="false" afterPath="$PROJECT_DIR$/../../../kernelip/neuromorhix/src/Neuromorphic.kt" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -17,7 +15,7 @@
     <option name="LAST_RESOLUTION" value="IGNORE" />
   </component>
   <component name="Git.Settings">
-    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/../.." />
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/../../.." />
   </component>
   <component name="GitHubPullRequestSearchHistory">{
   &quot;lastFilter&quot;: {
@@ -31,38 +29,49 @@
     &quot;accountId&quot;: &quot;4b1fd9ef-ab22-4f36-a141-213c418c8761&quot;
   }
 }</component>
-  <component name="ProblemsViewState">
-    <option name="selectedTabId" value="ProjectErrors" />
-  </component>
   <component name="ProjectColorInfo">{
   &quot;customColor&quot;: &quot;&quot;,
-  &quot;associatedIndex&quot;: 1
+  &quot;associatedIndex&quot;: 2
 }</component>
-  <component name="ProjectId" id="2hi1inl1BSQULBQsjDz3hU2ZrTs" />
+  <component name="ProjectId" id="2hi1kyvB3S1FgSSauohKrbUsB1F" />
   <component name="ProjectViewState">
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
   <component name="PropertiesComponent">{
   &quot;keyToString&quot;: {
-    &quot;Kotlin.NeuromorphicKt.executor&quot;: &quot;Run&quot;,
+    &quot;Kotlin.LifKt.executor&quot;: &quot;Run&quot;,
     &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
     &quot;git-widget-placeholder&quot;: &quot;master&quot;,
     &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,
-    &quot;last_opened_file_path&quot;: &quot;/Users/ivan/activecore/kernelip/neuromorhix&quot;,
-    &quot;project.structure.last.edited&quot;: &quot;Problems&quot;,
+    &quot;last_opened_file_path&quot;: &quot;/Users/ivan/activecore/designs/coregen/leaky&quot;,
+    &quot;project.structure.last.edited&quot;: &quot;Libraries&quot;,
     &quot;project.structure.proportion&quot;: &quot;0.0&quot;,
-    &quot;project.structure.side.proportion&quot;: &quot;0.2&quot;
+    &quot;project.structure.side.proportion&quot;: &quot;0.0&quot;
   }
 }</component>
+  <component name="RunManager">
+    <configuration name="LifKt" type="JetRunConfigurationType" temporary="true" nameIsGenerated="true">
+      <option name="MAIN_CLASS_NAME" value="leaky.LifKt" />
+      <module name="leaky" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <recent_temporary>
+      <list>
+        <item itemvalue="Kotlin.LifKt" />
+      </list>
+    </recent_temporary>
+  </component>
   <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
   <component name="TaskManager">
     <task active="true" id="Default" summary="Default task">
-      <changelist id="243fdb8d-6bf2-402e-b537-a0dd07a844cc" name="Changes" comment="" />
-      <created>1718062213077</created>
+      <changelist id="1f75f3f7-e626-4cc6-9f18-936bb8cac30e" name="Changes" comment="" />
+      <created>1718062230623</created>
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
-      <updated>1718062213077</updated>
+      <updated>1718062230623</updated>
     </task>
     <servers />
   </component>
