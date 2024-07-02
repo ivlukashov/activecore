@@ -1,0 +1,573 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectRootManager" version="2" languageLevel="JDK_22" default="true" project-jdk-name="22" project-jdk-type="JavaSDK">
+    <output url="file://$PROJECT_DIR$/out" />
+  </component>
+  <component name="SVCompilerDirectivesDefines">
+    <option name="define">
+      <map>
+        <entry key="CLK_HALF_PERIOD">
+          <value>
+            <Define>
+              <option name="definitions">
+                <list>
+                  <Body>
+                    <option name="offset" value="193" />
+                    <option name="replacementList" value="5&#9;&#9;&#9;&#9;&#9;&#9;//external 100 MHZ" />
+                    <option name="source" value="riscv_tb.sv" />
+                  </Body>
+                </list>
+              </option>
+            </Define>
+          </value>
+        </entry>
+        <entry key="DIVIDER_115200">
+          <value>
+            <Define>
+              <option name="definitions">
+                <list>
+                  <Body>
+                    <option name="offset" value="234" />
+                    <option name="replacementList" value="32'd8680" />
+                    <option name="source" value="tb.sv" />
+                  </Body>
+                  <Body>
+                    <option name="offset" value="240" />
+                    <option name="replacementList" value="32'd8680" />
+                    <option name="source" value="magma_tb.sv" />
+                  </Body>
+                  <Body>
+                    <option name="offset" value="245" />
+                    <option name="replacementList" value="32'd8680" />
+                    <option name="source" value="riscv_tb.sv" />
+                  </Body>
+                  <Body>
+                    <option name="offset" value="234" />
+                    <option name="replacementList" value="32'd8680" />
+                    <option name="source" value="tb_udm.sv" />
+                  </Body>
+                </list>
+              </option>
+            </Define>
+          </value>
+        </entry>
+        <entry key="DIVIDER_19200">
+          <value>
+            <Define>
+              <option name="definitions">
+                <list>
+                  <Body>
+                    <option name="offset" value="267" />
+                    <option name="replacementList" value="32'd52083" />
+                    <option name="source" value="tb.sv" />
+                  </Body>
+                  <Body>
+                    <option name="offset" value="273" />
+                    <option name="replacementList" value="32'd52083" />
+                    <option name="source" value="magma_tb.sv" />
+                  </Body>
+                  <Body>
+                    <option name="offset" value="278" />
+                    <option name="replacementList" value="32'd52083" />
+                    <option name="source" value="riscv_tb.sv" />
+                  </Body>
+                  <Body>
+                    <option name="offset" value="267" />
+                    <option name="replacementList" value="32'd52083" />
+                    <option name="source" value="tb_udm.sv" />
+                  </Body>
+                </list>
+              </option>
+            </Define>
+          </value>
+        </entry>
+        <entry key="DIVIDER_2400">
+          <value>
+            <Define>
+              <option name="definitions">
+                <list>
+                  <Body>
+                    <option name="offset" value="366" />
+                    <option name="replacementList" value="32'd416666" />
+                    <option name="source" value="tb.sv" />
+                  </Body>
+                  <Body>
+                    <option name="offset" value="372" />
+                    <option name="replacementList" value="32'd416666" />
+                    <option name="source" value="magma_tb.sv" />
+                  </Body>
+                  <Body>
+                    <option name="offset" value="377" />
+                    <option name="replacementList" value="32'd416666" />
+                    <option name="source" value="riscv_tb.sv" />
+                  </Body>
+                  <Body>
+                    <option name="offset" value="366" />
+                    <option name="replacementList" value="32'd416666" />
+                    <option name="source" value="tb_udm.sv" />
+                  </Body>
+                </list>
+              </option>
+            </Define>
+          </value>
+        </entry>
+        <entry key="DIVIDER_4800">
+          <value>
+            <Define>
+              <option name="definitions">
+                <list>
+                  <Body>
+                    <option name="offset" value="333" />
+                    <option name="replacementList" value="32'd208333" />
+                    <option name="source" value="tb.sv" />
+                  </Body>
+                  <Body>
+                    <option name="offset" value="339" />
+                    <option name="replacementList" value="32'd208333" />
+                    <option name="source" value="magma_tb.sv" />
+                  </Body>
+                  <Body>
+                    <option name="offset" value="344" />
+                    <option name="replacementList" value="32'd208333" />
+                    <option name="source" value="riscv_tb.sv" />
+                  </Body>
+                  <Body>
+                    <option name="offset" value="333" />
+                    <option name="replacementList" value="32'd208333" />
+                    <option name="source" value="tb_udm.sv" />
+                  </Body>
+                </list>
+              </option>
+            </Define>
+          </value>
+        </entry>
+        <entry key="DIVIDER_9600">
+          <value>
+            <Define>
+              <option name="definitions">
+                <list>
+                  <Body>
+                    <option name="offset" value="300" />
+                    <option name="replacementList" value="32'd104166" />
+                    <option name="source" value="tb.sv" />
+                  </Body>
+                  <Body>
+                    <option name="offset" value="306" />
+                    <option name="replacementList" value="32'd104166" />
+                    <option name="source" value="magma_tb.sv" />
+                  </Body>
+                  <Body>
+                    <option name="offset" value="311" />
+                    <option name="replacementList" value="32'd104166" />
+                    <option name="source" value="riscv_tb.sv" />
+                  </Body>
+                  <Body>
+                    <option name="offset" value="300" />
+                    <option name="replacementList" value="32'd104166" />
+                    <option name="source" value="tb_udm.sv" />
+                  </Body>
+                </list>
+              </option>
+            </Define>
+          </value>
+        </entry>
+        <entry key="ESCAPE_BYTE">
+          <value>
+            <Define>
+              <option name="definitions">
+                <list>
+                  <Body>
+                    <option name="offset" value="82" />
+                    <option name="replacementList" value="8'h5a" />
+                    <option name="source" value="udm.svh" />
+                  </Body>
+                </list>
+              </option>
+            </Define>
+          </value>
+        </entry>
+        <entry key="HALF_PERIOD">
+          <value>
+            <Define>
+              <option name="definitions">
+                <list>
+                  <Body>
+                    <option name="offset" value="192" />
+                    <option name="replacementList" value="10&#9;&#9;&#9;&#9;&#9;&#9;// external 50 MHZ" />
+                    <option name="source" value="xbar_tb.sv" />
+                  </Body>
+                  <Body>
+                    <option name="offset" value="186" />
+                    <option name="replacementList" value="5&#9;&#9;&#9;&#9;&#9;&#9;//external 100 MHZ" />
+                    <option name="source" value="tb.sv" />
+                  </Body>
+                  <Body>
+                    <option name="offset" value="192" />
+                    <option name="replacementList" value="10&#9;&#9;&#9;&#9;&#9;&#9;//external 50 MHZ" />
+                    <option name="source" value="magma_tb.sv" />
+                  </Body>
+                  <Body>
+                    <option name="offset" value="194" />
+                    <option name="replacementList" value="10&#9;&#9;&#9;&#9;&#9;&#9;// external 50 MHZ" />
+                    <option name="source" value="credit_tb.sv" />
+                  </Body>
+                  <Body>
+                    <option name="offset" value="201" />
+                    <option name="replacementList" value="10&#9;&#9;&#9;&#9;&#9;&#9;// external 50 MHZ" />
+                    <option name="source" value="master_exerciser.sv" />
+                  </Body>
+                  <Body>
+                    <option name="offset" value="186" />
+                    <option name="replacementList" value="5&#9;&#9;&#9;&#9;&#9;&#9;//external 100 MHZ" />
+                    <option name="source" value="tb_udm.sv" />
+                  </Body>
+                  <Body>
+                    <option name="offset" value="249" />
+                    <option name="replacementList" value="5&#9;&#9;&#9;&#9;&#9;&#9;//external 100 MHZ" />
+                    <option name="source" value="tb_direct.sv" />
+                  </Body>
+                </list>
+              </option>
+            </Define>
+          </value>
+        </entry>
+        <entry key="IDCODE_CMD">
+          <value>
+            <Define>
+              <option name="definitions">
+                <list>
+                  <Body>
+                    <option name="offset" value="114" />
+                    <option name="replacementList" value="8'h00&#9;// check udm accessibility" />
+                    <option name="source" value="udm.svh" />
+                  </Body>
+                </list>
+              </option>
+            </Define>
+          </value>
+        </entry>
+        <entry key="M0_RAND_SEED">
+          <value>
+            <Define>
+              <option name="definitions">
+                <list>
+                  <Body>
+                    <option name="offset" value="277" />
+                    <option name="replacementList" value="1" />
+                    <option name="source" value="xbar_tb.sv" />
+                  </Body>
+                </list>
+              </option>
+            </Define>
+          </value>
+        </entry>
+        <entry key="M1_RAND_SEED">
+          <value>
+            <Define>
+              <option name="definitions">
+                <list>
+                  <Body>
+                    <option name="offset" value="301" />
+                    <option name="replacementList" value="2" />
+                    <option name="source" value="xbar_tb.sv" />
+                  </Body>
+                </list>
+              </option>
+            </Define>
+          </value>
+        </entry>
+        <entry key="M2_RAND_SEED">
+          <value>
+            <Define>
+              <option name="definitions">
+                <list>
+                  <Body>
+                    <option name="offset" value="325" />
+                    <option name="replacementList" value="3" />
+                    <option name="source" value="xbar_tb.sv" />
+                  </Body>
+                </list>
+              </option>
+            </Define>
+          </value>
+        </entry>
+        <entry key="M3_RAND_SEED">
+          <value>
+            <Define>
+              <option name="definitions">
+                <list>
+                  <Body>
+                    <option name="offset" value="349" />
+                    <option name="replacementList" value="4" />
+                    <option name="source" value="xbar_tb.sv" />
+                  </Body>
+                </list>
+              </option>
+            </Define>
+          </value>
+        </entry>
+        <entry key="PERIOD">
+          <value>
+            <Define>
+              <option name="definitions">
+                <list>
+                  <Body>
+                    <option name="offset" value="241" />
+                    <option name="replacementList" value="(2*`HALF_PERIOD)" />
+                    <option name="source" value="xbar_tb.sv" />
+                  </Body>
+                  <Body>
+                    <option name="offset" value="243" />
+                    <option name="replacementList" value="(2*`HALF_PERIOD)" />
+                    <option name="source" value="credit_tb.sv" />
+                  </Body>
+                  <Body>
+                    <option name="offset" value="250" />
+                    <option name="replacementList" value="(2*`HALF_PERIOD)" />
+                    <option name="source" value="master_exerciser.sv" />
+                  </Body>
+                </list>
+              </option>
+            </Define>
+          </value>
+        </entry>
+        <entry key="RD_CMD">
+          <value>
+            <Define>
+              <option name="definitions">
+                <list>
+                  <Body>
+                    <option name="offset" value="326" />
+                    <option name="replacementList" value="8'h82&#9;// Read slave with autoincrement" />
+                    <option name="source" value="udm.svh" />
+                  </Body>
+                </list>
+              </option>
+            </Define>
+          </value>
+        </entry>
+        <entry key="RD_CMD_NOINC">
+          <value>
+            <Define>
+              <option name="definitions">
+                <list>
+                  <Body>
+                    <option name="offset" value="458" />
+                    <option name="replacementList" value="8'h84&#9;// Read slave without autoincrement" />
+                    <option name="source" value="udm.svh" />
+                  </Body>
+                </list>
+              </option>
+            </Define>
+          </value>
+        </entry>
+        <entry key="RST_CMD">
+          <value>
+            <Define>
+              <option name="definitions">
+                <list>
+                  <Body>
+                    <option name="offset" value="172" />
+                    <option name="replacementList" value="8'h80&#9;// Reset slave" />
+                    <option name="source" value="udm.svh" />
+                  </Body>
+                </list>
+              </option>
+            </Define>
+          </value>
+        </entry>
+        <entry key="SYNC_BYTE">
+          <value>
+            <Define>
+              <option name="definitions">
+                <list>
+                  <Body>
+                    <option name="offset" value="52" />
+                    <option name="replacementList" value="8'h55" />
+                    <option name="source" value="udm.svh" />
+                  </Body>
+                </list>
+              </option>
+            </Define>
+          </value>
+        </entry>
+        <entry key="UDM_BLOCK">
+          <value>
+            <Define>
+              <option name="definitions">
+                <list>
+                  <Body>
+                    <option name="offset" value="1170" />
+                    <option name="replacementList" value="DUT.udm" />
+                    <option name="source" value="tb.sv" />
+                  </Body>
+                  <Body>
+                    <option name="offset" value="1191" />
+                    <option name="replacementList" value="magma.udm" />
+                    <option name="source" value="magma_tb.sv" />
+                  </Body>
+                  <Body>
+                    <option name="offset" value="1338" />
+                    <option name="replacementList" value="sigrun.udm" />
+                    <option name="source" value="riscv_tb.sv" />
+                  </Body>
+                  <Body>
+                    <option name="offset" value="1143" />
+                    <option name="replacementList" value="DUT.udm" />
+                    <option name="source" value="tb_udm.sv" />
+                  </Body>
+                </list>
+              </option>
+            </Define>
+          </value>
+        </entry>
+        <entry key="UDM_RX_SIGNAL">
+          <value>
+            <Define>
+              <option name="definitions">
+                <list>
+                  <Body>
+                    <option name="offset" value="1145" />
+                    <option name="replacementList" value="rx" />
+                    <option name="source" value="tb.sv" />
+                  </Body>
+                  <Body>
+                    <option name="offset" value="1166" />
+                    <option name="replacementList" value="rx" />
+                    <option name="source" value="magma_tb.sv" />
+                  </Body>
+                  <Body>
+                    <option name="offset" value="1780" />
+                    <option name="replacementList" value="rx" />
+                    <option name="source" value="riscv_tb.sv" />
+                  </Body>
+                  <Body>
+                    <option name="offset" value="1118" />
+                    <option name="replacementList" value="rx" />
+                    <option name="source" value="tb_udm.sv" />
+                  </Body>
+                </list>
+              </option>
+            </Define>
+          </value>
+        </entry>
+        <entry key="WR_CMD">
+          <value>
+            <Define>
+              <option name="definitions">
+                <list>
+                  <Body>
+                    <option name="offset" value="263" />
+                    <option name="replacementList" value="8'h81&#9;// Write slave with autoincrement" />
+                    <option name="source" value="udm.svh" />
+                  </Body>
+                </list>
+              </option>
+            </Define>
+          </value>
+        </entry>
+        <entry key="WR_CMD_NOINC">
+          <value>
+            <Define>
+              <option name="definitions">
+                <list>
+                  <Body>
+                    <option name="offset" value="388" />
+                    <option name="replacementList" value="8'h83&#9;// Write slave without autoincrement" />
+                    <option name="source" value="udm.svh" />
+                  </Body>
+                </list>
+              </option>
+            </Define>
+          </value>
+        </entry>
+        <entry key="__Neuromorphic_design_h_">
+          <value>
+            <Define>
+              <option name="definitions">
+                <list>
+                  <Body>
+                    <option name="offset" value="299" />
+                    <option name="source" value="Neuromorphic_design.svh" />
+                  </Body>
+                </list>
+              </option>
+            </Define>
+          </value>
+        </entry>
+        <entry key="__SIGMA_TILE_H">
+          <value>
+            <Define>
+              <option name="definitions">
+                <list>
+                  <Body>
+                    <option name="offset" value="199" />
+                    <option name="source" value="sigma_tile.svh" />
+                  </Body>
+                </list>
+              </option>
+            </Define>
+          </value>
+        </entry>
+        <entry key="__coproc_if_h_">
+          <value>
+            <Define>
+              <option name="definitions">
+                <list>
+                  <Body>
+                    <option name="offset" value="289" />
+                    <option name="source" value="coproc_if.svh" />
+                  </Body>
+                </list>
+              </option>
+            </Define>
+          </value>
+        </entry>
+        <entry key="__genstructdel_req_struct_">
+          <value>
+            <Define>
+              <option name="definitions">
+                <list>
+                  <Body>
+                    <option name="offset" value="532" />
+                    <option name="source" value="coproc_if.svh" />
+                  </Body>
+                </list>
+              </option>
+            </Define>
+          </value>
+        </entry>
+        <entry key="__genstructdel_resp_struct_">
+          <value>
+            <Define>
+              <option name="definitions">
+                <list>
+                  <Body>
+                    <option name="offset" value="349" />
+                    <option name="source" value="coproc_if.svh" />
+                  </Body>
+                </list>
+              </option>
+            </Define>
+          </value>
+        </entry>
+        <entry key="nRST_CMD">
+          <value>
+            <Define>
+              <option name="definitions">
+                <list>
+                  <Body>
+                    <option name="offset" value="217" />
+                    <option name="replacementList" value="8'hC0&#9;// nReset slave" />
+                    <option name="source" value="udm.svh" />
+                  </Body>
+                </list>
+              </option>
+            </Define>
+          </value>
+        </entry>
+      </map>
+    </option>
+    <option name="version" value="195" />
+  </component>
+</project>
