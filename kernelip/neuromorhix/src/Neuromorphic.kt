@@ -6,6 +6,7 @@
 package neuromorphix
 
 import cyclix.*
+import cyclix.RtlGenerator.fifo_in_descr
 import hwast.*
 import kotlin.math.ln
 import javax.sound.sampled.Port
@@ -20,7 +21,7 @@ enum class NEURAL_NETWORK_TYPE {
 val OP_NEURO = hwast.hw_opcode("neuro_proc")
 
 
-data class SCHEDULER_BUF_SIZE(val SIZE : Int)
+data class SCHEDULER_BUF_SIZE(var SIZE : Int)
 
 data class STATIC_MEMORY_SIZE(val width : Int, val depth : Int)  // N*M matrix of weight[width:0]
 
@@ -128,15 +129,16 @@ internal class __neurons_proc_info(cyclix_gen : cyclix.Generic,
 
 
 
-open class i_buffer_if( name_prefix : String, TRX_BUF_SIZE : Int, data_in : hw_var, ) {
+class i_buffer( name_prefix : String, transaction_in : hw_var ) {
     var name = name_prefix
-    var data_in = data_in
+    var tr_in = transaction_in
+    var buf_size = SCHEDULER_BUF_SIZE(0)
 }
 
-open class o_buffer_if( name_prefix : String, TRX_BUF_SIZE : Int, data_out : hw_var) {
+open class o_buffer( name_prefix : String, transaction_out : hw_var) {
     var name = name_prefix
-    var data_out = data_out
-
+    var tr_out = transaction_out
+    var buf_size = SCHEDULER_BUF_SIZE(0)
 }
 
 internal class __TranslateInfo(var neuromorphic : Neuromorphic) {
@@ -146,8 +148,13 @@ internal class __TranslateInfo(var neuromorphic : Neuromorphic) {
     var __processing_handlers_assocs = mutableMapOf<hw_neuro_handler, __neurons_proc_info>()  // neuron_handler
     var ProcessList = ArrayList<hw_neuro_handler>()
     var ProcessInfoList = ArrayList<__neurons_proc_info>()
-    var __i_buffers = mutableMapOf<i_buffer_if, hw_fifo>()
-    var __o_buffers = mutableMapOf<o_buffer_if, hw_fifo>()
+
+//    var __i_buffers = mutableMapOf<i_buffer_if, hw_fifo>()
+//    var __o_buffers = mutableMapOf<o_buffer_if, hw_fifo>()
+
+    var __o_buffers = mutableMapOf<hw_fifo_out, hw_fifo_out>()
+    var __i_buffers = mutableMapOf<hw_fifo_in, hw_fifo_in>()
+
     var gen_neurons_count = DUMMY_VAR
     var __genvars_assocs = mutableMapOf<hw_var, hw_var>()
     var __ports_assocs = mutableMapOf<hw_var, hw_var>()
@@ -155,18 +162,20 @@ internal class __TranslateInfo(var neuromorphic : Neuromorphic) {
 
 open class Neuromorphic(val name : String, val snn : snn_arch, val tick_slot : Int ) : hw_astc_stdif() {
 
-    var locals          = ArrayList<neuro_local>()
-    var globals         = ArrayList<neuro_global>()
-    var epochals        = ArrayList<neuro_epochal>()
-    var i_buffer      = ArrayList<i_buffer_if>()
-    var o_buffer      = ArrayList<o_buffer_if>()
-//    var neur_ports      = ArrayList<hw_var>()
+    var locals = ArrayList<neuro_local>()
+    var globals = ArrayList<neuro_global>()
+    var epochals = ArrayList<neuro_epochal>()
+    var i_buffers = ArrayList<i_buffer>()
+    var o_buffers = ArrayList<o_buffer>()
+
+    //    var neur_ports      = ArrayList<hw_var>()
     var PortConnections = mutableMapOf<hw_port, hw_param>()
+
 
     var Procs = mutableMapOf<String, hw_neuro_handler>()
 
 
-    fun neuron_handler(name : String) : hw_neuro_handler {
+    fun neuron_handler(name: String): hw_neuro_handler {
         var new_neuron_process = hw_neuro_handler(name, this)
         Procs.put(new_neuron_process.name, new_neuron_process)
 
@@ -225,21 +234,14 @@ open class Neuromorphic(val name : String, val snn : snn_arch, val tick_slot : I
 //        new_port.default_astc = this
 //    }
 
-    private fun add_i_buffers(new_i_buffer: i_buffer_if){
-        i_buffer.add(new_i_buffer)
-    }
 
-    private fun add_o_buffers(new_o_buffer: o_buffer_if){
-        o_buffer.add(new_o_buffer)
-    }
-
-    fun local(name: String, vartype : hw_type, defimm: hw_imm): neuro_local {
+    fun local(name: String, vartype: hw_type, defimm: hw_imm): neuro_local {
         var ret_var = neuro_local(name, vartype, defimm)
         add_local(ret_var)
         return ret_var
     }
 
-    fun local(name: String, vartype : hw_type, defval: String): neuro_local {
+    fun local(name: String, vartype: hw_type, defval: String): neuro_local {
         var ret_var = neuro_local(name, vartype, defval)
         add_local(ret_var)
         return ret_var
@@ -433,7 +435,7 @@ open class Neuromorphic(val name : String, val snn : snn_arch, val tick_slot : I
         return ret_var
     }
 
-    fun epochal(name: String, vartype : hw_type, defval: String): neuro_epochal {
+    fun epochal(name: String, vartype: hw_type, defval: String): neuro_epochal {
         var ret_var = neuro_epochal(name, vartype, defval)
         add_epochal(ret_var)
         return ret_var
@@ -529,19 +531,27 @@ open class Neuromorphic(val name : String, val snn : snn_arch, val tick_slot : I
 //        return ret_var
 //    }
 
-    fun i_buffer( name_prefix : String,  TRX_BUF_SIZE : Int,  TRX_BUF_MULTIDIM : Int, data_in: hw_var ) : i_buffer_if{
-        var ret_buf = i_buffer_if(name_prefix, snn.presyn_neur*snn.postsyn_neur, data_in )
+    private fun add_i_buffers(new_i_buffer: i_buffer) {
+        i_buffers.add(new_i_buffer)
+    }
+
+    private fun add_o_buffers(new_o_buffer: o_buffer) {
+        o_buffers.add(new_o_buffer)
+    }
+
+    fun input_buffer(name_prefix: String, data_in: hw_var): i_buffer {
+        var ret_buf = i_buffer(name_prefix, data_in)
         add_i_buffers(ret_buf)
         return ret_buf
     }
 
-    fun o_buffer( name_prefix : String,  TRX_BUF_SIZE : Int,  TRX_BUF_MULTIDIM : Int, data_out: hw_var ) : o_buffer_if{
-        var ret_buf = o_buffer_if(name_prefix, snn.postsyn_neur, data_out )
+    fun o_buffer(name_prefix: String, BUF_SIZE: Int, data_out: hw_var): o_buffer {
+        var ret_buf = o_buffer(name_prefix, snn.postsyn_neur, data_out)
         add_o_buffers(ret_buf)
         return ret_buf
     }
 
-    fun begproc(neurohandler : hw_neuro_handler){
+    fun begproc(neurohandler: hw_neuro_handler) {
         add(neurohandler)
     }
 
@@ -549,10 +559,12 @@ open class Neuromorphic(val name : String, val snn : snn_arch, val tick_slot : I
         this.clear()
     }
 
-    fun reconstruct_expression(debug_lvl : DEBUG_LEVEL,
-                               cyclix_gen : hw_astc,
-                               expr : hw_exec,
-                               context : import_expr_context){
+    fun reconstruct_expression(
+        debug_lvl: DEBUG_LEVEL,
+        cyclix_gen: hw_astc,
+        expr: hw_exec,
+        context: import_expr_context
+    ) {
 
         for (exec in cyclix_gen) {
             cyclix_gen.import_expr(debug_lvl, exec, context, ::reconstruct_expression)
@@ -571,7 +583,7 @@ open class Neuromorphic(val name : String, val snn : snn_arch, val tick_slot : I
         }
     }
 
-    fun translate(debug_lvl : DEBUG_LEVEL) : cyclix.Generic {
+    fun translate(debug_lvl: DEBUG_LEVEL): cyclix.Generic {
         NEWLINE()
         MSG("##############################################")
         MSG("#### Starting Neuromorphix-to-Cyclix translation ####")
@@ -581,7 +593,10 @@ open class Neuromorphic(val name : String, val snn : snn_arch, val tick_slot : I
         var cyclix_gen = cyclix.Generic("Neuromorphic_design")
         var TranslateInfo = __TranslateInfo(this)
         var var_dict = mutableMapOf<hw_var, hw_var>()
+//        var fifo_in_dict    = mutableMapOf<hw_fifo_in, fifo_in_descr>()
         var context = import_expr_context(var_dict)
+
+
 
         if (snn.nn_type == NEURAL_NETWORK_TYPE.SFNN) {
             // Generate resources for epochals
@@ -592,12 +607,27 @@ open class Neuromorphic(val name : String, val snn : snn_arch, val tick_slot : I
             }
 
             for (port in Ports) {
-                TranslateInfo.__ports_assocs.put(port, cyclix_gen.port(port.name, port.port_dir, port.vartype, port.defval) )
+                TranslateInfo.__ports_assocs.put(
+                    port,
+                    cyclix_gen.port(port.name, port.port_dir, port.vartype, port.defval)
+                )
             }
-                // processing pContext list
+            // processing pContext list
             for (global in globals) {
                 TranslateInfo.__global_assocs.put(global, cyclix_gen.uglobal(global.name, global.defval))
             }
+
+            // Processing FIFOs
+//            for (fifo_out in fifo_outs) {
+//                var new_fifo_out = cyclix_gen.fifo_out(fifo_out.name, fifo_out.vartype)
+//                TranslateInfo.__o_buffers.put(fifo_out, new_fifo_out)
+//            }
+//            for (fifo_in in fifo_ins) {
+//                var new_fifo_in = cyclix_gen.fifo_in(fifo_in.name, fifo_in.vartype)
+//                TranslateInfo.__fifo_rd_assocs.put(fifo_in, new_fifo_in)
+//            }
+
+//            cyclix_gen.hw_fifo_in
 
 //            MSG(debug_lvl, "Processing genvars")
 //            for (CUR_STAGE_INDEX in 0 until TranslateInfo.StageList.size) {
@@ -607,84 +637,141 @@ open class Neuromorphic(val name : String, val snn : snn_arch, val tick_slot : I
 //                }
 //            }
 
-//                // Generating Tick for timeslot processing period
-//                var tick = cyclix_gen.uglobal("tick", "0")
-//                var tick_period = cyclix_gen.ulocal("tick_period", hw_imm(tick_slot))
-//                var clk_counter = cyclix_gen.uglobal("clk_counter", "0")
-//                var next_clk_count = cyclix_gen.uglobal("next_clk_count", "0")
-//                next_clk_count.assign(clk_counter.plus(1))
-//                clk_counter.assign(next_clk_count)
-//
-//                cyclix_gen.begif(cyclix_gen.eq2(tick_period, clk_counter))
-//                run {
-//                    tick.assign(1)
-//                    clk_counter.assign(0)
-//                }; cyclix_gen.endif()
-//                cyclix_gen.begelse()
-//                run {
-//                    tick.assign(0)
-//                }; cyclix_gen.endif()
-//
-//                // Additional logic for generate epochals resources
-//                for (epochal in epochals) {
-//                    var new_global = cyclix_gen.global((epochal.name), epochal.vartype, epochal.defimm)
-//                    var temp_new_global = cyclix_gen.global("gen_epoch" + epochal.name, epochal.vartype, epochal.defimm)
-//                    cyclix_gen.begif(tick)
-//                    run {
-//                        new_global.assign(0)
-//                    }; cyclix_gen.endif()
-//                    cyclix_gen.begelse()
-//                    run {
-//                        new_global.assign(temp_new_global)
-//                    }; cyclix_gen.endif()
-//
-//                    TranslateInfo.__epochal_assocs.put(temp_new_global, new_global)
-//                    TranslateInfo.__epochal_assocs.put(epochal, temp_new_global)
-//                }
+            // Generating Tick for timeslot processing period
+            var tick = cyclix_gen.uglobal("tick", "0")
+            var tick_period = cyclix_gen.ulocal("tick_period", hw_imm(tick_slot))
+            var clk_counter = cyclix_gen.uglobal("clk_counter", "0")
+            var next_clk_count = cyclix_gen.uglobal("next_clk_count", "0")
+            next_clk_count.assign(clk_counter.plus(1))
+            clk_counter.assign(next_clk_count)
 
-//                var weight_mem_dim = hw_dim_static()
-//                weight_mem_dim.add(snn.weight_width, 0)
-//                weight_mem_dim.add(snn.presyn_neur-1, 0)
-////                weight_mem_dim.add(snn.postsyn_neur-1, 0)
-//                var weight_memory = cyclix_gen.uglobal("weight_memory", weight_mem_dim, "0" )
-//
-//                var output_scheduler_dim = hw_dim_static()
-//                output_scheduler_dim.add(log2(snn.postsyn_neur), 0)
-//                output_scheduler_dim.add(snn.postsyn_neur, 0)
-//                var output_scheduler = cyclix_gen.uglobal("output_scheduler", output_scheduler_dim, "0" )
-//
-//                var input_scheduler_dim = hw_dim_static()
-//                input_scheduler_dim.add(log2(snn.postsyn_neur), 0)
-//                input_scheduler_dim.add(snn.presyn_neur * snn.postsyn_neur, 0)
-//                var input_scheduler = cyclix_gen.uglobal("input_scheduler", input_scheduler_dim, "0" )
-//
-//                var presyn_neuron_counter_num = cyclix_gen.global("presyn_neuron_counter_num", hw_type(DATA_TYPE.BV_UNSIGNED, "0"), "0")
-//                var next_presyn_neuron_num = cyclix_gen.global("next_neuron_num", hw_type(DATA_TYPE.BV_UNSIGNED, "0"), "0")
-//                next_presyn_neuron_num.assign(presyn_neuron_counter_num.plus(1))
-//                presyn_neuron_counter_num.assign(next_presyn_neuron_num)
-//
-//                var postsyn_neuron_counter_num = cyclix_gen.global("postsyn_neuron_counter_num", hw_type(DATA_TYPE.BV_UNSIGNED, "0"), "0")
-//                var next_postsyn_neuron_num = cyclix_gen.global("next_postsyn_neuron_num", hw_type(DATA_TYPE.BV_UNSIGNED, "0"), "0")
-//                next_postsyn_neuron_num.assign(postsyn_neuron_counter_num.plus(1))
-//                postsyn_neuron_counter_num.assign(next_postsyn_neuron_num)
-//
-//                for (buf in i_buffer) {
-//                    var new_io_buf = hw_fifo(cyclix_gen,"new_io_buf_"+buf.name, log2(snn.postsyn_neur - 1), 0 )
-//                    var input_spk = cyclix_gen.indexed(input_scheduler, presyn_neuron_counter_num)
-//                    buf.data_in = input_spk
-//                    var weight = cyclix_gen.ulocal("weight", "0")
-//                    weight.assign(weight_memory)
-//                    var weights_presyn = cyclix_gen.indexed(weight_memory, presyn_neuron_counter_num)
-//                    var weight_presyn_postsyn = cyclix_gen.indexed(weights_presyn, input_spk)
-//                    TranslateInfo.__i_buffers.put(buf, new_io_buf)
-//                }
-//
-//                for (buf in o_buffer) {
-//                    var new_io_buf = hw_fifo(cyclix_gen,"new_io_buf_"+buf.name, log2(snn.postsyn_neur - 1), 0 )
-//                    var ouput_spk = buf.data_out.assign(cyclix_gen.indexed(output_scheduler, postsyn_neuron_counter_num))
-//                    TranslateInfo.__o_buffers.put(buf, new_io_buf)
-//                }
+            cyclix_gen.begif(cyclix_gen.eq2(tick_period, clk_counter))
+            run {
+                tick.assign(1)
+                clk_counter.assign(0)
+            }; cyclix_gen.endif()
+            cyclix_gen.begelse()
+            run {
+                tick.assign(0)
+            }; cyclix_gen.endif()
 
+            // Additional logic for generate epochals resources
+            for (epochal in epochals) {
+                var new_global = cyclix_gen.global((epochal.name), epochal.vartype, epochal.defimm)
+                var temp_new_global = cyclix_gen.global("gen_epoch" + epochal.name, epochal.vartype, epochal.defimm)
+                cyclix_gen.begif(tick)
+                run {
+                    new_global.assign(0)
+                }; cyclix_gen.endif()
+                cyclix_gen.begelse()
+                run {
+                    new_global.assign(temp_new_global)
+                }; cyclix_gen.endif()
+
+                TranslateInfo.__epochal_assocs.put(temp_new_global, new_global)
+                TranslateInfo.__epochal_assocs.put(epochal, temp_new_global)
+            }
+
+            var weight_mem_dim = hw_dim_static()
+            weight_mem_dim.add(snn.weight_width, 0)
+            weight_mem_dim.add(snn.presyn_neur - 1, 0)
+            weight_mem_dim.add(snn.postsyn_neur - 1, 0)
+            var weight_memory = cyclix_gen.uglobal("weight_memory", weight_mem_dim, "0")
+
+//            var output_scheduler_dim = hw_dim_static()
+//            output_scheduler_dim.add(log2(snn.postsyn_neur), 0)
+//            output_scheduler_dim.add(snn.postsyn_neur, 0)
+//            var output_scheduler = cyclix_gen.uglobal("output_scheduler", output_scheduler_dim, "0" )
+//
+//            var input_scheduler_dim = hw_dim_static()
+//            input_scheduler_dim.add(log2(snn.postsyn_neur), 0)
+//            input_scheduler_dim.add(snn.presyn_neur * snn.postsyn_neur, 0)
+//            var input_scheduler = cyclix_gen.uglobal("input_scheduler", input_scheduler_dim, "0" )
+
+            var presyn_neuron_counter_num =
+                cyclix_gen.global("presyn_neuron_counter_num", hw_type(DATA_TYPE.BV_UNSIGNED, "0"), "0")
+            var next_presyn_neuron_num = cyclix_gen.global("next_neuron_num", hw_type(DATA_TYPE.BV_UNSIGNED, "0"), "0")
+            next_presyn_neuron_num.assign(presyn_neuron_counter_num.plus(1))
+            presyn_neuron_counter_num.assign(next_presyn_neuron_num)
+
+            var postsyn_neuron_counter_num =
+                cyclix_gen.global("postsyn_neuron_counter_num", hw_type(DATA_TYPE.BV_UNSIGNED, "0"), "0")
+            var next_postsyn_neuron_num =
+                cyclix_gen.global("next_postsyn_neuron_num", hw_type(DATA_TYPE.BV_UNSIGNED, "0"), "0")
+            next_postsyn_neuron_num.assign(postsyn_neuron_counter_num.plus(1))
+            postsyn_neuron_counter_num.assign(next_postsyn_neuron_num)
+
+            for (scheduler in i_buffers) {
+                scheduler.buf_size.SIZE = snn.presyn_neur
+
+                var i_buf_wr_en =
+                    cyclix_gen.port(scheduler.name + "wr_en", PORT_DIR.IN, hw_type(DATA_TYPE.BV_UNSIGNED, "0"), "0")
+                var input_if_spk = cyclix_gen.uport(
+                    scheduler.name + "input_if",
+                    PORT_DIR.IN,
+                    hw_dim_static(log2(snn.presyn_neur), 0),
+                    "0"
+                )
+
+                var i_buf_rd_en = cyclix_gen.ulocal(scheduler.name + "rd_en", "0")
+                var spike_scheduler_mem = hw_dim_static()
+                spike_scheduler_mem.add(log2(snn.presyn_neur), 0)
+                spike_scheduler_mem.add(scheduler.buf_size.SIZE, 0)
+                var spike_scheduler = cyclix_gen.ulocal(scheduler.name, spike_scheduler_mem, "0")
+
+                var wr_ptr = cyclix_gen.ulocal(scheduler.name + "_wr_ptr", "0")
+
+                cyclix_gen.begif(i_buf_wr_en)
+                run {
+                    cyclix_gen.indexed(spike_scheduler, wr_ptr).assign(input_if_spk)
+                    wr_ptr.plus(1)
+                }; cyclix_gen.endif()
+
+                cyclix_gen.begif(i_buf_rd_en)
+                run {
+                    var input_spike = cyclix_gen.indexed(spike_scheduler, presyn_neuron_counter_num)
+
+                    cyclix_gen.begif(input_spike)
+                    run {
+                        var weight_presyn_neurons = cyclix_gen.indexed(weight_memory, presyn_neuron_counter_num)
+                        var weight_neuron = cyclix_gen.indexed(weight_presyn_neurons, postsyn_neuron_counter_num)
+                        scheduler.tr_in.assign(weight_neuron)  // assign synapse weight to transaction
+                    }; cyclix_gen.endif()
+                }; cyclix_gen.endif()
+            }
+
+            for (scheduler in o_buffers) {
+                scheduler.buf_size.SIZE = snn.postsyn_neur
+
+                var o_buf_wr_en =
+                    cyclix_gen.port(scheduler.name + "wr_en", PORT_DIR.IN, hw_type(DATA_TYPE.BV_UNSIGNED, "0"), "0")
+                var output_if_spk = cyclix_gen.uport(
+                    scheduler.name + "output_if",
+                    PORT_DIR.IN,
+                    hw_dim_static(log2(snn.postsyn_neur), 0),
+                    "0"
+                )
+
+                var o_buf_rd_en = cyclix_gen.ulocal(scheduler.name + "rd_en", "0")
+                var spike_scheduler_mem = hw_dim_static()
+                spike_scheduler_mem.add(log2(snn.postsyn_neur), 0)
+                spike_scheduler_mem.add(scheduler.buf_size.SIZE, 0)
+                var spike_scheduler = cyclix_gen.ulocal(scheduler.name, spike_scheduler_mem, "0")
+
+//                    var wr_ptr = cyclix_gen.ulocal(scheduler.name+"_wr_ptr", "0" )
+
+                cyclix_gen.begif(o_buf_rd_en)
+                run {
+                    cyclix_gen.indexed(spike_scheduler, postsyn_neuron_counter_num).assign(scheduler.tr_out)
+                }; cyclix_gen.endif()
+
+                var rd_ptr = cyclix_gen.ulocal(scheduler.name + "_rd_ptr", "0")
+                cyclix_gen.begif(o_buf_rd_en)
+                run {
+                    output_if_spk.assign(cyclix_gen.indexed(spike_scheduler, rd_ptr))
+                    rd_ptr.plus(1)
+                }; cyclix_gen.endif()
+            }
 
 //            for (local_assocs in TranslateInfo.__local_assocs) {
 //                context.var_dict.put(local_assocs.key, local_assocs.value)
@@ -704,16 +791,8 @@ open class Neuromorphic(val name : String, val snn : snn_arch, val tick_slot : I
             context.var_dict.putAll(TranslateInfo.__epochal_assocs)
             context.var_dict.putAll(TranslateInfo.__ports_assocs)
 
-            for (var_entry in context.var_dict) {
-                var key_type_string = "var"
-                var value_type_string = "var"
-                hwast.MSG("-- key: " + var_entry.key.name +
-                        " (" + key_type_string + "), value: " +
-                        var_entry.value.name + " (" + value_type_string + ")")
-            }
-
             for (proc in Procs) {
-//                println("translate: " + proc.value)
+                //                println("translate: " + proc.value)
                 for (exec in proc.value.expressions) {
                     cyclix_gen.import_expr(debug_lvl, exec, context, ::reconstruct_expression)
                 }
@@ -726,8 +805,8 @@ open class Neuromorphic(val name : String, val snn : snn_arch, val tick_slot : I
 
         return cyclix_gen
     }
-
 }
+
 
 fun main(){
 //    var sfnn_snn_arch = snn_arch("test", NEURAL_NETWORK_TYPE.SFNN, 32, 32, 4, 5)
