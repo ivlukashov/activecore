@@ -19,8 +19,8 @@ class lif(name : String, snn : lif_snn, tick_timeslot: Int) : Neuromorphic( name
 
     constructor(name : String, snn : lif_snn) : this(name, snn, 5000)
 
-    var input_spike =  input_buffer("input_spikes_buffer")  // input buffer
-    var spike_transaction = ulocal("spike_transaction", "0")
+    var input_if =  input_buffer("input_spikes_buffer")  // input buffer
+    var input_spike = ulocal("input_spike", "0")
     var threshold = uglobal("threshold", hw_imm("5"))
     var leakage = uglobal("leakage", hw_imm("1"))
     var membr_potential_mem_dim = hw_dim_static()
@@ -33,9 +33,9 @@ class lif(name : String, snn : lif_snn, tick_timeslot: Int) : Neuromorphic( name
     var LIF = neuron_handler("LIF")
 
     init {
-        LIF.begin()  // здесь операция таймслота
+        LIF.begin()  // timeslot operation
         run{
-            spike_transaction.assign(input_spike.mem[presyn_nuerons_counter])
+            input_spike.assign(input_if.mem[presyn_nuerons_counter])
 
             membr_potential_mem_dim.add(3, 0)
             membr_potential_mem_dim.add(snn.postsyn_neur, 0)
