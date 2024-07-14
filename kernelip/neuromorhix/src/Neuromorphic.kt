@@ -129,9 +129,10 @@ internal class __neurons_proc_info(cyclix_gen : cyclix.Generic,
 
 
 
-class i_buffer( name_prefix : String, transaction_in : hw_var ) {
+class i_buffer( name_prefix : String) {
     var name = name_prefix
-    var tr_in = transaction_in
+    var buf_dim = hw_dim_static()
+    var mem = neuro_local("mem", hw_type(DATA_TYPE.BV_UNSIGNED, buf_dim), "0")
     var buf_size = SCHEDULER_BUF_SIZE(0)
 }
 
@@ -139,6 +140,11 @@ open class o_buffer( name_prefix : String, transaction_out : hw_var) {
     var name = name_prefix
     var tr_out = transaction_out
     var buf_size = SCHEDULER_BUF_SIZE(0)
+}
+
+open class dynamic_params( name_prefix: String, transaction : hw_var ){
+    var name = name_prefix
+    var transaction = transaction
 }
 
 internal class __TranslateInfo(var neuromorphic : Neuromorphic) {
@@ -167,6 +173,10 @@ open class Neuromorphic(val name : String, val snn : snn_arch, val tick_slot : I
     var epochals = ArrayList<neuro_epochal>()
     var i_buffers = ArrayList<i_buffer>()
     var o_buffers = ArrayList<o_buffer>()
+    var dyn_mems = ArrayList<dynamic_params>()
+
+    var presyn_nuerons_counter = hw_var("presyn_nuerons_counter", DATA_TYPE.BV_UNSIGNED, "0");
+    var postsyn_nuerons_counter = hw_var("postsyn_nuerons_counter", DATA_TYPE.BV_UNSIGNED, "0");
 
     //    var neur_ports      = ArrayList<hw_var>()
     var PortConnections = mutableMapOf<hw_port, hw_param>()
@@ -539,17 +549,34 @@ open class Neuromorphic(val name : String, val snn : snn_arch, val tick_slot : I
         o_buffers.add(new_o_buffer)
     }
 
-    fun input_buffer(name_prefix: String, data_in: hw_var): i_buffer {
-        var ret_buf = i_buffer(name_prefix, data_in)
+    fun input_buffer(name_prefix: String): i_buffer {
+        var ret_buf = i_buffer(name_prefix)
         add_i_buffers(ret_buf)
         return ret_buf
     }
 
-    fun o_buffer(name_prefix: String, BUF_SIZE: Int, data_out: hw_var): o_buffer {
-        var ret_buf = o_buffer(name_prefix, snn.postsyn_neur, data_out)
+    fun output_buffer(name_prefix: String, data_out: hw_var): o_buffer {
+        var ret_buf = o_buffer(name_prefix, data_out)
         add_o_buffers(ret_buf)
         return ret_buf
     }
+
+    private fun add_dyn_params(new_dyn_mem : dynamic_params) {
+        dyn_mems.add(new_dyn_mem)
+    }
+
+    fun dynamic_parameters(name: String, transaction: hw_var) : dynamic_params {
+        var ret_dyn_mem = dynamic_params(name, transaction)
+        add_dyn_params(ret_dyn_mem)
+        return ret_dyn_mem
+    }
+
+//    fun presyn_neurons_counter(name: String, counter: hw_var) : neuro_global {
+//        var ret_var = neuro_global(name, DATA_TYPE.BV_UNSIGNED, "0")
+//
+//
+//        return ret_var
+//    }
 
     fun begproc(neurohandler: hw_neuro_handler) {
         add(neurohandler)
@@ -597,7 +624,6 @@ open class Neuromorphic(val name : String, val snn : snn_arch, val tick_slot : I
         var context = import_expr_context(var_dict)
 
 
-
         if (snn.nn_type == NEURAL_NETWORK_TYPE.SFNN) {
             // Generate resources for epochals
 //            for (CUR_PROCESS_INDEX in 0 until TranslateInfo.ProcessList.size) {
@@ -612,10 +638,12 @@ open class Neuromorphic(val name : String, val snn : snn_arch, val tick_slot : I
                     cyclix_gen.port(port.name, port.port_dir, port.vartype, port.defval)
                 )
             }
+
             // processing pContext list
             for (global in globals) {
                 TranslateInfo.__global_assocs.put(global, cyclix_gen.uglobal(global.name, global.defval))
             }
+
 
             // Processing FIFOs
 //            for (fifo_out in fifo_outs) {
@@ -655,10 +683,10 @@ open class Neuromorphic(val name : String, val snn : snn_arch, val tick_slot : I
                 tick.assign(0)
             }; cyclix_gen.endif()
 
-            // Additional logic for generate epochals resources
+//             Additional logic for generate epochals resources
             for (epochal in epochals) {
                 var new_global = cyclix_gen.global((epochal.name), epochal.vartype, epochal.defimm)
-                var temp_new_global = cyclix_gen.global("gen_epoch" + epochal.name, epochal.vartype, epochal.defimm)
+                var temp_new_global = cyclix_gen.global("gen_epochal_" + epochal.name, epochal.vartype, epochal.defimm)
                 cyclix_gen.begif(tick)
                 run {
                     new_global.assign(0)
@@ -678,21 +706,22 @@ open class Neuromorphic(val name : String, val snn : snn_arch, val tick_slot : I
             weight_mem_dim.add(snn.postsyn_neur - 1, 0)
             var weight_memory = cyclix_gen.uglobal("weight_memory", weight_mem_dim, "0")
 
-//            var output_scheduler_dim = hw_dim_static()
-//            output_scheduler_dim.add(log2(snn.postsyn_neur), 0)
-//            output_scheduler_dim.add(snn.postsyn_neur, 0)
-//            var output_scheduler = cyclix_gen.uglobal("output_scheduler", output_scheduler_dim, "0" )
-//
-//            var input_scheduler_dim = hw_dim_static()
-//            input_scheduler_dim.add(log2(snn.postsyn_neur), 0)
-//            input_scheduler_dim.add(snn.presyn_neur * snn.postsyn_neur, 0)
-//            var input_scheduler = cyclix_gen.uglobal("input_scheduler", input_scheduler_dim, "0" )
+            var output_scheduler_dim = hw_dim_static()
+            output_scheduler_dim.add(log2(snn.postsyn_neur), 0)
+            output_scheduler_dim.add(snn.postsyn_neur, 0)
+            var output_scheduler = cyclix_gen.uglobal("output_scheduler", output_scheduler_dim, "0" )
+
+            var input_scheduler_dim = hw_dim_static()
+            input_scheduler_dim.add(log2(snn.postsyn_neur), 0)
+            input_scheduler_dim.add(snn.presyn_neur * snn.postsyn_neur, 0)
+            var input_scheduler = cyclix_gen.uglobal("input_scheduler", input_scheduler_dim, "0" )
 
             var presyn_neuron_counter_num =
                 cyclix_gen.global("presyn_neuron_counter_num", hw_type(DATA_TYPE.BV_UNSIGNED, "0"), "0")
             var next_presyn_neuron_num = cyclix_gen.global("next_neuron_num", hw_type(DATA_TYPE.BV_UNSIGNED, "0"), "0")
             next_presyn_neuron_num.assign(presyn_neuron_counter_num.plus(1))
             presyn_neuron_counter_num.assign(next_presyn_neuron_num)
+            TranslateInfo.__global_assocs.put(presyn_nuerons_counter, presyn_neuron_counter_num)
 
             var postsyn_neuron_counter_num =
                 cyclix_gen.global("postsyn_neuron_counter_num", hw_type(DATA_TYPE.BV_UNSIGNED, "0"), "0")
@@ -700,6 +729,7 @@ open class Neuromorphic(val name : String, val snn : snn_arch, val tick_slot : I
                 cyclix_gen.global("next_postsyn_neuron_num", hw_type(DATA_TYPE.BV_UNSIGNED, "0"), "0")
             next_postsyn_neuron_num.assign(postsyn_neuron_counter_num.plus(1))
             postsyn_neuron_counter_num.assign(next_postsyn_neuron_num)
+            TranslateInfo.__global_assocs.put(postsyn_nuerons_counter, postsyn_neuron_counter_num)
 
             for (scheduler in i_buffers) {
                 scheduler.buf_size.SIZE = snn.presyn_neur
@@ -709,37 +739,68 @@ open class Neuromorphic(val name : String, val snn : snn_arch, val tick_slot : I
                 var input_if_spk = cyclix_gen.uport(
                     scheduler.name + "input_if",
                     PORT_DIR.IN,
-                    hw_dim_static(log2(snn.presyn_neur), 0),
+                    hw_dim_static(0, 0),
                     "0"
                 )
 
+                scheduler.buf_dim.add(0, 0)
+                scheduler.buf_dim.add(scheduler.buf_size.SIZE, 0)
+
                 var i_buf_rd_en = cyclix_gen.ulocal(scheduler.name + "rd_en", "0")
-                var spike_scheduler_mem = hw_dim_static()
-                spike_scheduler_mem.add(log2(snn.presyn_neur), 0)
-                spike_scheduler_mem.add(scheduler.buf_size.SIZE, 0)
-                var spike_scheduler = cyclix_gen.ulocal(scheduler.name, spike_scheduler_mem, "0")
-
                 var wr_ptr = cyclix_gen.ulocal(scheduler.name + "_wr_ptr", "0")
-
+//
                 cyclix_gen.begif(i_buf_wr_en)
                 run {
-                    cyclix_gen.indexed(spike_scheduler, wr_ptr).assign(input_if_spk)
+                    cyclix_gen.indexed(scheduler.mem, wr_ptr).assign(input_if_spk)
                     wr_ptr.plus(1)
                 }; cyclix_gen.endif()
 
-                cyclix_gen.begif(i_buf_rd_en)
-                run {
-                    var input_spike = cyclix_gen.indexed(spike_scheduler, presyn_neuron_counter_num)
+//                TranslateInfo.__ports_assocs.put(i_buf_wr_en, cyclix_gen.port(i_buf_wr_en.name+"gen", i_buf_wr_en.port_dir, i_buf_wr_en.vartype, i_buf_wr_en.defval))
+//                TranslateInfo.__ports_assocs.put(input_if_spk, cyclix_gen.port(input_if_spk.name+"gen", input_if_spk.port_dir, input_if_spk.vartype, input_if_spk.defval))
 
-                    cyclix_gen.begif(input_spike)
-                    run {
-                        var weight_presyn_neurons = cyclix_gen.indexed(weight_memory, presyn_neuron_counter_num)
-                        var weight_neuron = cyclix_gen.indexed(weight_presyn_neurons, postsyn_neuron_counter_num)
-                        scheduler.tr_in.assign(weight_neuron)  // assign synapse weight to transaction
-                    }; cyclix_gen.endif()
-                }; cyclix_gen.endif()
             }
 
+//            for (scheduler in i_buffers) {
+//                scheduler.buf_size.SIZE = snn.presyn_neur
+//
+//                var i_buf_wr_en =
+//                    cyclix_gen.port(scheduler.name + "wr_en", PORT_DIR.IN, hw_type(DATA_TYPE.BV_UNSIGNED, "0"), "0")
+//                var input_if_spk = cyclix_gen.uport(
+//                    scheduler.name + "input_if",
+//                    PORT_DIR.IN,
+//                    hw_dim_static(log2(snn.presyn_neur), 0),
+//                    "0"
+//                )
+//
+//                var i_buf_rd_en = cyclix_gen.ulocal(scheduler.name + "rd_en", "0")
+//                var spike_scheduler_mem = hw_dim_static()
+//                spike_scheduler_mem.add(log2(snn.presyn_neur), 0)
+//                spike_scheduler_mem.add(scheduler.buf_size.SIZE, 0)
+//                var spike_scheduler = cyclix_gen.ulocal(scheduler.name, spike_scheduler_mem, "0")
+//
+//                var wr_ptr = cyclix_gen.ulocal(scheduler.name + "_wr_ptr", "0")
+////
+//                cyclix_gen.begif(i_buf_wr_en)
+//                run {
+//                    cyclix_gen.indexed(spike_scheduler, wr_ptr).assign(input_if_spk)
+//                    wr_ptr.plus(1)
+//                }; cyclix_gen.endif()
+//
+//                cyclix_gen.begif(i_buf_rd_en)
+//                run {
+//                    var input_spike = cyclix_gen.indexed(spike_scheduler, presyn_neuron_counter_num)
+//
+//                    cyclix_gen.begif(input_spike)
+//                    run {
+//                        var weight_presyn_neurons = cyclix_gen.indexed(weight_memory, presyn_neuron_counter_num)
+//                        var weight_neuron = cyclix_gen.indexed(weight_presyn_neurons, postsyn_neuron_counter_num)
+//                        var transaction_buf_in = cyclix_gen.ulocal(scheduler.tr_in.name+"_scheduler", scheduler.tr_in.defval)
+//                        transaction_buf_in.assign(weight_neuron)
+////                        transaction_buf_in.assign(weight_neuron)  // assign synapse weight to transaction
+//                    }; cyclix_gen.endif()
+//                }; cyclix_gen.endif()
+//            }
+//
             for (scheduler in o_buffers) {
                 scheduler.buf_size.SIZE = snn.postsyn_neur
 
@@ -762,9 +823,10 @@ open class Neuromorphic(val name : String, val snn : snn_arch, val tick_slot : I
 
                 cyclix_gen.begif(o_buf_rd_en)
                 run {
-                    cyclix_gen.indexed(spike_scheduler, postsyn_neuron_counter_num).assign(scheduler.tr_out)
+                    var scheduler_tr_out = cyclix_gen.ulocal(scheduler.tr_out.name+ "_scheduler", scheduler.tr_out.defval)
+                    cyclix_gen.indexed(spike_scheduler, postsyn_neuron_counter_num).assign(scheduler_tr_out)
                 }; cyclix_gen.endif()
-
+//
                 var rd_ptr = cyclix_gen.ulocal(scheduler.name + "_rd_ptr", "0")
                 cyclix_gen.begif(o_buf_rd_en)
                 run {

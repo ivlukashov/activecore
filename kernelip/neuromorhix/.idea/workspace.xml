@@ -4,11 +4,21 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="243fdb8d-6bf2-402e-b537-a0dd07a844cc" name="Changes" comment="">
+    <list default="true" id="243fdb8d-6bf2-402e-b537-a0dd07a844cc" name="Changes" comment="minor updates of buffers">
+      <change beforePath="$PROJECT_DIR$/../../.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../../.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../designs/coregen/leaky/.idea/libraries/KotlinJavaRuntime.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../../designs/coregen/leaky/.idea/libraries/KotlinJavaRuntime.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../../designs/coregen/leaky/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../../designs/coregen/leaky/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../designs/coregen/leaky/out/production/leaky/META-INF/leaky.kotlin_module" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../designs/coregen/leaky/out/production/leaky/leaky/lif.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../designs/coregen/leaky/out/production/leaky/leaky/lif_snn.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../designs/coregen/leaky/src/lif.kt" beforeDir="false" afterPath="$PROJECT_DIR$/../../designs/coregen/leaky/src/lif.kt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../../designs/rtl/lif_acc/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../../designs/rtl/lif_acc/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../designs/rtl/lif_acc/debug_log.txt" beforeDir="false" afterPath="$PROJECT_DIR$/../../designs/rtl/lif_acc/debug_log.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../designs/rtl/lif_acc/src/gen_accelerator.kt" beforeDir="false" afterPath="$PROJECT_DIR$/../../designs/rtl/lif_acc/src/gen_accelerator.kt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../../hwast/src/util.kt" beforeDir="false" afterPath="$PROJECT_DIR$/../../hwast/src/util.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../cyclix/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../cyclix/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Neuromorphic.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/Neuromorphic.kt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../rtl/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../rtl/.idea/workspace.xml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -34,11 +44,15 @@
   <component name="HighlightingSettingsPerFile">
     <setting file="file://$PROJECT_DIR$/../../hwast/out/production/hwast/hwast/hw_astc.class" root0="SKIP_INSPECTION" />
     <setting file="file://$PROJECT_DIR$/../../hwast/out/production/hwast/hwast/hw_astc_stdif.class" root0="SKIP_INSPECTION" />
+    <setting file="file://$PROJECT_DIR$/../../hwast/out/production/hwast/hwast/hw_dim_static.class" root0="SKIP_INSPECTION" />
     <setting file="file://$PROJECT_DIR$/../../hwast/out/production/hwast/hwast/hw_exec.class" root0="SKIP_INSPECTION" />
+    <setting file="file://$PROJECT_DIR$/../../hwast/out/production/hwast/hwast/hw_fifo_out.class" root0="SKIP_INSPECTION" />
     <setting file="file://$PROJECT_DIR$/../../hwast/out/production/hwast/hwast/hw_param.class" root0="SKIP_INSPECTION" />
     <setting file="file://$PROJECT_DIR$/../../hwast/out/production/hwast/hwast/hw_port.class" root0="SKIP_INSPECTION" />
+    <setting file="file://$PROJECT_DIR$/../../hwast/out/production/hwast/hwast/hw_structvar.class" root0="SKIP_INSPECTION" />
     <setting file="file://$PROJECT_DIR$/../../hwast/out/production/hwast/hwast/import_expr_context.class" root0="SKIP_INSPECTION" />
     <setting file="file://$PROJECT_DIR$/../cyclix/out/production/cyclix/cyclix/Generic.class" root0="SKIP_INSPECTION" />
+    <setting file="file://$PROJECT_DIR$/src/Neuromorphic.kt" root0="SKIP_INSPECTION" />
   </component>
   <component name="ProblemsViewState">
     <option name="selectedTabId" value="ProjectErrors" />
@@ -52,19 +66,19 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "Kotlin.NeuromorphicKt.executor": "Run",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "git-widget-placeholder": "dev__nrmphx__ports",
-    "kotlin-language-version-configured": "true",
-    "last_opened_file_path": "/Users/ivan/activecore/kernelip/neuromorhix",
-    "project.structure.last.edited": "Problems",
-    "project.structure.proportion": "0.0",
-    "project.structure.side.proportion": "0.2",
-    "settings.editor.selected.configurable": "preferences.lookFeel"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;Kotlin.NeuromorphicKt.executor&quot;: &quot;Run&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;dev__nrmphx__ports&quot;,
+    &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,
+    &quot;last_opened_file_path&quot;: &quot;/Users/ivan/activecore/kernelip/neuromorhix&quot;,
+    &quot;project.structure.last.edited&quot;: &quot;Modules&quot;,
+    &quot;project.structure.proportion&quot;: &quot;0.0&quot;,
+    &quot;project.structure.side.proportion&quot;: &quot;0.2&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;org.jetbrains.plugins.github.ui.GithubSettingsConfigurable&quot;
   }
-}]]></component>
+}</component>
   <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
   <component name="TaskManager">
     <task active="true" id="Default" summary="Default task">
@@ -74,6 +88,20 @@
       <option name="presentableId" value="Default" />
       <updated>1718062213077</updated>
     </task>
+    <task id="LOCAL-00001" summary="update of input/output schedulers">
+      <option name="closed" value="true" />
+      <created>1720531457023</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1720531457023</updated>
+    </task>
+    <option name="localTasksCounter" value="2" />
     <servers />
+  </component>
+  <component name="VcsManagerConfiguration">
+    <MESSAGE value="update of input/output schedulers" />
+    <MESSAGE value="minor updates of buffers" />
+    <option name="LAST_COMMIT_MESSAGE" value="minor updates of buffers" />
   </component>
 </project>
