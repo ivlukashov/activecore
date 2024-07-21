@@ -4,22 +4,18 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="243fdb8d-6bf2-402e-b537-a0dd07a844cc" name="Changes" comment="minor updates of buffers">
+    <list default="true" id="243fdb8d-6bf2-402e-b537-a0dd07a844cc" name="Changes" comment="naming upd">
+      <change beforePath="$PROJECT_DIR$/../../.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../../.idea/misc.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../../.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../../.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../designs/coregen/leaky/.idea/libraries/KotlinJavaRuntime.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../../designs/coregen/leaky/.idea/libraries/KotlinJavaRuntime.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../../designs/coregen/leaky/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../../designs/coregen/leaky/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../designs/coregen/leaky/out/production/leaky/META-INF/leaky.kotlin_module" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../designs/coregen/leaky/out/production/leaky/leaky/lif.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../designs/coregen/leaky/out/production/leaky/leaky/lif_snn.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../designs/coregen/leaky/out/production/leaky/leaky/lif.class" beforeDir="false" afterPath="$PROJECT_DIR$/../../designs/coregen/leaky/out/production/leaky/leaky/lif.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../designs/coregen/leaky/out/production/leaky/leaky/lif_snn.class" beforeDir="false" afterPath="$PROJECT_DIR$/../../designs/coregen/leaky/out/production/leaky/leaky/lif_snn.class" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../../designs/coregen/leaky/src/lif.kt" beforeDir="false" afterPath="$PROJECT_DIR$/../../designs/coregen/leaky/src/lif.kt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../../designs/rtl/lif_acc/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../../designs/rtl/lif_acc/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../../designs/rtl/lif_acc/debug_log.txt" beforeDir="false" afterPath="$PROJECT_DIR$/../../designs/rtl/lif_acc/debug_log.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../designs/rtl/lif_acc/src/gen_accelerator.kt" beforeDir="false" afterPath="$PROJECT_DIR$/../../designs/rtl/lif_acc/src/gen_accelerator.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../hwast/src/util.kt" beforeDir="false" afterPath="$PROJECT_DIR$/../../hwast/src/util.kt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../cyclix/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../cyclix/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/Neuromorphic.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/Neuromorphic.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../rtl/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../rtl/.idea/workspace.xml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -76,9 +72,28 @@
     &quot;project.structure.last.edited&quot;: &quot;Modules&quot;,
     &quot;project.structure.proportion&quot;: &quot;0.0&quot;,
     &quot;project.structure.side.proportion&quot;: &quot;0.2&quot;,
-    &quot;settings.editor.selected.configurable&quot;: &quot;org.jetbrains.plugins.github.ui.GithubSettingsConfigurable&quot;
+    &quot;settings.editor.selected.configurable&quot;: &quot;reference.settings.ide.settings.new.ui&quot;
   }
 }</component>
+  <component name="RecentsManager">
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/sverilog" />
+    </key>
+  </component>
+  <component name="RunManager">
+    <configuration name="NeuromorphicKt" type="JetRunConfigurationType" temporary="true" nameIsGenerated="true">
+      <option name="MAIN_CLASS_NAME" value="neuromorphix.NeuromorphicKt" />
+      <module name="neuromorphix" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <recent_temporary>
+      <list>
+        <item itemvalue="Kotlin.NeuromorphicKt" />
+      </list>
+    </recent_temporary>
+  </component>
   <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
   <component name="TaskManager">
     <task active="true" id="Default" summary="Default task">
