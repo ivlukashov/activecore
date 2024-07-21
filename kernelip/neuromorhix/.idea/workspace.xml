@@ -4,9 +4,8 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="243fdb8d-6bf2-402e-b537-a0dd07a844cc" name="Changes" comment="naming upd">
+    <list default="true" id="243fdb8d-6bf2-402e-b537-a0dd07a844cc" name="Changes" comment="Minor fixes to improve stability">
       <change beforePath="$PROJECT_DIR$/../../.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../../.idea/misc.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../../.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../../designs/coregen/leaky/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../../designs/coregen/leaky/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../../designs/coregen/leaky/out/production/leaky/leaky/lif.class" beforeDir="false" afterPath="$PROJECT_DIR$/../../designs/coregen/leaky/out/production/leaky/leaky/lif.class" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../../designs/coregen/leaky/out/production/leaky/leaky/lif_snn.class" beforeDir="false" afterPath="$PROJECT_DIR$/../../designs/coregen/leaky/out/production/leaky/leaky/lif_snn.class" afterDir="false" />
@@ -111,12 +110,21 @@
       <option name="project" value="LOCAL" />
       <updated>1720531457023</updated>
     </task>
-    <option name="localTasksCounter" value="2" />
+    <task id="LOCAL-00002" summary="Minor fixes to improve stability">
+      <option name="closed" value="true" />
+      <created>1721572803583</created>
+      <option name="number" value="00002" />
+      <option name="presentableId" value="LOCAL-00002" />
+      <option name="project" value="LOCAL" />
+      <updated>1721572803583</updated>
+    </task>
+    <option name="localTasksCounter" value="3" />
     <servers />
   </component>
   <component name="VcsManagerConfiguration">
     <MESSAGE value="update of input/output schedulers" />
     <MESSAGE value="minor updates of buffers" />
-    <option name="LAST_COMMIT_MESSAGE" value="minor updates of buffers" />
+    <MESSAGE value="Minor fixes to improve stability" />
+    <option name="LAST_COMMIT_MESSAGE" value="Minor fixes to improve stability" />
   </component>
 </project>

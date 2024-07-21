@@ -565,7 +565,7 @@ open class Neuromorphic(val name : String, val snn : snn_arch, val tick_slot : I
         new_buffer.mem.default_astc = this
     }
 
-    fun mkbuffer(name_prefix: String, size : Int): buffer {
+    fun io_if(name_prefix: String, size : Int): buffer {
         var ret_buf = buffer(name_prefix, size)
         add_buffer(ret_buf)
         return ret_buf

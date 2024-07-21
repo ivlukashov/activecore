@@ -19,25 +19,16 @@ class lif(name : String, snn : lif_snn, tick_timeslot: Int) : Neuromorphic( name
 
     constructor(name : String, snn : lif_snn) : this(name, snn, 5000)
 
-//    var input_if =  input_buffer("input_spikes_buffer")  // input buffer
-//    var input_spike = ulocal("input_spike", "0")
-//    var threshold = uglobal("threshold", hw_imm("5"))
-//    var leakage = uglobal("leakage", hw_imm("1"))
-//    var membr_potential_mem_dim = hw_dim_static()
-//    var membrane_potential = uepochal("membrane_potential", membr_potential_mem_dim,"0" )
-//    var updated_membr_potential  = uepochal("res_potential", "0" )
-//    var res_membr_potential  = uepochal("res_potential", "0" )
-//    var output_spike = ulocal("output_spike", "0")
-//    var output_if = output_buffer("output_spikes_buffer", output_spike)
-
-    var input_scheduler =  mkbuffer("input_scheduler", snn.presyn_neur)  // input buffer
-    var output_scheduler =  mkbuffer("output_scheduler", snn.postsyn_neur)
+    var input_if =  io_if("input_scheduler", snn.presyn_neur)  // input buffer
+    var output_if =  io_if("output_scheduler", snn.postsyn_neur)
+    var LIF = neuron_handler("LIF")
+    var input_spike = uglobal("input_spike", "0")
+    var output_spike = uglobal("output_spike", "0")
+    var updated_membr_potential = uepochal("updated_membr_potential", "0")
     var weights_memory = mkstaticmem("weights", snn.presyn_neur, snn.postsyn_neur)
     var potentials_memory = mkdynamicmem("potentials", snn.postsyn_neur)
     var potential = uepochal("potential", "0")
     var leakage = uglobal("leakage", hw_imm("1"))
-
-    var LIF = neuron_handler("LIF")
 
     init {
         LIF.begin()  // timeslot operation
@@ -47,9 +38,11 @@ class lif(name : String, snn : lif_snn, tick_timeslot: Int) : Neuromorphic( name
                 begif(less(presyn_neurons_counter, snn.presyn_neur))
                 // updating membraine potentials
                 run {
-                    begif(eq2(input_scheduler.mem[presyn_neurons_counter], 1))
+                    begif(eq2(input_if.mem[presyn_neurons_counter], 1))
                         run {
-                            potentials_memory.mem[postsyn_neurons_counter].assign(weights_memory.mem[postsyn_neurons_counter][presyn_neurons_counter])
+                            input_spike.assign(weights_memory.mem[postsyn_neurons_counter][presyn_neurons_counter])
+                            updated_membr_potential.assign(potentials_memory.mem[postsyn_neurons_counter].plus(input_spike))
+                            potentials_memory.mem[postsyn_neurons_counter].assign(updated_membr_potential)
                         }; endif()
                     }; endif()
 
@@ -59,12 +52,13 @@ class lif(name : String, snn : lif_snn, tick_timeslot: Int) : Neuromorphic( name
 
                     begif(less(potential, snn.threshold))
                     run {
-                        output_scheduler.mem[postsyn_neurons_counter].assign(0)    // not fire
+                        output_if.mem[postsyn_neurons_counter].assign(0)    // not fire
                     }; endif()
 
                     begelse()
                     run {
-                        output_scheduler.mem[postsyn_neurons_counter].assign(1)    // fire
+                        output_spike.assign(1)
+                        output_if.mem[postsyn_neurons_counter].assign(output_spike)    // fire
                     }; endif()
                 }; endif()
             }; endif()
