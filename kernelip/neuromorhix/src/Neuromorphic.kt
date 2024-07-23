@@ -608,9 +608,7 @@ open class Neuromorphic(val name : String, val snn : snn_arch, val tick_slot : I
         context: import_expr_context
     ) {
 
-        for (exec in cyclix_gen) {
-            cyclix_gen.import_expr(debug_lvl, exec, context, ::reconstruct_expression)
-        }
+        cyclix_gen.import_expr(debug_lvl, expr, context, ::reconstruct_expression)
     }
 
     fun printObjectMethods(obj: Any) {
@@ -676,6 +674,15 @@ open class Neuromorphic(val name : String, val snn : snn_arch, val tick_slot : I
 
             for (global in globals) {
                 TranslateInfo.__global_assocs.put(global, cyclix_gen.uglobal(global.name, global.defval))
+            }
+
+            for (proc in Procs) {
+                for (exec in proc.value.expressions) {
+                    for (genvar in exec.genvars){
+//                        println("genvar: $genvar")
+                        TranslateInfo.__local_assocs.put(genvar, cyclix_gen.ulocal(genvar.name, genvar.defval))
+                    }
+                }
             }
 
             // Generating pre-/postsynaptic neurons counters
@@ -751,7 +758,7 @@ open class Neuromorphic(val name : String, val snn : snn_arch, val tick_slot : I
                 clk_counter.assign(0)
             }; cyclix_gen.endif()
 
-            //  Additional logic for generate epochals resources
+//              Additional logic for generate epochals resources
             for (epochal in epochals) {
                 var new_global = cyclix_gen.global((epochal.name), epochal.vartype, epochal.defimm)
                 var temp_new_global = cyclix_gen.global("gen_epochal_" + epochal.name, epochal.vartype, epochal.defimm)
@@ -872,19 +879,21 @@ open class Neuromorphic(val name : String, val snn : snn_arch, val tick_slot : I
         }
 
         context.var_dict.putAll(TranslateInfo.__global_assocs)
+        context.var_dict.putAll(TranslateInfo.__local_assocs)
+        context.var_dict.putAll(TranslateInfo.__epochal_assocs)
+
+//        cyclix_gen.end()
+
+        var Dbg = HwDebugWriter("debug_log.txt")
+        Dbg.WriteExec(cyclix_gen.proc)
+        Dbg.Close()
 
         for (proc in Procs) {
-//            println("translate: " + proc.value)
-//            println("translate proc: " + proc)
-//            println("translate proc: " + Procs)
             for (exec in proc.value.expressions) {
                 cyclix_gen.import_expr(debug_lvl, exec, context, ::reconstruct_expression)
             }
         }
 
-        var Dbg = HwDebugWriter("debug_log.txt")
-        Dbg.WriteExec(cyclix_gen.proc)
-        Dbg.Close()
         return cyclix_gen
     }
 
