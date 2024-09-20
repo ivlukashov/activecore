@@ -6,7 +6,7 @@ import hwast.*
 fun main(args: Array<String>) {
     println("Generation LIF accelerator")
 
-    var lif_nn_model_256_256_4 = lif_snn("lif_nn_model_256_256_4", 4, 4, 16, 16)
+    var lif_nn_model_256_256_4 = lif_snn("lif_nn_model_256_256_4", 3, 3, 4, 4)
     var lif_accelerator = lif("lif_accelerator", lif_nn_model_256_256_4)
 
     var cyclix_ast = lif_accelerator.translate(DEBUG_LEVEL.FULL)
