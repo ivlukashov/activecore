@@ -1,0 +1,6 @@
+*.class
+out/
+debug_log.txt
+log.txt
+test/
+.idea/
