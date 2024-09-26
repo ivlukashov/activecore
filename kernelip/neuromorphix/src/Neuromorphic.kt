@@ -686,10 +686,10 @@ open class Neuromorphic(val name : String, val snn : snn_arch, val tick_slot : I
             MSG(""+presyn_neurons+postsyn_neurons+weight_width+potential_width)
 
 
-            // Объявление входного и выходного FIFO
-            var input_fifo_dim = hw_dim_static(1)
-            input_fifo_dim.add(presyn_neurons*postsyn_neurons-1, 0)
-            val fifo_in_interface = cyclix_gen.ufifo_in("fifo_input", input_fifo_dim)
+//            // Объявление входного и выходного FIFO
+//            var input_fifo_dim = hw_dim_static(1)
+//            input_fifo_dim.add(presyn_neurons-1, 0)
+//            val fifo_in_interface = cyclix_gen.ufifo_in("fifo_input", input_fifo_dim)
 
             var output_fifo_dim = hw_dim_static(1)
             output_fifo_dim.add(postsyn_neurons, 0)
@@ -699,12 +699,12 @@ open class Neuromorphic(val name : String, val snn : snn_arch, val tick_slot : I
             var weights_mem_dim = hw_dim_static(weight_width)
             weights_mem_dim.add(presyn_neurons-1, 0)  // разрядность веса
             weights_mem_dim.add(postsyn_neurons-1, 0)  // 256
-            var weight_memory = cyclix_gen.uglobal("weights_mem", weights_mem_dim, "0")
+            var weight_memory = cyclix_gen.sglobal("weights_mem", weights_mem_dim, "0")
 
             // Память статических параметров
             var membrane_potential_mem_dim = hw_dim_static(potential_width)
             membrane_potential_mem_dim.add(postsyn_neurons-1, 0)   // 256
-            var membrane_potential_memory = cyclix_gen.uglobal("membrane_potential_memory", membrane_potential_mem_dim, "0")
+            var membrane_potential_memory = cyclix_gen.sglobal("membrane_potential_memory", membrane_potential_mem_dim, "0")
 
 
             // проверка записи/чтения из fifo
@@ -716,10 +716,10 @@ open class Neuromorphic(val name : String, val snn : snn_arch, val tick_slot : I
             var in_fifo_dim = hw_dim_static(1)
             in_fifo_dim.add(presyn_neurons*postsyn_neurons-1, 0)
             var in_fifo = cyclix_gen.uglobal("in_fifo", in_fifo_dim, "0")
-            cyclix_gen.begif(cyclix_gen.eq2(sig_rd_fifo, 1))
-            run {
-                cyclix_gen.fifo_rd_unblk(fifo_in_interface, in_fifo)
-            }; cyclix_gen.endif()
+//            cyclix_gen.begif(cyclix_gen.eq2(sig_rd_fifo, 1))
+//            run {
+////                cyclix_gen.fifo_rd_unblk(fifo_in_interface, in_fifo)
+//            }; cyclix_gen.endif()
 
 
             var out_fifo_dim = hw_dim_static(1)
@@ -727,7 +727,7 @@ open class Neuromorphic(val name : String, val snn : snn_arch, val tick_slot : I
             var out_fifo = cyclix_gen.uglobal("out_fifo", out_fifo_dim, "0")
             cyclix_gen.begif(cyclix_gen.eq2(sig_rd_fifo, 1))
             run {
-                cyclix_gen.fifo_rd_unblk(fifo_in_interface, out_fifo)
+//                cyclix_gen.fifo_rd_unblk(fifo_in_interface, out_fifo)
             }; cyclix_gen.endif()
 
             // Контроллер для управления счётчиками
@@ -747,8 +747,8 @@ open class Neuromorphic(val name : String, val snn : snn_arch, val tick_slot : I
             val current_state = cyclix_gen.uglobal("current_state", hw_dim_static(3, 0), "0")
             val next_state = cyclix_gen.uglobal("next_state", hw_dim_static(2, 0), "0")
 
-            val postsynapse_neuron_number = cyclix_gen.uglobal("postsynapse_neuron_number", hw_dim_static(3), "0")
-            val presynapse_neuron_number = cyclix_gen.uglobal("presynapse_neuron_number", hw_dim_static(3), "0")
+            val postsynapse_neuron_number = cyclix_gen.uglobal("postsynapse_neuron_number", hw_dim_static(10), "0")  // todo: log
+            val presynapse_neuron_number = cyclix_gen.uglobal("presynapse_neuron_number", hw_dim_static(10), "0")
 
             current_state.assign(next_state)
 
@@ -774,16 +774,16 @@ open class Neuromorphic(val name : String, val snn : snn_arch, val tick_slot : I
                 run {
                     input_spike_num.assign(input_spike_num.plus(1))
 
+                    var weight_presyn_idx = cyclix_gen.uglobal("weight_presyn_idx", hw_dim_static(10, 0), "0")
+                    weight_presyn_idx.assign(presynapse_neuron_number-1)
+                    var weight_postsyn_idx = cyclix_gen.uglobal("weight_postsyn_idx", hw_dim_static(10, 0), "0")
+                    weight_postsyn_idx.assign(postsynapse_neuron_number)
+                    var weight_upd = cyclix_gen.slocal("weight_upd", hw_dim_static(weight_width, 0), "0")
+                    weight_upd.assign(weight_memory[postsynapse_neuron_number][presynapse_neuron_number-1])
+
                     presynapse_neuron_number.assign(presynapse_neuron_number.plus(1))
                     cyclix_gen.begif(cyclix_gen.eq2(actual_spike, 1))
                     run {
-                        var weight_presyn_idx = cyclix_gen.ulocal("weight_presyn_idx", hw_dim_static(3, 0), "0")
-                        weight_presyn_idx.assign(presynapse_neuron_number-1)
-                        var weight_postsyn_idx = cyclix_gen.ulocal("weight_postsyn_idx", hw_dim_static(3, 0), "0")
-                        weight_postsyn_idx.assign(postsynapse_neuron_number)
-                        var weight_upd = cyclix_gen.ulocal("weight_upd", hw_dim_static(weight_width, 0), "0")
-                        weight_upd.assign(weight_memory[postsynapse_neuron_number][presynapse_neuron_number-1])
-
                         membrane_potential_memory[postsynapse_neuron_number].assign(membrane_potential_memory[postsynapse_neuron_number].plus(weight_memory[postsynapse_neuron_number][presynapse_neuron_number-1]))  // integrate
                     }; cyclix_gen.endif()
                 }; cyclix_gen.endif()
@@ -799,7 +799,7 @@ open class Neuromorphic(val name : String, val snn : snn_arch, val tick_slot : I
             run {
 //                input_spike_num.assign(input_spike_num.minus(1))
 
-                membrane_potential_memory[postsynapse_neuron_number].assign(cyclix_gen.srl(membrane_potential_memory[postsynapse_neuron_number], 1))  // leak
+                membrane_potential_memory[postsynapse_neuron_number].assign(cyclix_gen.sra(membrane_potential_memory[postsynapse_neuron_number], leak))  // leak
                 cyclix_gen.begif(cyclix_gen.less(membrane_potential_memory[postsynapse_neuron_number], threshold))  // threshold-fire
                 run {
                     out_fifo[postsynapse_neuron_number].assign(0)
