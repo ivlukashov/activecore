@@ -12,15 +12,15 @@ import kotlin.math.ln
 import javax.sound.sampled.Port
 import kotlin.reflect.full.declaredFunctions
 import kotlin.reflect.full.memberFunctions
+import org.json.JSONObject
+import java.io.File
 
 enum class NEURAL_NETWORK_TYPE {
     SFNN, SCNN
-    // add memristor based
 }
 
 val OP_NEURO = hwast.hw_opcode("neuromorph")
 val OP_SYNAPTIC = hwast.hw_opcode("synaptic")
-
 
 data class SCHEDULER_BUF_SIZE(var SIZE : Int)
 
@@ -30,59 +30,41 @@ data class DYNAMIC_MEMORY_SIZE(val width : Int, val depth : Int)
 
 enum class SPIKE_TYPE {
     BINARY
-    // add memristor based
 }
 
+open class SnnArch(
+    var name: String = "Default Name",
+    var nnType: NEURAL_NETWORK_TYPE = NEURAL_NETWORK_TYPE.SFNN,
+    var presynNeur: Int = 10,
+    var postsynNeur: Int = 10,
+    var outputNeur: Int = 10,
+    var weightWidth: Int = 10,
+    var potentialWidth: Int = 10,
+    var leakage: Int = 1,
+    var threshold: Int = 1,
+    var spikesType: SPIKE_TYPE = SPIKE_TYPE.BINARY
+) {
 
+    fun loadModelFromJson(jsonFilePath: String) {
+        val jsonString = File(jsonFilePath).readText()
 
-open class snn_arch(
-    val name : String, val nn_type : NEURAL_NETWORK_TYPE, var presyn_neur : Int, val postsyn_neur : Int,
-    val weight_width : Int, val potential_width : Int, val leakage : Int, val threshold : Int, val spikes_type : SPIKE_TYPE ) {
+        val jsonObject = JSONObject(jsonString)
 
-//    val presyn_neurons_num = presyn_neur
-//    val postsyn_neurons_num = postsyn_neur
+        val modelTopology = jsonObject.getJSONObject("model_topology")
+        this.presynNeur = modelTopology.optInt("input_size", this.presynNeur)
+        this.postsynNeur = modelTopology.optInt("hidden_size", this.postsynNeur)
+        this.outputNeur = modelTopology.optInt("output_size", this.outputNeur)
+        val lifNeurons = jsonObject.getJSONObject("LIF_neurons").getJSONObject("lif1")
+        this.threshold = lifNeurons.optInt("threshold", this.threshold)
+        this.leakage = lifNeurons.optInt("leakage", this.leakage)
+
+        val nnTypeStr = jsonObject.optString("nn_type", "SFNN")
+        this.nnType = NEURAL_NETWORK_TYPE.valueOf(nnTypeStr)
+    }
 
     fun getArchitectureInfo(): String {
-        return "$name: " +
-                "(NN Type: $nn_type, " +
-                "Presynaptic Neurons = $presyn_neur, " +
-                "Postsynaptic Neurons = $postsyn_neur)"
+        return "$name: (NN Type: $nnType, Presynaptic Neurons = $presynNeur, Postsynaptic Neurons = $postsynNeur, Spikes Type: $spikesType)"
     }
-
-    fun getPresynNeurNum() : Int {
-        return presyn_neur    // this
-    }
-
-    fun getPostsynNeurNum() : Int {
-        return  postsyn_neur
-    }
-
-    fun getWeightWidth() : Int {
-        return  weight_width
-    }
-
-    fun getPotentialWidth() : Int {
-        return  potential_width
-    }
-
-//    fun updateNeurons(presyn_neur: Int, postsyn_neur: Int) {
-//        this.presyn_neur = presyn_neur
-//        this.postsyn_neur = postsyn_neur
-//    }
-
-}
-
-class sfnn_memory_models(val name: String, nn_model : snn_arch) {
-    val static_memory =  STATIC_MEMORY_SIZE(nn_model.weight_width,nn_model.presyn_neur*nn_model.postsyn_neur)    // weight memory num = num of presynaptic neurons * num of postsynaptic neurons
-    val dynamic_memory =  DYNAMIC_MEMORY_SIZE(nn_model.potential_width, nn_model.postsyn_neur)    // membrane potential memory num = num of postsynaptic neurons
-    val scheduler_buffer_memory =  SCHEDULER_BUF_SIZE(nn_model.presyn_neur*nn_model.postsyn_neur)
-
-    fun printMemValues() : String {
-        return "static_memory: $static_memory,\n" +
-                "dynamic_memory: $dynamic_memory,\n" +
-                "scheduler_buffer_memory: $scheduler_buffer_memory"
-    }
-
 }
 
 class hw_neuro_handler(val name : String, val neuromorphic: Neuromorphic) : hwast.hw_exec(OP_NEURO) {
@@ -192,7 +174,7 @@ internal class __TranslateInfo(var neuromorphic : Neuromorphic) {
 //    var __ports_assocs = mutableMapOf<hw_var, hw_var>()
 }
 
-open class Neuromorphic(val name : String, val snn : snn_arch, val tick_slot : Int ) : hw_astc_stdif() {
+open class Neuromorphic(val name : String, val snn : SnnArch, val tick_slot : Int ) : hw_astc_stdif() {
 
     var locals = ArrayList<neuro_local>()
     var globals = ArrayList<neuro_global>()
@@ -659,9 +641,6 @@ open class Neuromorphic(val name : String, val snn : snn_arch, val tick_slot : I
         }
     }
 
-    fun synaptic_handler(topology:NEURAL_NETWORK_TYPE, snn_model:snn_arch) {
-
-    }
 
     fun translate(debug_lvl: DEBUG_LEVEL): cyclix.Generic {
         NEWLINE()
@@ -676,11 +655,11 @@ open class Neuromorphic(val name : String, val snn : snn_arch, val tick_slot : I
         var TranslateInfo = __TranslateInfo(this)
 
 
-        if (snn.nn_type == NEURAL_NETWORK_TYPE.SFNN) {
-            val presyn_neurons = snn.getPresynNeurNum()
-            val postsyn_neurons = snn.getPostsynNeurNum()
-            val weight_width = snn.getWeightWidth()
-            val potential_width = snn.getPotentialWidth()
+        if (snn.nnType == NEURAL_NETWORK_TYPE.SFNN) {
+            val presyn_neurons = snn.presynNeur
+            val postsyn_neurons = snn.postsynNeur
+            val weight_width = snn.weightWidth
+            val potential_width = snn.potentialWidth
             val threshold = snn.threshold
             val leak = snn.leakage
             MSG(""+presyn_neurons+postsyn_neurons+weight_width+potential_width)
