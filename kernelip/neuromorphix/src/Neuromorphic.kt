@@ -22,6 +22,9 @@ enum class NEURAL_NETWORK_TYPE {
 val OP_NEURO = hwast.hw_opcode("neuron_op")
 val OP_SYNAPTIC = hwast.hw_opcode("synaptic")
 
+val OP_SYN_ACC = hwast.hw_opcode("synaptic_acc")
+val OP_SYN_ASSIGN = hwast.hw_opcode("syn_assign")
+
 
 
 data class SCHEDULER_BUF_SIZE(var SIZE : Int)
@@ -69,21 +72,69 @@ open class SnnArch(
     }
 }
 
-//data class SYNAPSE_FIELD(val name: String, val msb : Int, val lsb: Int)
 
-class SynapseField(val name: String, val msb : Int, val lsb: Int) {
-//    fun field_acc()
+class NeuroParam(val name: String, vartype: hw_type, hwImm: hw_imm, val width: Int): hw_param(vartype, hwImm.imm_value) { // для lif добавить ресет value d hw–imm
 }
+
+class Neuron(val name: String) {
+    var params = mutableMapOf<String, NeuroParam>()// ArrayList<NeuroParam>()
+
+    fun add_param(name: String, vartype: hw_type, width: Int): NeuroParam{
+        val paramName = name + "_param_of_neuron"
+        val new_neuro_param = NeuroParam(paramName, vartype, hw_imm(0), width)
+        params.put(name, new_neuro_param)
+
+        return  new_neuro_param
+    }
+
+    // Функция для клонирования нейрона
+    fun clone(newName: String): Neuron {
+        val clonedNeuron = Neuron(newName)
+        // Копирование параметров нейрона
+        clonedNeuron.params.putAll(this.params.mapValues { (_, param) ->
+            NeuroParam(param.name, param.vartype, hw_imm(0), param.width)
+        })
+        return clonedNeuron
+    }
+}
+
+// Создаем класс для хранения четырех значений
+data class OperationAssign(
+    val op: hw_opcode,
+    val dst1: NeuronsStream,
+    val src2: NeuronsStream,
+    val neuroParam: NeuroParam,
+    val connType: NEURAL_NETWORK_TYPE
+)
+
+open class NeuronsStream(name: String, count: Int, neuron: Neuron) {
+    var neurons = ArrayList<Neuron>()
+    val count = count
+    val operations = ArrayList<OperationAssign>()
+
+    init {
+        for (i in 0 until count) {
+            val new_neuron_name = name + "_" + neuron.name + "_" + i
+            val new_neuron = neuron.clone(new_neuron_name) // Клонирование нейрона с новым именем
+            neurons.add(new_neuron)
+        }
+    }
+
+    fun stream_assign(src1: NeuronsStream, neuroParam: NeuroParam, conn_type: NEURAL_NETWORK_TYPE) {
+        val new_opcode = hw_opcode("stream_acc")
+        val operation = OperationAssign(new_opcode,this, src1, neuroParam, conn_type)
+        operations.add(operation)
+    }
+}
+
+class SynapseField(val name: String, val msb : Int, val lsb: Int) {}
 
 class Synapse(val name: String) {
 
     var fields = ArrayList<SynapseField>()
 
-    fun add_field(field_var: SynapseField): SynapseField {
-        val new_field = field_var
-        fields.add(new_field)
-
-        return new_field
+    fun add_field(field_var: SynapseField) {
+        fields.add(field_var)
     }
 }
 
@@ -129,48 +180,6 @@ class neuro_epochal(name : String, vartype : hw_type, defimm : hw_imm)
             : this(name, vartype, hw_imm(defval))
 }
 
-internal class __neurons_proc_info(cyclix_gen : cyclix.Generic,
-                                   name_prefix : String,
-                                   val TranslateInfo : __TranslateInfo,
-                                   val tick : hw_var) {
-
-    var nContext_epochals_dict     = mutableMapOf<hw_var, hw_var>()    // local variables
-
-    var var_dict            = mutableMapOf<hw_var, hw_var>()
-}
-
-class input_buffer(name_prefix : String, val buf_size : Int) {
-    var name = name_prefix + "_input_buf"
-    var size = buf_size
-    var buf_dim = hw_dim_static()
-    var mem = neuro_global(name_prefix + "_input_buf_mem", hw_type(DATA_TYPE.BV_UNSIGNED, buf_dim), "0")
-}
-
-class output_buffer(name_prefix : String, val buf_size : Int) {
-    var name = name_prefix + "_output_buf"
-    var size = buf_size
-    var buf_dim = hw_dim_static()
-    var mem = neuro_global(name_prefix + "_output_buf_mem", hw_type(DATA_TYPE.BV_UNSIGNED, buf_dim), "0")
-}
-
-class stat_mem(name_prefix : String, val dim1: Int, val dim2 : Int) {
-    var name = name_prefix + "_stat_mem"
-//    var size = buf_size
-    var mem_dim = hw_dim_static()
-    var mem = neuro_global(name_prefix + "_stat_mem", hw_type(DATA_TYPE.BV_UNSIGNED, mem_dim), "0")
-}
-
-class dyn_mem(name_prefix : String, val size: Int) {
-    var name = name_prefix + "_dyn_mem"
-    //    var size = buf_size
-    var mem_dim = hw_dim_static()
-    var mem = neuro_global(name_prefix + "_dyn_mem", hw_type(DATA_TYPE.BV_UNSIGNED, mem_dim), "0")
-}
-
-open class dynamic_params( name_prefix: String, transaction : hw_var ){
-    var name = name_prefix
-    var transaction = transaction
-}
 
 internal class __TranslateInfo(var neuromorphic : Neuromorphic) {
     var __global_assocs = mutableMapOf<hw_var, hw_var>()
@@ -188,6 +197,7 @@ open class Neuromorphic(val name : String, val snn : SnnArch, val tick_slot : In
     var Neurons_Processes = mutableMapOf<String, hw_neuron_handler>()
 
     var Synapses = ArrayList<Synapse>()
+    var Neurons_steams = ArrayList<NeuronsStream>()
 
     var Synaptic_Processes = mutableMapOf<String, hw_synaptic_handler>()
 
@@ -253,12 +263,6 @@ open class Neuromorphic(val name : String, val snn : SnnArch, val tick_slot : In
 
     fun local(name: String, vartype: hw_type, defimm: hw_imm): neuro_local {
         var ret_var = neuro_local(name, vartype, defimm)
-        add_local(ret_var)
-        return ret_var
-    }
-
-    fun local(name: String, vartype: hw_type, defval: String): neuro_local {
-        var ret_var = neuro_local(name, vartype, defval)
         add_local(ret_var)
         return ret_var
     }
@@ -636,6 +640,37 @@ open class Neuromorphic(val name : String, val snn : SnnArch, val tick_slot : In
         cyclix_gen.import_expr(debug_lvl, expr, context, ::reconstruct_expression)
     }
 
+    internal fun dynamic_memory_generation(stream: NeuronsStream, cyclix_gen: Generic) {      // generation dynamic memory for streams (transactions)
+        for ((name, param) in stream.neurons[0].params) {
+            val dynamic_mem_dim = hw_dim_static(param.width)
+            dynamic_mem_dim.add(stream.count - 1, 0)   // Добавляем измерение для нейронов
+            cyclix_gen.sglobal(name+"_static_memory", dynamic_mem_dim, "0")
+        }
+    }
+
+
+//    internal fun streams_assign_generate(cyclix_gen: Generic, stream: NeuronsStream) {
+//
+//        if (stream.operations[0].op == OP_SYN_ACC) {
+//            // for postneuron in postsyn
+//                // for preneuron in presyn
+//                    // postneuron.param += preneuron.param
+//
+//
+//        }
+//    }
+
+
+    fun neurons_tr(stream: NeuronsStream) :  NeuronsStream {
+        var ret_neuron_stream = stream
+        Neurons_steams.add(ret_neuron_stream)
+
+        return ret_neuron_stream
+    }
+
+    fun syn_assign(dst: NeuronsStream, src: NeuronsStream) {
+        AddExpr(hw_exec(OP_SYN_ASSIGN))
+    }
 
     fun translate(debug_lvl: DEBUG_LEVEL): cyclix.Generic {
         NEWLINE()
@@ -657,6 +692,11 @@ open class Neuromorphic(val name : String, val snn : SnnArch, val tick_slot : In
 //        for (synapse in Synapses) {
 //            static_memory_generation(synapse, synapse.name + "_stat_mem", this, cyclix_gen)
 //        }
+
+        for (stream in Neurons_steams) {
+            dynamic_memory_generation(stream, cyclix_gen)
+        }
+
 
         for (neuron_operation in Neurons_Processes) {  }
 
