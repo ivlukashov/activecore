@@ -73,59 +73,91 @@ open class SnnArch(
 }
 
 
-class NeuroParam(val name: String, vartype: hw_type, hwImm: hw_imm, val width: Int): hw_param(vartype, hwImm.imm_value) { // для lif добавить ресет value d hw–imm
-}
+//class NeuroParam(val name: String, vartype: hw_type, hwImm: hw_imm, val width: Int): hw_param(vartype, hwImm.imm_value) { // для lif добавить ресет value d hw–imm
+//}
+//
+//class Neuron(val name: String) {
+//    var params = mutableMapOf<String, NeuroParam>()// ArrayList<NeuroParam>()
+//
+//    fun add_param(name: String, vartype: hw_type, width: Int): NeuroParam{
+//        val paramName = name + "_param_of_neuron"
+//        val new_neuro_param = NeuroParam(paramName, vartype, hw_imm(0), width)
+//        params.put(name, new_neuro_param)
+//
+//        return  new_neuro_param
+//    }
+//
+//    // Функция для клонирования нейрона
+//    fun clone(newName: String): Neuron {
+//        val clonedNeuron = Neuron(newName)
+//        // Копирование параметров нейрона
+//        clonedNeuron.params.putAll(this.params.mapValues { (_, param) ->
+//            NeuroParam(param.name, param.vartype, hw_imm(0), param.width)
+//        })
+//        return clonedNeuron
+//    }
+//}
+//
+//// Создаем класс для хранения четырех значений
+//data class StreamOperation(
+//    val op: hw_opcode,
+//    val postsyn: NeuronsStream,
+//    val presyn: NeuronsStream,
+//    val neuroParam: NeuroParam,
+//    val connType: NEURAL_NETWORK_TYPE
+//)
+//
+//open class NeuronsStream(name: String, count: Int, neuron: Neuron) {
+//    var neurons = ArrayList<Neuron>()
+//    val count = count
+//    val operations = ArrayList<StreamOperation>()
+//
+//    init {
+//        for (i in 0 until count) {
+//            val new_neuron_name = name + "_" + neuron.name + "_" + i
+//            val new_neuron = neuron.clone(new_neuron_name) // Клонирование нейрона с новым именем
+//            neurons.add(new_neuron)
+//        }
+//    }
+//
+//    fun stream_assign(presyn: NeuronsStream, neuroParam: NeuroParam, conn_type: NEURAL_NETWORK_TYPE) {
+//        val new_opcode = hw_opcode("stream_acc")
+//        val operation = StreamOperation(new_opcode,this, presyn, neuroParam, conn_type)
+//        operations.add(operation)
+//    }
+//}
 
-class Neuron(val name: String) {
-    var params = mutableMapOf<String, NeuroParam>()// ArrayList<NeuroParam>()
+data class NeuronParameter(
+    val name: String,
+    val width: Int
+)
 
-    fun add_param(name: String, vartype: hw_type, width: Int): NeuroParam{
-        val paramName = name + "_param_of_neuron"
-        val new_neuro_param = NeuroParam(paramName, vartype, hw_imm(0), width)
-        params.put(name, new_neuro_param)
+data class StreamOperation(
+    val op: hw_opcode,
+    val postsyn: Neurons,
+    val presyn: Neurons,
+    val neuroParam: NeuronParameter,
+    val connType: NEURAL_NETWORK_TYPE
+)
+
+
+class Neurons(val name: String, val count: Int) {
+    var params = ArrayList<NeuronParameter>() // ArrayList<NeuroParam>()
+    val operations = ArrayList<StreamOperation>()
+
+    fun add_param(name: String, width: Int): NeuronParameter{
+        val new_neuro_param = NeuronParameter(name, width)
+        params.add(new_neuro_param)
 
         return  new_neuro_param
     }
 
-    // Функция для клонирования нейрона
-    fun clone(newName: String): Neuron {
-        val clonedNeuron = Neuron(newName)
-        // Копирование параметров нейрона
-        clonedNeuron.params.putAll(this.params.mapValues { (_, param) ->
-            NeuroParam(param.name, param.vartype, hw_imm(0), param.width)
-        })
-        return clonedNeuron
-    }
-}
-
-// Создаем класс для хранения четырех значений
-data class OperationAssign(
-    val op: hw_opcode,
-    val dst1: NeuronsStream,
-    val src2: NeuronsStream,
-    val neuroParam: NeuroParam,
-    val connType: NEURAL_NETWORK_TYPE
-)
-
-open class NeuronsStream(name: String, count: Int, neuron: Neuron) {
-    var neurons = ArrayList<Neuron>()
-    val count = count
-    val operations = ArrayList<OperationAssign>()
-
-    init {
-        for (i in 0 until count) {
-            val new_neuron_name = name + "_" + neuron.name + "_" + i
-            val new_neuron = neuron.clone(new_neuron_name) // Клонирование нейрона с новым именем
-            neurons.add(new_neuron)
-        }
-    }
-
-    fun stream_assign(src1: NeuronsStream, neuroParam: NeuroParam, conn_type: NEURAL_NETWORK_TYPE) {
-        val new_opcode = hw_opcode("stream_acc")
-        val operation = OperationAssign(new_opcode,this, src1, neuroParam, conn_type)
+    fun stream_acc(presyn: Neurons, neuroParam: NeuronParameter, conn_type: NEURAL_NETWORK_TYPE) {
+        val operation = StreamOperation(OP_SYN_ACC,this, presyn, neuroParam, conn_type)
         operations.add(operation)
     }
 }
+
 
 class SynapseField(val name: String, val msb : Int, val lsb: Int) {}
 
@@ -197,7 +229,7 @@ open class Neuromorphic(val name : String, val snn : SnnArch, val tick_slot : In
     var Neurons_Processes = mutableMapOf<String, hw_neuron_handler>()
 
     var Synapses = ArrayList<Synapse>()
-    var Neurons_steams = ArrayList<NeuronsStream>()
+    var Neurons_steams = ArrayList<Neurons>()
 
     var Synaptic_Processes = mutableMapOf<String, hw_synaptic_handler>()
 
@@ -640,37 +672,136 @@ open class Neuromorphic(val name : String, val snn : SnnArch, val tick_slot : In
         cyclix_gen.import_expr(debug_lvl, expr, context, ::reconstruct_expression)
     }
 
-    internal fun dynamic_memory_generation(stream: NeuronsStream, cyclix_gen: Generic) {      // generation dynamic memory for streams (transactions)
-        for ((name, param) in stream.neurons[0].params) {
+    var dynamic_memories = mutableMapOf<String, hw_var>()
+
+    internal fun dynamic_memory_generation(neurons: Neurons, cyclix_gen: Generic) {      // generation dynamic memory for streams (transactions)
+
+        for (param in neurons.params) {
             val dynamic_mem_dim = hw_dim_static(param.width)
-            dynamic_mem_dim.add(stream.count - 1, 0)   // Добавляем измерение для нейронов
-            cyclix_gen.sglobal(name+"_static_memory", dynamic_mem_dim, "0")
+            dynamic_mem_dim.add(neurons.count - 1, 0)   // Добавляем измерение для нейронов
+            var dynamic_memory = cyclix_gen.uglobal(neurons.name + "_" + param.name , dynamic_mem_dim, "0") // TODO: signed/unsigned
+            dynamic_memories[neurons.name + "_" + param.name] = dynamic_memory
         }
+
     }
 
 
-//    internal fun streams_assign_generate(cyclix_gen: Generic, stream: NeuronsStream) {
-//
-//        if (stream.operations[0].op == OP_SYN_ACC) {
-//            // for postneuron in postsyn
-//                // for preneuron in presyn
-//                    // postneuron.param += preneuron.param
-//
-//
-//        }
-//    }
+    internal fun neurons_operations_generate(cyclix_gen: Generic, neurons: Neurons) {
+
+        for (i in 0 until neurons.operations.size){
+            if (neurons.operations[i].op == OP_SYN_ACC) {
+                if (neurons.operations[i].connType == NEURAL_NETWORK_TYPE.SFNN) {
+                    // for postneuron in postsyn
+                    // for preneuron in presyn
+                    // postneuron.param += preneuron.param
+
+                    println(neurons.operations[i].op.default_string)
+                    val postsyn_dyn_mem_name =
+                        neurons.operations[i].postsyn.name + "_" + neurons.operations[i].neuroParam.name
+                    val presyn_dyn_mem_name =
+                        neurons.operations[i].presyn.name + "_" + neurons.operations[i].neuroParam.name
+                    println("post $postsyn_dyn_mem_name, pre $presyn_dyn_mem_name")
 
 
-    fun neurons_tr(stream: NeuronsStream) :  NeuronsStream {
+                    // Контроллер для управления счётчиками
+                    // Внешний сигнал
+                    val start_processing = cyclix_gen.uport(neurons.operations[i].neuroParam.name + "_start", PORT_DIR.IN, hw_dim_static(1), "0")
+                    val reg_start_processing = cyclix_gen.uglobal("reg_start_processing", hw_dim_static(1), "0")
+                    reg_start_processing.assign(start_processing)
+
+                    // Состояния контроллера
+                    val STATE_IDLE = 0
+                    val STATE_PRESYN_PROC = 1
+                    val STATE_POSTSYN_PROC = 2
+                    val STATE_DONE = 3  // Новое состояние для завершения работы
+
+                    // Переменная для отслеживания состояния обработки
+                    val current_state = cyclix_gen.uglobal("current_state", hw_dim_static(3, 0), "0")
+                    val next_state = cyclix_gen.uglobal("next_state", hw_dim_static(2, 0), "0")
+
+                    val postsyn_counter = cyclix_gen.uglobal("postsyn_counter", hw_dim_static(10), "0")  // todo: log
+                    val presyn_counter = cyclix_gen.uglobal("presyn_counter", hw_dim_static(10), "0")
+
+                    current_state.assign(next_state)
+
+                    // Логика контроллера
+                    cyclix_gen.begif(cyclix_gen.eq2(reg_start_processing, 1))  // Если старт обработки активен
+                    run {
+                        cyclix_gen.begif(cyclix_gen.eq2(current_state, STATE_IDLE))  // Состояние "идл"
+                        run {
+                            postsyn_counter.assign(0)
+                            next_state.assign(STATE_PRESYN_PROC)
+                        }; cyclix_gen.endif()
+                    }; cyclix_gen.endif()
+
+                    // Обработка пресинаптического счётчика
+                    cyclix_gen.begif(cyclix_gen.eq2(current_state, STATE_PRESYN_PROC))
+                    run {
+
+                        cyclix_gen.begif(
+                            cyclix_gen.less(
+                                presyn_counter,
+                                neurons.operations[i].presyn.count
+                            )
+                        )  // Проверка количества пресинаптических нейронов
+                        run {
+                            presyn_counter.assign(presyn_counter.plus(1))
+
+                            dynamic_memories[postsyn_dyn_mem_name]!![postsyn_counter].assign(dynamic_memories[postsyn_dyn_mem_name]!![postsyn_counter].plus(
+                                dynamic_memories[presyn_dyn_mem_name]!![presyn_counter]))
+
+                        }; cyclix_gen.endif()
+                        cyclix_gen.begif(
+                            cyclix_gen.eq2(
+                                presyn_counter,
+                                neurons.operations[i].presyn.count - 1
+                            )
+                        )  // Переход после завершения обработки пресинаптических нейронов
+                        run {
+                            next_state.assign(STATE_POSTSYN_PROC)
+                        }; cyclix_gen.endif()
+                    }; cyclix_gen.endif()
+
+
+                    // Обработка постсинаптического счётчика
+                    cyclix_gen.begif(cyclix_gen.eq2(current_state, STATE_POSTSYN_PROC))
+                    run {
+                        cyclix_gen.begif(
+                            cyclix_gen.less(
+                                postsyn_counter,
+                                neurons.operations[i].presyn.count - 1
+                            )
+                        )  // Проверка количества постсинаптических нейронов
+                        run {
+                            postsyn_counter.assign(postsyn_counter.plus(1))
+                            presyn_counter.assign(0)
+                            next_state.assign(STATE_PRESYN_PROC)  // Возврат к обработке пресинаптического счётчика для следующего постсинаптического нейрона
+                        }; cyclix_gen.endif()
+
+//                next_state.assign(STATE_DONE)
+                    }; cyclix_gen.endif()
+
+                    // Состояние завершения
+                    cyclix_gen.begif(cyclix_gen.eq2(current_state, STATE_DONE))
+                    run {
+                        next_state.assign(STATE_IDLE)
+                    }; cyclix_gen.endif()
+                }
+            }
+        }
+    }
+//
+//
+    fun neurons_tr(stream: Neurons) :  Neurons {
         var ret_neuron_stream = stream
         Neurons_steams.add(ret_neuron_stream)
 
         return ret_neuron_stream
     }
 
-    fun syn_assign(dst: NeuronsStream, src: NeuronsStream) {
-        AddExpr(hw_exec(OP_SYN_ASSIGN))
-    }
+//    fun syn_assign(dst: NeuronsStream, src: NeuronsStream) {
+//        AddExpr(hw_exec(OP_SYN_ASSIGN))
+//    }
 
     fun translate(debug_lvl: DEBUG_LEVEL): cyclix.Generic {
         NEWLINE()
@@ -693,8 +824,14 @@ open class Neuromorphic(val name : String, val snn : SnnArch, val tick_slot : In
 //            static_memory_generation(synapse, synapse.name + "_stat_mem", this, cyclix_gen)
 //        }
 
-        for (stream in Neurons_steams) {
-            dynamic_memory_generation(stream, cyclix_gen)
+//        print(Neurons_steams.size)
+
+        for (neurons in Neurons_steams) {
+            dynamic_memory_generation(neurons, cyclix_gen)
+        }
+
+        for (neurons in Neurons_steams) {
+            neurons_operations_generate(cyclix_gen, neurons)
         }
 
 
