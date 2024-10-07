@@ -23,7 +23,14 @@ val OP_NEURO = hwast.hw_opcode("neuron_op")
 val OP_SYNAPTIC = hwast.hw_opcode("synaptic")
 
 val OP_SYN_ACC = hwast.hw_opcode("synaptic_acc")
+
+val OP_NEURONS_ACC = hwast.hw_opcode("neuronal_acc")
 val OP_SYN_ASSIGN = hwast.hw_opcode("syn_assign")
+
+val OP_NEURON_MINUS = hwast.hw_opcode("neuron_minus")
+val OP_NEURON_RIGHT_SHIFT = hwast.hw_opcode("neuron_right_shift")
+val OP_NEURON_COMPARE = hwast.hw_opcode("neuron_compare")
+
 
 
 
@@ -72,60 +79,16 @@ open class SnnArch(
     }
 }
 
+class SynapseField(val name: String, val msb : Int, val lsb: Int) {}
 
-//class NeuroParam(val name: String, vartype: hw_type, hwImm: hw_imm, val width: Int): hw_param(vartype, hwImm.imm_value) { // для lif добавить ресет value d hw–imm
-//}
-//
-//class Neuron(val name: String) {
-//    var params = mutableMapOf<String, NeuroParam>()// ArrayList<NeuroParam>()
-//
-//    fun add_param(name: String, vartype: hw_type, width: Int): NeuroParam{
-//        val paramName = name + "_param_of_neuron"
-//        val new_neuro_param = NeuroParam(paramName, vartype, hw_imm(0), width)
-//        params.put(name, new_neuro_param)
-//
-//        return  new_neuro_param
-//    }
-//
-//    // Функция для клонирования нейрона
-//    fun clone(newName: String): Neuron {
-//        val clonedNeuron = Neuron(newName)
-//        // Копирование параметров нейрона
-//        clonedNeuron.params.putAll(this.params.mapValues { (_, param) ->
-//            NeuroParam(param.name, param.vartype, hw_imm(0), param.width)
-//        })
-//        return clonedNeuron
-//    }
-//}
-//
-//// Создаем класс для хранения четырех значений
-//data class StreamOperation(
-//    val op: hw_opcode,
-//    val postsyn: NeuronsStream,
-//    val presyn: NeuronsStream,
-//    val neuroParam: NeuroParam,
-//    val connType: NEURAL_NETWORK_TYPE
-//)
-//
-//open class NeuronsStream(name: String, count: Int, neuron: Neuron) {
-//    var neurons = ArrayList<Neuron>()
-//    val count = count
-//    val operations = ArrayList<StreamOperation>()
-//
-//    init {
-//        for (i in 0 until count) {
-//            val new_neuron_name = name + "_" + neuron.name + "_" + i
-//            val new_neuron = neuron.clone(new_neuron_name) // Клонирование нейрона с новым именем
-//            neurons.add(new_neuron)
-//        }
-//    }
-//
-//    fun stream_assign(presyn: NeuronsStream, neuroParam: NeuroParam, conn_type: NEURAL_NETWORK_TYPE) {
-//        val new_opcode = hw_opcode("stream_acc")
-//        val operation = StreamOperation(new_opcode,this, presyn, neuroParam, conn_type)
-//        operations.add(operation)
-//    }
-//}
+class Synapse(val name: String) {
+
+    var fields = ArrayList<SynapseField>()
+
+    fun add_field(field_var: SynapseField) {
+        fields.add(field_var)
+    }
+}
 
 data class NeuronParameter(
     val name: String,
@@ -140,10 +103,30 @@ data class StreamOperation(
     val connType: NEURAL_NETWORK_TYPE
 )
 
+data class SynOperation(
+    val op: hw_opcode,
+    val postsyn: Neurons,
+    val presyn: Neurons,
+    val neuroParam: NeuronParameter,
+    val synfield: SynapseField,
+    val connType: NEURAL_NETWORK_TYPE,
+    val inputSpikes: SpikesScheduler
+)
+
+data class NeuronOperation(
+    val op: hw_opcode,
+    val postsyn: Neurons,
+    val neuroParam: NeuronParameter,
+    val param: Int
+)
+
 
 class Neurons(val name: String, val count: Int) {
     var params = ArrayList<NeuronParameter>() // ArrayList<NeuroParam>()
     val operations = ArrayList<StreamOperation>()
+    val syn_operations = ArrayList<SynOperation>()
+    val neuron_operations = ArrayList<NeuronOperation>()
+    val output_spikes = SpikesScheduler(name +"_output_spikes", count)
 
     fun add_param(name: String, width: Int): NeuronParameter{
         val new_neuro_param = NeuronParameter(name, width)
@@ -152,23 +135,29 @@ class Neurons(val name: String, val count: Int) {
         return  new_neuro_param
     }
 
-    fun stream_acc(presyn: Neurons, neuroParam: NeuronParameter, conn_type: NEURAL_NETWORK_TYPE) {
-        val operation = StreamOperation(OP_SYN_ACC,this, presyn, neuroParam, conn_type)
+    fun stream_acc(presyn: Neurons, neuroParam: NeuronParameter, neuroParam2: NeuronParameter , conn_type: NEURAL_NETWORK_TYPE) {
+        val operation = StreamOperation(OP_NEURONS_ACC,this, presyn, neuroParam, conn_type)
         operations.add(operation)
     }
-}
 
+    fun syn_acc(presyn: Neurons, neuroParam: NeuronParameter, synfield: SynapseField, conn_type: NEURAL_NETWORK_TYPE) {
+        val syn_operation = SynOperation(OP_SYN_ACC,this, presyn, neuroParam, synfield, conn_type, output_spikes)
+        syn_operations.add(syn_operation)
+    }
 
-class SynapseField(val name: String, val msb : Int, val lsb: Int) {}
+    fun neuron_right_shift(neuroParam: NeuronParameter, param: Int) {
+        val neuron_operation = NeuronOperation(OP_NEURON_RIGHT_SHIFT, this, neuroParam, param )
+        neuron_operations.add(neuron_operation)
+    }
 
-class Synapse(val name: String) {
-
-    var fields = ArrayList<SynapseField>()
-
-    fun add_field(field_var: SynapseField) {
-        fields.add(field_var)
+    fun neuron_compare(neuroParam: NeuronParameter, param: Int) {
+        val neuron_operation = NeuronOperation(OP_NEURON_COMPARE, this, neuroParam, param )
+        neuron_operations.add(neuron_operation)
     }
 }
+
+class SpikesScheduler(val name: String, val count: Int){ }
+
 
 class hw_neuron_handler(val name : String, val neuromorphic: Neuromorphic) : hwast.hw_exec(OP_NEURO) {
 
@@ -620,30 +609,68 @@ open class Neuromorphic(val name : String, val snn : SnnArch, val tick_slot : In
         return newSynapse
     }
 
-    internal fun static_memory_generation(synapse: Synapse, name: String, neuromorphic: Neuromorphic, cyclix_gen: Generic): hw_var {
-        val word_width = synapse.fields.sumOf { it.msb - it.lsb + 1 }
-        var static_mem_dim = hw_dim_static(word_width)         // Создание измерения памяти на основе ширины синапса
-        static_mem_dim.add(neuromorphic.presyn_neurons - 1, 0)  // разрядность веса
-        static_mem_dim.add(neuromorphic.postsyn_neurons - 1, 0)  // 256
-        var static_memory = cyclix_gen.sglobal(name, static_mem_dim, "0")  // Создание глобальной памяти
 
-        var current_position = 0    // Инициализация начальной позиции для срезов
+    var static_memory = mutableMapOf<String, hw_var>()
+    var slicies = mutableMapOf<String, hw_var>()
+    var static_memory_map = mutableMapOf<String, hw_var>()
+    var output_spikes_buffers = mutableMapOf<String, hw_var>()
+
+
+
+//    internal fun static_memory_generation(synapse: Synapse, name: String, neuromorphic: Neuromorphic, cyclix_gen: Generic): hw_var {
+//        val word_width = synapse.fields.sumOf { it.msb - it.lsb + 1 }
+//        var static_mem_dim = hw_dim_static(word_width)         // Создание измерения памяти на основе ширины синапса
+//        static_mem_dim.add(neuromorphic.presyn_neurons - 1, 0)  // разрядность веса
+//        static_mem_dim.add(neuromorphic.postsyn_neurons - 1, 0)  // 256
+//        var static_memory = cyclix_gen.sglobal(name, static_mem_dim, "0")  // Создание глобальной памяти
+//
+//        var current_position = 0    // Инициализация начальной позиции для срезов
+//        // Цикл по всем полям синапса
+//        for (field in synapse.fields) {
+//
+//
+//            val mem_slice = static_memory.GetFracRef(current_position + field.msb, current_position + field.lsb)    // Создаем срез для данного поля
+//            val field_width = field.msb - field.lsb + 1    // Рассчитываем размеры среза для текущего поля
+//
+//            val mem_slice_dim = hw_dim_static(field_width)
+//            println(field_width)
+//            mem_slice_dim.add(neuromorphic.presyn_neurons - 1, 0)
+//            mem_slice_dim.add(neuromorphic.postsyn_neurons - 1, 0)
+//            val slice = cyclix_gen.uglobal("${field.name}_slice", mem_slice_dim, "0")
+//
+//            for (i in 0 until 10 ) {
+//                for (j in 0 until 10) {
+//                    slice[i][j].assign(mem_slice[i][j])
+//                }
+//            }
+//
+////            slice.assign(mem_slice)   // Присваиваем срезу значение из памяти
+//
+//            current_position += field_width    // Обновляем текущую позицию для следующего поля
+//
+////            slicies["${field.name}_slice"] = slice
+//
+//        }
+//
+//        return static_memory
+//    }
+
+    internal fun static_memory_generation(synapse: Synapse, name: String, neuromorphic: Neuromorphic, cyclix_gen: Generic) {
+
         // Цикл по всем полям синапса
         for (field in synapse.fields) {
-            val field_width = field.msb - field.lsb + 1    // Рассчитываем размеры среза для текущего поля
-            println(field_width)
-            val mem_slice = static_memory.GetFracRef(current_position + field.msb, current_position + field.lsb)    // Создаем срез для данного поля
+            val word_width = field.msb - field.lsb + 1
 
-            val mem_slice_dim = hw_dim_static(field_width)
-            mem_slice_dim.add(neuromorphic.presyn_neurons - 1, 0)
-            mem_slice_dim.add(neuromorphic.postsyn_neurons - 1, 0)
-
-            val slice = cyclix_gen.uglobal("${field.name}_slice", mem_slice_dim, "0")
-            slice.assign(mem_slice)   // Присваиваем срезу значение из памяти
-            current_position += field_width    // Обновляем текущую позицию для следующего поля
+            var static_mem_dim = hw_dim_static(word_width)         // Создание измерения памяти на основе ширины синапса
+            static_mem_dim.add(neuromorphic.presyn_neurons - 1, 0)  // разрядность веса
+            static_mem_dim.add(neuromorphic.postsyn_neurons - 1, 0)  // 256
+            var static_memory = cyclix_gen.sglobal(field.name+"_static", static_mem_dim, "0")  // Создание глобальной памяти
+            static_memory_map.put(field.name+"_static", static_memory)
         }
+    }
 
-        return static_memory
+    internal fun scheduler_generate(cyclix_gen: Generic) {
+
     }
 
 
@@ -676,9 +703,14 @@ open class Neuromorphic(val name : String, val snn : SnnArch, val tick_slot : In
 
     internal fun dynamic_memory_generation(neurons: Neurons, cyclix_gen: Generic) {      // generation dynamic memory for streams (transactions)
 
+        for (param in neurons.params){
+            println(param.name)
+        }
+
         for (param in neurons.params) {
             val dynamic_mem_dim = hw_dim_static(param.width)
             dynamic_mem_dim.add(neurons.count - 1, 0)   // Добавляем измерение для нейронов
+            println(neurons.name + "_" + param.name)
             var dynamic_memory = cyclix_gen.uglobal(neurons.name + "_" + param.name , dynamic_mem_dim, "0") // TODO: signed/unsigned
             dynamic_memories[neurons.name + "_" + param.name] = dynamic_memory
         }
@@ -686,10 +718,9 @@ open class Neuromorphic(val name : String, val snn : SnnArch, val tick_slot : In
     }
 
 
-    internal fun neurons_operations_generate(cyclix_gen: Generic, neurons: Neurons) {
-
+    internal fun streams_operations_generate(cyclix_gen: Generic, neurons: Neurons) {
         for (i in 0 until neurons.operations.size){
-            if (neurons.operations[i].op == OP_SYN_ACC) {
+            if (neurons.operations[i].op == OP_NEURONS_ACC) {
                 if (neurons.operations[i].connType == NEURAL_NETWORK_TYPE.SFNN) {
                     // for postneuron in postsyn
                     // for preneuron in presyn
@@ -788,10 +819,237 @@ open class Neuromorphic(val name : String, val snn : SnnArch, val tick_slot : In
                     }; cyclix_gen.endif()
                 }
             }
+
         }
     }
-//
-//
+
+
+    internal fun synaptics_operations_generate(cyclix_gen: Generic, neurons: Neurons) { // add , spikes_scheduler: hw_var
+        for (i in 0 until neurons.syn_operations.size) {
+            if (neurons.syn_operations[i].op == OP_SYN_ACC) {
+                if (neurons.syn_operations[i].connType == NEURAL_NETWORK_TYPE.SFNN) {
+                    // for postneurons
+                    // for preneurons
+                    // postneurons += weight[presyn][postsyn]
+
+                    println(neurons.syn_operations[i].op.default_string)
+                    val postsyn_dyn_mem_name =
+                        neurons.syn_operations[i].postsyn.name + "_" + neurons.syn_operations[i].neuroParam.name
+                    val static_mem_name = neurons.syn_operations[i].synfield.name+"_static"
+                    val output_buf_name = neurons.syn_operations[i].postsyn.output_spikes.name
+                    println(output_buf_name)
+
+                            // Контроллер для управления счётчиками
+                            // Внешний сигнал
+                            val start_syn_processing = cyclix_gen.uport(neurons.syn_operations[i].neuroParam.name + "_syn_start", PORT_DIR.IN, hw_dim_static(1), "0")
+                            val reg_syn_start_processing = cyclix_gen.uglobal("reg_syn_start", hw_dim_static(1), "0")
+                            reg_syn_start_processing.assign(start_syn_processing)
+
+                            // Состояния контроллера
+                            val STATE_IDLE = 0
+                            val STATE_PRESYN_PROC = 1
+                            val STATE_POSTSYN_PROC = 2
+                            val STATE_DONE = 3
+
+                            // Переменная для отслеживания состояния обработки
+                            val current_state = cyclix_gen.uglobal("current_syn_state", hw_dim_static(3, 0), "0")
+                            val next_state = cyclix_gen.uglobal("next_syn_state", hw_dim_static(2, 0), "0")
+
+                            val postsyn_counter = cyclix_gen.uglobal("postsyn_counter_synaptic", hw_dim_static(10), "0")  // todo: log
+                            val presyn_counter = cyclix_gen.uglobal("presyn_counter_synaptic", hw_dim_static(10), "0")
+
+                            current_state.assign(next_state)
+
+                            // Логика контроллера
+                            cyclix_gen.begif(cyclix_gen.eq2(reg_syn_start_processing, 1))  // Если старт обработки активен
+                            run {
+                                cyclix_gen.begif(cyclix_gen.eq2(current_state, STATE_IDLE))  // Состояние "идл"
+                                run {
+                                    postsyn_counter.assign(0)
+                                    next_state.assign(STATE_PRESYN_PROC)
+                                }; cyclix_gen.endif()
+                            }; cyclix_gen.endif()
+
+                            // Обработка пресинаптического счётчика
+                            cyclix_gen.begif(cyclix_gen.eq2(current_state, STATE_PRESYN_PROC))
+                            run {
+
+                                cyclix_gen.begif(
+                                    cyclix_gen.less(
+                                        presyn_counter,
+                                        neurons.syn_operations[i].presyn.count
+                                    )
+                                )  // Проверка количества пресинаптических нейронов
+                                run {
+                                    presyn_counter.assign(presyn_counter.plus(1))
+                                cyclix_gen.begif(cyclix_gen.eq2(output_spikes_buffers[output_buf_name]!![presyn_counter], 1))
+                                    run {
+
+                                        dynamic_memories[postsyn_dyn_mem_name]!![postsyn_counter]
+                                            .assign(static_memory_map[static_mem_name]!![presyn_counter][postsyn_counter]
+                                            .plus(dynamic_memories[postsyn_dyn_mem_name]!![postsyn_counter]))
+                                    }; cyclix_gen.endif()
+                                }; cyclix_gen.endif()
+
+                                cyclix_gen.begif(
+                                    cyclix_gen.eq2(
+                                        presyn_counter,
+                                        neurons.syn_operations[i].presyn.count - 1
+                                    )
+                                )  // Переход после завершения обработки пресинаптических нейронов
+                                run {
+                                    next_state.assign(STATE_POSTSYN_PROC)
+                                }; cyclix_gen.endif()
+                            }; cyclix_gen.endif()
+
+                            // Обработка постсинаптического счётчика
+                            cyclix_gen.begif(cyclix_gen.eq2(current_state, STATE_POSTSYN_PROC))
+                            run {
+                                cyclix_gen.begif(
+                                    cyclix_gen.less(
+                                        postsyn_counter,
+                                        neurons.syn_operations[i].presyn.count - 1
+                                    )
+                                )  // Проверка количества постсинаптических нейронов
+                                run {
+                                    postsyn_counter.assign(postsyn_counter.plus(1))
+                                    presyn_counter.assign(0)
+                                    next_state.assign(STATE_PRESYN_PROC)  // Возврат к обработке пресинаптического счётчика для следующего постсинаптического нейрона
+                                }; cyclix_gen.endif()
+                            }; cyclix_gen.endif()
+
+                            // Состояние завершения
+                            cyclix_gen.begif(cyclix_gen.eq2(current_state, STATE_DONE))
+                            run {
+                                next_state.assign(STATE_IDLE)
+                            }; cyclix_gen.endif()
+                }
+            }
+        }
+
+    }
+
+
+    internal fun neurons_operations_generate(cyclix_gen: Generic, neurons: Neurons) {
+        for (i in 0 until neurons.neuron_operations.size){
+            if (neurons.neuron_operations[i].op == OP_NEURON_RIGHT_SHIFT) {
+                    println(neurons.neuron_operations[i].op.default_string)
+                    val postsyn_dyn_mem_name =
+                        neurons.neuron_operations[i].postsyn.name + "_" + neurons.neuron_operations[i].neuroParam.name
+
+                    // Контроллер для управления счётчиками
+                    // Внешний сигнал
+                    val start_processing = cyclix_gen.uport(neurons.neuron_operations[i].neuroParam.name + "_start", PORT_DIR.IN, hw_dim_static(1), "0")
+                    val reg_start_processing = cyclix_gen.uglobal(neurons.neuron_operations[i].neuroParam.name + "reg_start_processing", hw_dim_static(1), "0")
+                    reg_start_processing.assign(start_processing)
+
+                    // Состояния контроллера
+                    val STATE_IDLE = 0
+                    val STATE_POSTSYN_PROC = 1
+                    val STATE_DONE = 2  // Новое состояние для завершения работы
+                    val STATE_PRESYN_PROC = 3
+
+                    // Переменная для отслеживания состояния обработки
+                    val current_state = cyclix_gen.uglobal(neurons.neuron_operations[i].neuroParam.name +"current_state", hw_dim_static(3, 0), "0")
+                    val next_state = cyclix_gen.uglobal(neurons.neuron_operations[i].neuroParam.name +"next_state", hw_dim_static(2, 0), "0")
+
+                    val postsyn_counter = cyclix_gen.uglobal(neurons.neuron_operations[i].neuroParam.name +"postsyn_counter", hw_dim_static(10), "0")  // todo: log
+
+                    current_state.assign(next_state)
+
+                    // Логика контроллера
+                    cyclix_gen.begif(cyclix_gen.eq2(reg_start_processing, 1))  // Если старт обработки активен
+                    run {
+                        cyclix_gen.begif(cyclix_gen.eq2(current_state, STATE_IDLE))  // Состояние "идл"
+                        run {
+                            postsyn_counter.assign(0)
+                            next_state.assign(STATE_PRESYN_PROC)
+                        }; cyclix_gen.endif()
+                    }; cyclix_gen.endif()
+
+                    // Обработка пресинаптического счётчика
+                    cyclix_gen.begif(cyclix_gen.eq2(current_state, STATE_PRESYN_PROC))
+                    run {
+                        dynamic_memories[postsyn_dyn_mem_name]!![postsyn_counter].assign(cyclix_gen.sra(dynamic_memories[postsyn_dyn_mem_name]!![postsyn_counter], neurons.neuron_operations[i].param))
+                    }; cyclix_gen.endif()
+
+                    // Обработка постсинаптического счётчика
+                    cyclix_gen.begif(cyclix_gen.eq2(current_state, STATE_POSTSYN_PROC))
+                    run {
+
+                            postsyn_counter.assign(postsyn_counter.plus(1))
+
+                            next_state.assign(STATE_PRESYN_PROC)  // Возврат к обработке пресинаптического счётчика для следующего постсинаптического нейрона
+                        }; cyclix_gen.endif()
+
+//                next_state.assign(STATE_DONE)
+
+                    // Состояние завершения
+                    cyclix_gen.begif(cyclix_gen.eq2(current_state, STATE_DONE))
+                    run {
+                        next_state.assign(STATE_IDLE)
+                    }; cyclix_gen.endif()
+                }
+            else if (neurons.neuron_operations[i].op == OP_NEURON_COMPARE) {
+                println(neurons.neuron_operations[i].op.default_string)
+                val postsyn_dyn_mem_name =
+                    neurons.neuron_operations[i].postsyn.name + "_" + neurons.neuron_operations[i].neuroParam.name
+
+                // Контроллер для управления счётчиками
+                // Внешний сигнал
+                val start_processing = cyclix_gen.uport(neurons.neuron_operations[i].op.default_string +"_" + neurons.neuron_operations[i].neuroParam.name + "_start", PORT_DIR.IN, hw_dim_static(1), "0")
+                val reg_start_processing = cyclix_gen.uglobal(neurons.neuron_operations[i].postsyn.name + "reg_start_processing", hw_dim_static(1), "0")
+                reg_start_processing.assign(start_processing)
+
+                // Состояния контроллера
+                val STATE_IDLE = 0
+                val STATE_POSTSYN_PROC = 1
+                val STATE_DONE = 2  // Новое состояние для завершения работы
+                val STATE_PRESYN_PROC = 3
+
+                // Переменная для отслеживания состояния обработки
+                val current_state = cyclix_gen.uglobal("current_state", hw_dim_static(3, 0), "0")
+                val next_state = cyclix_gen.uglobal(neurons.neuron_operations[i].postsyn.name + "next_state", hw_dim_static(2, 0), "0")
+
+                val postsyn_counter = cyclix_gen.uglobal(neurons.neuron_operations[i].postsyn.name + "postsyn_counter", hw_dim_static(10), "0")  // todo: log
+
+                current_state.assign(next_state)
+
+                // Логика контроллера
+                cyclix_gen.begif(cyclix_gen.eq2(reg_start_processing, 1))  // Если старт обработки активен
+                run {
+                    cyclix_gen.begif(cyclix_gen.eq2(current_state, STATE_IDLE))  // Состояние "идл"
+                    run {
+                        postsyn_counter.assign(0)
+                        next_state.assign(STATE_PRESYN_PROC)
+                    }; cyclix_gen.endif()
+                }; cyclix_gen.endif()
+
+                // Обработка пресинаптического счётчика
+                cyclix_gen.begif(cyclix_gen.eq2(current_state, STATE_PRESYN_PROC))
+                run {
+                    dynamic_memories[postsyn_dyn_mem_name]!![postsyn_counter].assign(dynamic_memories[postsyn_dyn_mem_name]!![postsyn_counter].minus(neurons.neuron_operations[i].param))
+                }; cyclix_gen.endif()
+
+                // Обработка постсинаптического счётчика
+                cyclix_gen.begif(cyclix_gen.eq2(current_state, STATE_POSTSYN_PROC))
+                run {
+                    postsyn_counter.assign(postsyn_counter.plus(1))
+                    next_state.assign(STATE_PRESYN_PROC)  // Возврат к обработке пресинаптического счётчика для следующего постсинаптического нейрона
+                }; cyclix_gen.endif()
+
+//                next_state.assign(STATE_DONE)
+
+                // Состояние завершения
+                cyclix_gen.begif(cyclix_gen.eq2(current_state, STATE_DONE))
+                run {
+                    next_state.assign(STATE_IDLE)
+                }; cyclix_gen.endif()
+            }
+
+        }
+    }
+
     fun neurons_tr(stream: Neurons) :  Neurons {
         var ret_neuron_stream = stream
         Neurons_steams.add(ret_neuron_stream)
@@ -816,32 +1074,59 @@ open class Neuromorphic(val name : String, val snn : SnnArch, val tick_slot : In
         var TranslateInfo = __TranslateInfo(this)
 
 
-//        // generation tick
-//        var tick =  cyclix_gen.uglobal("tick", "0")
-//        tick_generation(tick, 50, "ns", 10, cyclix_gen)
-//
-//        for (synapse in Synapses) {
-//            static_memory_generation(synapse, synapse.name + "_stat_mem", this, cyclix_gen)
-//        }
+        // generation tick
+        var tick =  cyclix_gen.uglobal("tick", "0")
+        tick_generation(tick, 50, "ns", 10, cyclix_gen)
+
+
+
+        for (neurons in Neurons_steams) {
+            println("generate neurons memory for ${neurons.name}_output")
+            var in_buf_dim = hw_dim_static(1)
+            in_buf_dim.add(neurons.count, 0)
+            val output_buf = cyclix_gen.uglobal(neurons.output_spikes.name, in_buf_dim, "0")
+            output_spikes_buffers.put(neurons.output_spikes.name, output_buf)
+        }
+
+
+        for (synapse in Synapses) {
+            println("generate static memory for ${synapse.name}_stat_mem")
+            static_memory_generation(synapse, synapse.name + "_stat_mem", this, cyclix_gen)
+        }
 
 //        print(Neurons_steams.size)
 
         for (neurons in Neurons_steams) {
+            println("generate neurons dynamic memory for ${neurons.name}")
             dynamic_memory_generation(neurons, cyclix_gen)
         }
 
         for (neurons in Neurons_steams) {
-            neurons_operations_generate(cyclix_gen, neurons)
+            println("generate streams operations for ${neurons.name}")
+            streams_operations_generate(cyclix_gen, neurons)
         }
 
+//        var spikes_scheduler_buf_dim = hw_dim_static(1)
+//        spikes_scheduler_buf_dim.add(10, 0)
+//        var spikes_scheduler_buf = cyclix_gen.sglobal("spikes_scheduler_buf", spikes_scheduler_buf_dim, "0")
+
+        for (neurons in Neurons_steams) {
+            println("generate synaptics operations for ${neurons.name}")
+            synaptics_operations_generate(cyclix_gen, neurons) // synaptics_operations_generate
+        }
+
+        for (neurons in Neurons_steams) {
+            println("generate neurons_operations_generate for ${neurons.name}")
+            neurons_operations_generate(cyclix_gen, neurons) // synaptics_operations_generate
+        }
 
         for (neuron_operation in Neurons_Processes) {  }
 
-        for (synaptic_operation in Synaptic_Processes) {
-
-        }
+        for (synaptic_operation in Synaptic_Processes) { }
 
         if (snn.nnType == NEURAL_NETWORK_TYPE.SFNN) {
+
+// ============== Legacy ============== //
 //            val presyn_neurons = snn.presynNeur
 //            val postsyn_neurons = snn.postsynNeur
 //            val weight_width = snn.weightWidth
