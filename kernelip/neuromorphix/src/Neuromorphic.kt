@@ -31,8 +31,30 @@ val OP_NEURON_MINUS = hwast.hw_opcode("neuron_minus")
 val OP_NEURON_RIGHT_SHIFT = hwast.hw_opcode("neuron_right_shift")
 val OP_NEURON_COMPARE = hwast.hw_opcode("neuron_compare")
 
+val OP_NEURON_HANDLER = hwast.hw_opcode("neuron_handler")
 
+class hw_neuro_phase(val name : String, val core : Neuromorphic) : hwast.hw_exec(OP_NEURON_HANDLER) {
 
+    fun begin() {
+        core.begphase(this)
+    }
+}
+
+class hw_neuron_stage(val name: String, val neuromorphic: Neuromorphic) {
+    val operations = mutableListOf<hw_exec_neuron_stage>()
+
+    fun addOperation(op: hw_exec_neuron_stage) {
+        operations.add(op)
+    }
+
+    fun execute() {
+        for (op in operations) {
+            println("Executing ${op.opcode.default_string} in stage $name")
+        }
+    }
+}
+
+open class hw_exec_neuron_stage(var stage: hw_neuron_stage, opcode: hw_opcode) : hw_exec(opcode)
 
 data class SCHEDULER_BUF_SIZE(var SIZE : Int)
 
@@ -43,6 +65,66 @@ data class DYNAMIC_MEMORY_SIZE(val width : Int, val depth : Int)
 enum class SPIKE_TYPE {
     BINARY
 }
+
+enum class TR_STATUS {
+    INIT,
+    ACTIVE,
+    STOPPED,
+    KILLED
+}
+
+
+data class TRANSACTION_FIELD(val id_field: Int, val name: String, val depth: Int)
+
+open class Transaction(
+    var payload_data: ArrayList<TRANSACTION_FIELD> = ArrayList(),
+    var meta_data: ArrayList<TRANSACTION_FIELD> = ArrayList(),
+    var status: TR_STATUS = TR_STATUS.INIT
+) {
+    fun addPayloadField(id: Int, name: String, depth: Int) {
+        payload_data.add(TRANSACTION_FIELD(id, name, depth))
+    }
+
+    fun addMetaField(id: Int, name: String, depth: Int) {
+        meta_data.add(TRANSACTION_FIELD(id, name, depth))
+    }
+
+    fun getPayloadFields(): List<TRANSACTION_FIELD> {
+        return payload_data
+    }
+
+    fun getMetaFields(): List<TRANSACTION_FIELD> {
+        return meta_data
+    }
+}
+
+
+class SpikeTransaction(private val targetNeuronIdBits: Int) : Transaction() {
+    init {
+        addPayloadField(1, "target_neuron_id", targetNeuronIdBits) // ID целевого нейрона, задаваемая ширина
+    }
+
+    fun getTargetNeuronIdBits(): Int {
+        return targetNeuronIdBits
+    }
+}
+
+enum class QUEUE_FLOW_CONTROL_TYPE{
+    BACKPRESSURE
+}
+
+open class Queue(
+    var name: String,
+    var depth: Int,
+    var spikes: SpikeTransaction,
+    var FC_type: QUEUE_FLOW_CONTROL_TYPE
+){
+    var width: Int = spikes.getTargetNeuronIdBits() // Устанавливаем width из targetNeuronIdBits
+}
+
+open class Event(val name: String) {}
+
+//open class
 
 open class SnnArch(
     var name: String = "Default Name",
@@ -232,12 +314,49 @@ open class Neuromorphic(val name : String, val snn : SnnArch, val tick_slot : In
     val layers = 2
     val conncted = NEURAL_NETWORK_TYPE.SFNN
 
+    val spikes = SpikeTransaction(10)
+
+    var input_queue = Queue("input_queue", 10, spikes, QUEUE_FLOW_CONTROL_TYPE.BACKPRESSURE)
+    var output_queue = Queue("output_queue", 10, spikes, QUEUE_FLOW_CONTROL_TYPE.BACKPRESSURE)
 
     fun neuron_handler(name: String): hw_neuron_handler {
         var new_neuron_process = hw_neuron_handler(name, this)
         Neurons_Processes.put(new_neuron_process.name, new_neuron_process)
 
         return new_neuron_process
+    }
+
+    var Phases  = mutableMapOf<String, hw_neuro_phase>()
+
+    fun phase_handler(name : String) : hw_neuro_phase {
+        var new_phase = hw_neuro_phase(name, this)
+        if (Phases.put(new_phase.name, new_phase) != null) {
+            ERROR("Stage addition problem!")
+        }
+        return new_phase
+    }
+
+    var neuronStages     = mutableMapOf<String, hw_neuron_stage>()
+
+    fun begphase(phase: hw_neuro_phase) {
+        add(phase)
+    }
+
+    fun endphase() {
+//        if (FROZEN_FLAG) ERROR("Failed to end stage: ASTC frozen")
+//        if (this.size != 1) ERROR("Stage ASTC inconsistent!")
+//        if (this[0].opcode != OP_STAGE) ERROR("Stage ASTC inconsistent!")
+        this.clear()
+    }
+
+    fun addStage(stage: hw_neuron_stage) {
+        neuronStages.put("test", stage)
+    }
+
+    fun runPipeline() {
+        for ((_, stage) in neuronStages) { // Деструктуризация, чтобы получить только значение
+            stage.execute()
+        }
     }
 
     fun log2(value: Int): Int {
@@ -1057,6 +1176,28 @@ open class Neuromorphic(val name : String, val snn : SnnArch, val tick_slot : In
         return ret_neuron_stream
     }
 
+//    fun generateQueues(cyclix_gen: Generic) {
+//        val inputFifoDim = hw_dim_static(10)
+//        inputFifoDim.add(input_queue.depth, 0)
+//        val inputFifo = cyclix_gen.ufifo_in(input_queue.name, inputFifoDim)
+//
+////        val outputFifoDim = hw_dim_static(spikes.getTargetNeuronIdBits())
+////        outputFifoDim.add(output_queue.depth - 1, 0)
+////        val outputFifo = cyclix_gen.ufifo_out(output_queue.name, outputFifoDim)
+//
+//        println("Generated FIFO: ${input_queue.name} (depth: ${input_queue.depth})")
+////        println("Generated FIFO: ${output_queue.name} (depth: ${output_queue.depth})")
+//
+//        // Пример блокирующей записи в FIFO
+//        val inputData = cyclix_gen.uglobal("input_data", hw_dim_static(10), "0")
+//        val writeEnable = cyclix_gen.uglobal("write_enable", hw_dim_static(1), "0")
+//
+//        cyclix_gen.begif(cyclix_gen.eq2(writeEnable, 1))  // Если запись разрешена
+//        run {
+//            cyclix_gen.fifo_rd_unblk(inputFifo, inputData) // Блокирующая запись в input_queue
+//        }; cyclix_gen.endif()
+//    }
+
 //    fun syn_assign(dst: NeuronsStream, src: NeuronsStream) {
 //        AddExpr(hw_exec(OP_SYN_ASSIGN))
 //    }
@@ -1088,6 +1229,7 @@ open class Neuromorphic(val name : String, val snn : SnnArch, val tick_slot : In
             output_spikes_buffers.put(neurons.output_spikes.name, output_buf)
         }
 
+//        generateQueues(cyclix_gen)
 
         for (synapse in Synapses) {
             println("generate static memory for ${synapse.name}_stat_mem")
@@ -1120,7 +1262,7 @@ open class Neuromorphic(val name : String, val snn : SnnArch, val tick_slot : In
             neurons_operations_generate(cyclix_gen, neurons) // synaptics_operations_generate
         }
 
-        for (neuron_operation in Neurons_Processes) {  }
+//        for (neuron_operation in Neurons_Processes) {  }
 
         for (synaptic_operation in Synaptic_Processes) { }
 
@@ -1295,15 +1437,31 @@ open class Neuromorphic(val name : String, val snn : SnnArch, val tick_slot : In
 
 //        cyclix_gen.end()
 
+
+
+        for (proc in Neurons_Processes) {
+            println("proc_print:"+proc.value.name)
+            for (exec in proc.value.expressions) {
+                println(exec.expressions)
+                cyclix_gen.import_expr(debug_lvl, exec, context, ::reconstruct_expression)
+            }
+        }
+
         var Dbg = HwDebugWriter("debug_log.txt")
         Dbg.WriteExec(cyclix_gen.proc)
         Dbg.Close()
 
-        for (proc in Neurons_Processes) {
-            for (exec in proc.value.expressions) {
-                cyclix_gen.import_expr(debug_lvl, exec, context, ::reconstruct_expression)
-            }
-        }
+//        for (proc in Phases) {
+//            for (exec in proc.value.expressions) {
+//                cyclix_gen.import_expr(debug_lvl, exec, context, ::reconstruct_expression)
+//            }
+//        }
+
+//        for ((_, stage) in neuronStages) { // Перебираем только значения в `neuronStages`
+//            for (op in stage.operations) { // Перебираем операции в текущем `hw_neuron_stage`
+//                cyclix_gen.import_expr(debug_lvl, op, context, ::reconstruct_expression)
+//            }
+//        }
 
         return cyclix_gen
     }

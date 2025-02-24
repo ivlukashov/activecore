@@ -27,21 +27,20 @@ class LifSnn(
 class lif(name : String, snn : LifSnn, tick_timeslot: Int) : Neuromorphic( name, snn, tick_timeslot) {
 
     constructor(name : String, snn : LifSnn) : this(name, snn, 15)
-
     init {
-        val simple_synapse = createSynapse("simple_synapse")
-        val weight_field = SynapseField("weight", 7, 0)
-        simple_synapse.add_field(weight_field)
-
-        val presyn_neurons = Neurons("presyn", 10)
-        val membrane_potential = presyn_neurons.add_param("membrane_potential", 4)
-        neurons_tr(presyn_neurons)
-        val postsyn_neurons = Neurons("postsyn", 10)
-        postsyn_neurons.add_param("membrane_potential", 4)
-        neurons_tr(postsyn_neurons)
-
-        postsyn_neurons.syn_acc(presyn_neurons, membrane_potential, weight_field, NEURAL_NETWORK_TYPE.SFNN)
-        postsyn_neurons.neuron_right_shift(membrane_potential, 1)
-        postsyn_neurons.neuron_compare(membrane_potential, 1)
+//        val simple_synapse = createSynapse("simple_synapse")
+//        val weight_field = SynapseField("weight", 7, 0)
+//        simple_synapse.add_field(weight_field)
+//
+//        val presyn_neurons = Neurons("presyn", 10)
+//        val membrane_potential = presyn_neurons.add_param("membrane_potential", 4)
+//        neurons_tr(presyn_neurons)
+//        val postsyn_neurons = Neurons("postsyn", 10)
+//        postsyn_neurons.add_param("membrane_potential", 4)
+//        neurons_tr(postsyn_neurons)
+//
+//        postsyn_neurons.syn_acc(presyn_neurons, membrane_potential, weight_field, NEURAL_NETWORK_TYPE.SFNN)
+//        postsyn_neurons.neuron_right_shift(membrane_potential, 1)
+//        postsyn_neurons.neuron_compare(membrane_potential, 1)
     }
 }

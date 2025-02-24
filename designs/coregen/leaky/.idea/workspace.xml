@@ -5,10 +5,9 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="1f75f3f7-e626-4cc6-9f18-936bb8cac30e" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/../../../.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../../../.idea/misc.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../../../kernelip/cyclix/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../../../kernelip/cyclix/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../../kernelip/neuromorhix/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../../../kernelip/neuromorhix/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../../kernelip/neuromorhix/src/Neuromorphic.kt" beforeDir="false" afterPath="$PROJECT_DIR$/../../../kernelip/neuromorhix/src/Neuromorphic.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../kernelip/neuromorphix/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../../../kernelip/neuromorphix/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../kernelip/neuromorphix/src/Neuromorphic.kt" beforeDir="false" afterPath="$PROJECT_DIR$/../../../kernelip/neuromorphix/src/Neuromorphic.kt" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -26,7 +25,7 @@
 }</component>
   <component name="GithubPullRequestsUISettings">{
   &quot;selectedUrlAndAccountId&quot;: {
-    &quot;url&quot;: &quot;https://ivan@github.com/ivlukashov/activecore.git&quot;,
+    &quot;url&quot;: &quot;https://github.com/ivlukashov/activecore.git&quot;,
     &quot;accountId&quot;: &quot;4b1fd9ef-ab22-4f36-a141-213c418c8761&quot;
   }
 }</component>
@@ -42,18 +41,18 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;Kotlin.LifKt.executor&quot;: &quot;Run&quot;,
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;dev__nrmphx__ports&quot;,
-    &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,
-    &quot;last_opened_file_path&quot;: &quot;/Users/ivan/activecore/designs/coregen/leaky&quot;,
-    &quot;project.structure.last.edited&quot;: &quot;Libraries&quot;,
-    &quot;project.structure.proportion&quot;: &quot;0.0&quot;,
-    &quot;project.structure.side.proportion&quot;: &quot;0.0&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "Kotlin.LifKt.executor": "Run",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "git-widget-placeholder": "dev__transactions",
+    "kotlin-language-version-configured": "true",
+    "last_opened_file_path": "/Users/ivan/activecore/designs/coregen/leaky",
+    "project.structure.last.edited": "Libraries",
+    "project.structure.proportion": "0.0",
+    "project.structure.side.proportion": "0.0"
   }
-}</component>
+}]]></component>
   <component name="RunManager">
     <configuration name="LifKt" type="JetRunConfigurationType" temporary="true" nameIsGenerated="true">
       <option name="MAIN_CLASS_NAME" value="leaky.LifKt" />

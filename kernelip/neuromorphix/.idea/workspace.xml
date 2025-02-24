@@ -5,37 +5,16 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="243fdb8d-6bf2-402e-b537-a0dd07a844cc" name="Changes" comment="Update recursive subprocess handling">
-      <change afterPath="$PROJECT_DIR$/../../designs/rtl/lif_mnist/lif_mnist.iml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../../designs/rtl/mnist_example2/mnist_example2.iml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../../designs/rtl/snn_mnist/lif_acc.iml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../../designs/rtl/snn_mnist/untitled/untitled.iml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../../designs/rtl/snn_mnist_example/snn_mnist_example.iml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../../.idea/misc.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../designs/coregen/leaky/.idea/libraries/KotlinJavaRuntime.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../../designs/coregen/leaky/.idea/libraries/KotlinJavaRuntime.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../../designs/coregen/leaky/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../../designs/coregen/leaky/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../../designs/coregen/leaky/out/production/leaky/leaky/lif.class" beforeDir="false" afterPath="$PROJECT_DIR$/../../designs/coregen/leaky/out/production/leaky/leaky/lif.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../designs/coregen/leaky/out/production/leaky/leaky/lif_snn.class" beforeDir="false" afterPath="$PROJECT_DIR$/../../designs/coregen/leaky/out/production/leaky/leaky/lif_snn.class" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../../designs/coregen/leaky/src/lif.kt" beforeDir="false" afterPath="$PROJECT_DIR$/../../designs/coregen/leaky/src/lif.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../designs/rtl/lif_acc/.idea/libraries/KotlinJavaRuntime.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../../designs/rtl/lif_acc/.idea/libraries/KotlinJavaRuntime.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../designs/rtl/lif_acc/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../../designs/rtl/lif_acc/.idea/misc.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../designs/rtl/lif_acc/.idea/modules.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../../designs/rtl/lif_acc/.idea/modules.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../../designs/rtl/lif_acc/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../../designs/rtl/lif_acc/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../../designs/rtl/lif_acc/debug_log.txt" beforeDir="false" afterPath="$PROJECT_DIR$/../../designs/rtl/lif_acc/debug_log.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../designs/rtl/lif_acc/lif_acc.iml" beforeDir="false" afterPath="$PROJECT_DIR$/../../designs/rtl/lif_acc/lif_mnist.iml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../designs/rtl/lif_acc/src/gen_accelerator.kt" beforeDir="false" afterPath="$PROJECT_DIR$/../../designs/rtl/lif_acc/src/gen_accelerator.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../designs/rtl/sigma_tile/hw/riscv/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../../designs/rtl/sigma_tile/hw/riscv/.idea/misc.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../designs/rtl/sigma_tile/hw/riscv/src/gen_cpus.kt" beforeDir="false" afterPath="$PROJECT_DIR$/../../designs/rtl/sigma_tile/hw/riscv/src/gen_cpus.kt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../cyclix/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../cyclix/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../cyclix/src/RtlGenerator.kt" beforeDir="false" afterPath="$PROJECT_DIR$/../cyclix/src/RtlGenerator.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../neuromorhix/.idea/codeStyles/Project.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../neuromorhix/.idea/codeStyles/codeStyleConfig.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../neuromorhix/.idea/encodings.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../neuromorhix/.idea/libraries/KotlinJavaRuntime.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../neuromorhix/.idea/misc.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../neuromorhix/.idea/modules.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../neuromorhix/.idea/vcs.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../neuromorhix/.idea/workspace.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../neuromorhix/Readme.md" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../neuromorhix/neuromorphix.iml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../neuromorhix/src/Neuromorphic.kt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Neuromorphic.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/Neuromorphic.kt" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -53,7 +32,7 @@
 }</component>
   <component name="GithubPullRequestsUISettings">{
   &quot;selectedUrlAndAccountId&quot;: {
-    &quot;url&quot;: &quot;https://ivan@github.com/ivlukashov/activecore.git&quot;,
+    &quot;url&quot;: &quot;https://github.com/ivlukashov/activecore.git&quot;,
     &quot;accountId&quot;: &quot;4b1fd9ef-ab22-4f36-a141-213c418c8761&quot;
   }
 }</component>
@@ -87,10 +66,10 @@
     &quot;Kotlin.NeuromorphicKt.executor&quot;: &quot;Run&quot;,
     &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
     &quot;SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;dev__nrmphx__ports&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;master&quot;,
     &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,
     &quot;last_opened_file_path&quot;: &quot;/Users/ivan/activecore/kernelip/neuromorphix&quot;,
-    &quot;project.structure.last.edited&quot;: &quot;Project&quot;,
+    &quot;project.structure.last.edited&quot;: &quot;Libraries&quot;,
     &quot;project.structure.proportion&quot;: &quot;0.0&quot;,
     &quot;project.structure.side.proportion&quot;: &quot;0.2&quot;,
     &quot;settings.editor.selected.configurable&quot;: &quot;reference.settings.ide.settings.new.ui&quot;
