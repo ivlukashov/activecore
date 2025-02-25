@@ -138,7 +138,6 @@ open class SnnArch(
     var threshold: Int = 1,
     var spikesType: SPIKE_TYPE = SPIKE_TYPE.BINARY
 ) {
-
     fun loadModelFromJson(jsonFilePath: String) {
         val jsonString = File(jsonFilePath).readText()
 
@@ -293,6 +292,7 @@ internal class __TranslateInfo(var neuromorphic : Neuromorphic) {
 }
 
 open class Neuromorphic(val name : String, val snn : SnnArch, val tick_slot : Int ) : hw_astc_stdif() {
+//open class Neuromorphic(val name : String, val tick_slot : Int ) : hw_astc_stdif() {
 
     var locals = ArrayList<neuro_local>()
     var globals = ArrayList<neuro_global>()
@@ -310,6 +310,13 @@ open class Neuromorphic(val name : String, val snn : SnnArch, val tick_slot : In
     val potential_width = snn.potentialWidth
     val threshold = snn.threshold
     val leak = snn.leakage
+/*    val presyn_neurons = 256
+    val postsyn_neurons = 256
+    val weight_width = 8
+    val potential_width = 8
+    val threshold = 5
+    val leak = 3*/
+
 
     val layers = 2
     val conncted = NEURAL_NETWORK_TYPE.SFNN

@@ -4,17 +4,34 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="243fdb8d-6bf2-402e-b537-a0dd07a844cc" name="Changes" comment="Update recursive subprocess handling">
-      <change beforePath="$PROJECT_DIR$/../../designs/coregen/leaky/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../../designs/coregen/leaky/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../designs/coregen/leaky/out/production/leaky/leaky/lif.class" beforeDir="false" afterPath="$PROJECT_DIR$/../../designs/coregen/leaky/out/production/leaky/leaky/lif.class" afterDir="false" />
+    <list default="true" id="243fdb8d-6bf2-402e-b537-a0dd07a844cc" name="Changes" comment="Minor fixes to improve stability">
+      <change beforePath="$PROJECT_DIR$/../../designs/coregen/leaky/out/production/leaky/leaky/lif.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../designs/coregen/leaky/out/production/leaky/leaky/lif_snn.class" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/../../designs/coregen/leaky/src/lif.kt" beforeDir="false" afterPath="$PROJECT_DIR$/../../designs/coregen/leaky/src/lif.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../designs/rtl/lif_acc/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../../designs/rtl/lif_acc/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../designs/rtl/lif_acc/debug_log.txt" beforeDir="false" afterPath="$PROJECT_DIR$/../../designs/rtl/lif_acc/debug_log.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../designs/rtl/sigma_tile/hw/riscv/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../../designs/rtl/sigma_tile/hw/riscv/.idea/misc.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../designs/rtl/sigma_tile/hw/riscv/src/gen_cpus.kt" beforeDir="false" afterPath="$PROJECT_DIR$/../../designs/rtl/sigma_tile/hw/riscv/src/gen_cpus.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../cyclix/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../cyclix/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Readme.md" beforeDir="false" afterPath="$PROJECT_DIR$/Readme.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/implementation environment/convert_weights.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/implementation environment/export_spikes_to_fifo.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/implementation environment/export_weights_to_dat.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/implementation environment/exported_model.pth" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/implementation environment/exported_spiking_input.json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/implementation environment/fifo_data_sample.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/implementation environment/json_spikes_viewer.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/implementation environment/main.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/implementation environment/pth_to_json.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/implementation environment/pth_viewer.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/implementation environment/viewer_mnist.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/implementation environment/weights_fc1.dat" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/implementation environment/weights_fc2.dat" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/neuromorphix.iml" beforeDir="false" afterPath="$PROJECT_DIR$/neuromorphix.iml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/Neuromorphic.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/Neuromorphic.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/sverilog/Neuromorphic_design.sv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/sverilog/Neuromorphic_design.svh" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/sverilog/Neuromorphic_design.vcd" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/sverilog/Neuromorphic_design_tb.vvp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/sverilog/sim.sh" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/sverilog/tb.sv" beforeDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -32,7 +49,7 @@
 }</component>
   <component name="GithubPullRequestsUISettings">{
   &quot;selectedUrlAndAccountId&quot;: {
-    &quot;url&quot;: &quot;https://github.com/ivlukashov/activecore.git&quot;,
+    &quot;url&quot;: &quot;https://ivan@github.com/ivlukashov/activecore.git&quot;,
     &quot;accountId&quot;: &quot;4b1fd9ef-ab22-4f36-a141-213c418c8761&quot;
   }
 }</component>
@@ -49,8 +66,11 @@
     <setting file="file://$PROJECT_DIR$/../cyclix/out/production/cyclix/cyclix/Generic.class" root0="SKIP_INSPECTION" />
     <setting file="file://$PROJECT_DIR$/src/Neuromorphic.kt" root0="SKIP_INSPECTION" />
   </component>
+  <component name="MarkdownSettingsMigration">
+    <option name="stateVersion" value="1" />
+  </component>
   <component name="ProblemsViewState">
-    <option name="selectedTabId" value="CurrentFile" />
+    <option name="selectedTabId" value="ProjectErrors" />
   </component>
   <component name="ProjectColorInfo">{
   &quot;customColor&quot;: &quot;&quot;,
@@ -61,20 +81,19 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;Kotlin.NeuromorphicKt.executor&quot;: &quot;Run&quot;,
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;master&quot;,
-    &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,
-    &quot;last_opened_file_path&quot;: &quot;/Users/ivan/activecore/kernelip/neuromorphix&quot;,
-    &quot;project.structure.last.edited&quot;: &quot;Libraries&quot;,
-    &quot;project.structure.proportion&quot;: &quot;0.0&quot;,
-    &quot;project.structure.side.proportion&quot;: &quot;0.2&quot;,
-    &quot;settings.editor.selected.configurable&quot;: &quot;reference.settings.ide.settings.new.ui&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "Kotlin.NeuromorphicKt.executor": "Run",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "git-widget-placeholder": "dev__transactions",
+    "kotlin-language-version-configured": "true",
+    "last_opened_file_path": "/home/ivan/IdeaProjects/neuromorphix_work/activecore/designs/coregen/leaky",
+    "project.structure.last.edited": "Modules",
+    "project.structure.proportion": "0.0",
+    "project.structure.side.proportion": "0.2",
+    "settings.editor.selected.configurable": "preferences.keymap"
   }
-}</component>
+}]]></component>
   <component name="RecentsManager">
     <key name="MoveFile.RECENT_KEYS">
       <recent name="$PROJECT_DIR$/sverilog" />
@@ -119,31 +138,13 @@
       <option name="project" value="LOCAL" />
       <updated>1721572803583</updated>
     </task>
-    <task id="LOCAL-00003" summary=".">
-      <option name="closed" value="true" />
-      <created>1721574096961</created>
-      <option name="number" value="00003" />
-      <option name="presentableId" value="LOCAL-00003" />
-      <option name="project" value="LOCAL" />
-      <updated>1721574096961</updated>
-    </task>
-    <task id="LOCAL-00004" summary="Update recursive subprocess handling">
-      <option name="closed" value="true" />
-      <created>1721769385374</created>
-      <option name="number" value="00004" />
-      <option name="presentableId" value="LOCAL-00004" />
-      <option name="project" value="LOCAL" />
-      <updated>1721769385374</updated>
-    </task>
-    <option name="localTasksCounter" value="5" />
+    <option name="localTasksCounter" value="3" />
     <servers />
   </component>
   <component name="VcsManagerConfiguration">
     <MESSAGE value="update of input/output schedulers" />
     <MESSAGE value="minor updates of buffers" />
     <MESSAGE value="Minor fixes to improve stability" />
-    <MESSAGE value="." />
-    <MESSAGE value="Update recursive subprocess handling" />
-    <option name="LAST_COMMIT_MESSAGE" value="Update recursive subprocess handling" />
+    <option name="LAST_COMMIT_MESSAGE" value="Minor fixes to improve stability" />
   </component>
 </project>
