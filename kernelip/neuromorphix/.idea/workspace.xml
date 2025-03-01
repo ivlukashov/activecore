@@ -5,33 +5,15 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="243fdb8d-6bf2-402e-b537-a0dd07a844cc" name="Changes" comment="Minor fixes to improve stability">
-      <change beforePath="$PROJECT_DIR$/../../designs/coregen/leaky/out/production/leaky/leaky/lif.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../designs/coregen/leaky/out/production/leaky/leaky/lif_snn.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../designs/coregen/leaky/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../../designs/coregen/leaky/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../../designs/coregen/leaky/src/lif.kt" beforeDir="false" afterPath="$PROJECT_DIR$/../../designs/coregen/leaky/src/lif.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../designs/rtl/lif_acc/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../../designs/rtl/lif_acc/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../designs/rtl/lif_acc/LIF_acceleralor_255/sverilog/Neuromorphic_design.sv" beforeDir="false" afterPath="$PROJECT_DIR$/../../designs/rtl/lif_acc/LIF_acceleralor_255/sverilog/Neuromorphic_design.sv" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../designs/rtl/lif_acc/LIF_acceleralor_255/sverilog/Neuromorphic_design.svh" beforeDir="false" afterPath="$PROJECT_DIR$/../../designs/rtl/lif_acc/LIF_acceleralor_255/sverilog/Neuromorphic_design.svh" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../designs/rtl/lif_acc/debug_log.txt" beforeDir="false" afterPath="$PROJECT_DIR$/../../designs/rtl/lif_acc/debug_log.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../designs/rtl/lif_acc/src/gen_accelerator.kt" beforeDir="false" afterPath="$PROJECT_DIR$/../../designs/rtl/lif_acc/src/gen_accelerator.kt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Readme.md" beforeDir="false" afterPath="$PROJECT_DIR$/Readme.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/implementation environment/convert_weights.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/implementation environment/export_spikes_to_fifo.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/implementation environment/export_weights_to_dat.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/implementation environment/exported_model.pth" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/implementation environment/exported_spiking_input.json" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/implementation environment/fifo_data_sample.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/implementation environment/json_spikes_viewer.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/implementation environment/main.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/implementation environment/pth_to_json.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/implementation environment/pth_viewer.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/implementation environment/viewer_mnist.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/implementation environment/weights_fc1.dat" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/implementation environment/weights_fc2.dat" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/neuromorphix.iml" beforeDir="false" afterPath="$PROJECT_DIR$/neuromorphix.iml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/Neuromorphic.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/Neuromorphic.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/sverilog/Neuromorphic_design.sv" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/sverilog/Neuromorphic_design.svh" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/sverilog/Neuromorphic_design.vcd" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/sverilog/Neuromorphic_design_tb.vvp" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/sverilog/sim.sh" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/sverilog/tb.sv" beforeDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -81,19 +63,20 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "Kotlin.NeuromorphicKt.executor": "Run",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "git-widget-placeholder": "dev__transactions",
-    "kotlin-language-version-configured": "true",
-    "last_opened_file_path": "/home/ivan/IdeaProjects/neuromorphix_work/activecore/designs/coregen/leaky",
-    "project.structure.last.edited": "Modules",
-    "project.structure.proportion": "0.0",
-    "project.structure.side.proportion": "0.2",
-    "settings.editor.selected.configurable": "preferences.keymap"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;Kotlin.NeuromorphicKt.executor&quot;: &quot;Run&quot;,
+    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;dev__transactions&quot;,
+    &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,
+    &quot;last_opened_file_path&quot;: &quot;/home/ivan/json-20210307.jar&quot;,
+    &quot;project.structure.last.edited&quot;: &quot;Libraries&quot;,
+    &quot;project.structure.proportion&quot;: &quot;0.0&quot;,
+    &quot;project.structure.side.proportion&quot;: &quot;0.2&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;preferences.keymap&quot;
   }
-}]]></component>
+}</component>
   <component name="RecentsManager">
     <key name="MoveFile.RECENT_KEYS">
       <recent name="$PROJECT_DIR$/sverilog" />
