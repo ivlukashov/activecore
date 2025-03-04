@@ -524,6 +524,20 @@
             </Define>
           </value>
         </entry>
+        <entry key="__n_core_h_">
+          <value>
+            <Define>
+              <option name="definitions">
+                <list>
+                  <Body>
+                    <option name="offset" value="286" />
+                    <option name="source" value="n_core.svh" />
+                  </Body>
+                </list>
+              </option>
+            </Define>
+          </value>
+        </entry>
         <entry key="__riscv_1stage_h_">
           <value>
             <Define>

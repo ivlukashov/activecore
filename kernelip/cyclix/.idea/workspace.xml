@@ -6,9 +6,14 @@
   <component name="ChangeListManager">
     <list default="true" id="9c63d57f-27f0-4573-aa81-4e2cc7386aee" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/../../designs/coregen/leaky/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../../designs/coregen/leaky/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../designs/coregen/leaky/src/lif.kt" beforeDir="false" afterPath="$PROJECT_DIR$/../../designs/coregen/leaky/src/lif.kt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../../designs/rtl/lif_acc/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../../designs/rtl/lif_acc/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../hwast/src/util.kt" beforeDir="false" afterPath="$PROJECT_DIR$/../../hwast/src/util.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../neuromorhix/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../neuromorhix/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../designs/rtl/lif_acc/n_core/sverilog/Neuromorphic_design.sv" beforeDir="false" afterPath="$PROJECT_DIR$/../../designs/rtl/lif_acc/n_core/sverilog/Neuromorphic_design.sv" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../designs/rtl/lif_acc/n_core/sverilog/Neuromorphic_design.svh" beforeDir="false" afterPath="$PROJECT_DIR$/../../designs/rtl/lif_acc/n_core/sverilog/Neuromorphic_design.svh" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../designs/rtl/lif_acc/src/gen_accelerator.kt" beforeDir="false" afterPath="$PROJECT_DIR$/../../designs/rtl/lif_acc/src/gen_accelerator.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../neuromorphix/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../neuromorphix/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../neuromorphix/src/Neuromorphic.kt" beforeDir="false" afterPath="$PROJECT_DIR$/../neuromorphix/src/Neuromorphic.kt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../rtl/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../rtl/.idea/workspace.xml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -49,7 +54,7 @@
   "keyToString": {
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "SHARE_PROJECT_CONFIGURATION_FILES": "true",
-    "git-widget-placeholder": "dev__nrmphx__ports",
+    "git-widget-placeholder": "dev__transactions",
     "kotlin-language-version-configured": "true"
   }
 }]]></component>

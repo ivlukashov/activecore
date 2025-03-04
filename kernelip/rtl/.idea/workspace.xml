@@ -5,11 +5,16 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="c6bc71d9-a473-441b-85b0-f919a5ed3c31" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/../../designs/coregen/leaky/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../../designs/coregen/leaky/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../../designs/coregen/leaky/src/lif.kt" beforeDir="false" afterPath="$PROJECT_DIR$/../../designs/coregen/leaky/src/lif.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../designs/rtl/lif_acc/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../../designs/rtl/lif_acc/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../designs/rtl/lif_acc/n_core/sverilog/Neuromorphic_design.sv" beforeDir="false" afterPath="$PROJECT_DIR$/../../designs/rtl/lif_acc/n_core/sverilog/Neuromorphic_design.sv" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../designs/rtl/lif_acc/n_core/sverilog/Neuromorphic_design.svh" beforeDir="false" afterPath="$PROJECT_DIR$/../../designs/rtl/lif_acc/n_core/sverilog/Neuromorphic_design.svh" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../../designs/rtl/lif_acc/src/gen_accelerator.kt" beforeDir="false" afterPath="$PROJECT_DIR$/../../designs/rtl/lif_acc/src/gen_accelerator.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../hwast/src/util.kt" beforeDir="false" afterPath="$PROJECT_DIR$/../../hwast/src/util.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../neuromorhix/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../neuromorhix/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../neuromorhix/src/Neuromorphic.kt" beforeDir="false" afterPath="$PROJECT_DIR$/../neuromorhix/src/Neuromorphic.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../cyclix/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../cyclix/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../neuromorphix/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../neuromorphix/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../neuromorphix/src/Neuromorphic.kt" beforeDir="false" afterPath="$PROJECT_DIR$/../neuromorphix/src/Neuromorphic.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -40,13 +45,13 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;master&quot;,
-    &quot;kotlin-language-version-configured&quot;: &quot;true&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "git-widget-placeholder": "dev__transactions",
+    "kotlin-language-version-configured": "true"
   }
-}</component>
+}]]></component>
   <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
   <component name="TaskManager">
     <task active="true" id="Default" summary="Default task">

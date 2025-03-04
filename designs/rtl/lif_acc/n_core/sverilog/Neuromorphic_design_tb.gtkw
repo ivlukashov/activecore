@@ -1,0 +1,21 @@
+[*]
+[*] GTKWave Analyzer v3.4.0 (w)1999-2022 BSI
+[*] Sat Mar  1 19:38:52 2025
+[*]
+[dumpfile] "Neuromorphic_design.vcd"
+[dumpfile_mtime] "Sat Mar  1 19:34:07 2025"
+[dumpfile_size] 17221
+[savefile] "/Users/ivan/activecore/designs/rtl/lif_acc/n_core/sverilog/Neuromorphic_design_tb.gtkw"
+[timestart] 0
+[size] 1288 600
+[pos] -1 -1
+*0.000000 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+[treeopen] Neuromorphic_design_tb.
+[sst_width] 253
+[signals_width] 78
+[sst_expanded] 1
+[sst_vpaned_height] 151
+@28
+Neuromorphic_design_tb.dut.clk_i
+[pattern_trace] 1
+[pattern_trace] 0
