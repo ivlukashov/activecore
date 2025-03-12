@@ -1,0 +1,419 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wave_config>
+   <wave_state>
+   </wave_state>
+   <db_ref_list>
+      <db_ref path="tb_fifo_behav.wdb" id="1">
+         <top_modules>
+            <top_module name="glbl" />
+            <top_module name="tb_fifo" />
+         </top_modules>
+      </db_ref>
+   </db_ref_list>
+   <zoom_setting>
+      <ZoomStartTime time="0fs"></ZoomStartTime>
+      <ZoomEndTime time="1238000001fs"></ZoomEndTime>
+      <Cursor1Time time="425000000fs"></Cursor1Time>
+   </zoom_setting>
+   <column_width_setting>
+      <NameColumnWidth column_width="205"></NameColumnWidth>
+      <ValueColumnWidth column_width="136"></ValueColumnWidth>
+   </column_width_setting>
+   <WVObjectSize size="11" />
+   <wvobject type="group" fp_name="group18">
+      <obj_property name="label">TB</obj_property>
+      <obj_property name="DisplayName">label</obj_property>
+      <obj_property name="isExpanded"></obj_property>
+      <wvobject type="logic" fp_name="/tb_fifo/clk">
+         <obj_property name="ElementShortName">clk</obj_property>
+         <obj_property name="ObjectShortName">clk</obj_property>
+      </wvobject>
+   </wvobject>
+   <wvobject type="group" fp_name="group19">
+      <obj_property name="label">DUT</obj_property>
+      <obj_property name="DisplayName">label</obj_property>
+      <wvobject type="array" fp_name="/tb_fifo/dut/clk_i">
+         <obj_property name="ElementShortName">clk_i[0:0]</obj_property>
+         <obj_property name="ObjectShortName">clk_i[0:0]</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/tb_fifo/dut/rst_i">
+         <obj_property name="ElementShortName">rst_i[0:0]</obj_property>
+         <obj_property name="ObjectShortName">rst_i[0:0]</obj_property>
+      </wvobject>
+   </wvobject>
+   <wvobject type="array" fp_name="/tb_fifo/dut/en_core">
+      <obj_property name="ElementShortName">en_core[0:0]</obj_property>
+      <obj_property name="ObjectShortName">en_core[0:0]</obj_property>
+   </wvobject>
+   <wvobject type="array" fp_name="/tb_fifo/dut/weights_mem">
+      <obj_property name="ElementShortName">weights_mem[31:0][31:0][7:0]</obj_property>
+      <obj_property name="ObjectShortName">weights_mem[31:0][31:0][7:0]</obj_property>
+   </wvobject>
+   <wvobject type="array" fp_name="/tb_fifo/dut/clk_i">
+      <obj_property name="ElementShortName">clk_i[0:0]</obj_property>
+      <obj_property name="ObjectShortName">clk_i[0:0]</obj_property>
+   </wvobject>
+   <wvobject type="array" fp_name="/tb_fifo/dut/rst_i">
+      <obj_property name="ElementShortName">rst_i[0:0]</obj_property>
+      <obj_property name="ObjectShortName">rst_i[0:0]</obj_property>
+   </wvobject>
+   <wvobject type="group" fp_name="group280">
+      <obj_property name="label">tick</obj_property>
+      <obj_property name="DisplayName">label</obj_property>
+      <obj_property name="isExpanded"></obj_property>
+      <wvobject type="array" fp_name="/tb_fifo/dut/tick">
+         <obj_property name="ElementShortName">tick[31:0]</obj_property>
+         <obj_property name="ObjectShortName">tick[31:0]</obj_property>
+         <obj_property name="Radix">SIGNEDDECRADIX</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/tb_fifo/dut/tick_period">
+         <obj_property name="ElementShortName">tick_period[31:0]</obj_property>
+         <obj_property name="ObjectShortName">tick_period[31:0]</obj_property>
+         <obj_property name="Radix">SIGNEDDECRADIX</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/tb_fifo/dut/clk_counter">
+         <obj_property name="ElementShortName">clk_counter[31:0]</obj_property>
+         <obj_property name="ObjectShortName">clk_counter[31:0]</obj_property>
+         <obj_property name="Radix">SIGNEDDECRADIX</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/tb_fifo/dut/next_clk_count">
+         <obj_property name="ElementShortName">next_clk_count[31:0]</obj_property>
+         <obj_property name="ObjectShortName">next_clk_count[31:0]</obj_property>
+         <obj_property name="Radix">SIGNEDDECRADIX</obj_property>
+      </wvobject>
+   </wvobject>
+   <wvobject type="group" fp_name="group290">
+      <obj_property name="label">buffering input data</obj_property>
+      <obj_property name="DisplayName">label</obj_property>
+      <obj_property name="isExpanded"></obj_property>
+      <wvobject type="array" fp_name="/tb_fifo/dut/array_reg_input_queue">
+         <obj_property name="ElementShortName">array_reg_input_queue[32:0][7:0]</obj_property>
+         <obj_property name="ObjectShortName">array_reg_input_queue[32:0][7:0]</obj_property>
+         <obj_property name="Radix">SIGNEDDECRADIX</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/tb_fifo/dut/w_data_input_queue">
+         <obj_property name="ElementShortName">w_data_input_queue[7:0]</obj_property>
+         <obj_property name="ObjectShortName">w_data_input_queue[7:0]</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/tb_fifo/dut/reset_input_queue">
+         <obj_property name="ElementShortName">reset_input_queue[0:0]</obj_property>
+         <obj_property name="ObjectShortName">reset_input_queue[0:0]</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/tb_fifo/dut/rd_r_input_queue">
+         <obj_property name="ElementShortName">rd_r_input_queue[0:0]</obj_property>
+         <obj_property name="ObjectShortName">rd_r_input_queue[0:0]</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/tb_fifo/dut/rd_input_queue">
+         <obj_property name="ElementShortName">rd_input_queue[0:0]</obj_property>
+         <obj_property name="ObjectShortName">rd_input_queue[0:0]</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/tb_fifo/dut/wr_input_queue">
+         <obj_property name="ElementShortName">wr_input_queue[0:0]</obj_property>
+         <obj_property name="ObjectShortName">wr_input_queue[0:0]</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/tb_fifo/dut/empty_input_queue">
+         <obj_property name="ElementShortName">empty_input_queue[0:0]</obj_property>
+         <obj_property name="ObjectShortName">empty_input_queue[0:0]</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/tb_fifo/dut/full_input_queue">
+         <obj_property name="ElementShortName">full_input_queue[0:0]</obj_property>
+         <obj_property name="ObjectShortName">full_input_queue[0:0]</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/tb_fifo/dut/r_data_input_queue">
+         <obj_property name="ElementShortName">r_data_input_queue[7:0]</obj_property>
+         <obj_property name="ObjectShortName">r_data_input_queue[7:0]</obj_property>
+      </wvobject>
+   </wvobject>
+   <wvobject type="group" fp_name="group333">
+      <obj_property name="label">FSM</obj_property>
+      <obj_property name="DisplayName">label</obj_property>
+      <obj_property name="isExpanded"></obj_property>
+      <wvobject type="array" fp_name="/tb_fifo/dut/current_state">
+         <obj_property name="ElementShortName">current_state[2:0]</obj_property>
+         <obj_property name="ObjectShortName">current_state[2:0]</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/tb_fifo/dut/next_state">
+         <obj_property name="ElementShortName">next_state[2:0]</obj_property>
+         <obj_property name="ObjectShortName">next_state[2:0]</obj_property>
+      </wvobject>
+   </wvobject>
+   <wvobject type="group" fp_name="group341">
+      <obj_property name="label">Neurons Processing</obj_property>
+      <obj_property name="DisplayName">label</obj_property>
+      <obj_property name="isExpanded"></obj_property>
+      <wvobject type="array" fp_name="/tb_fifo/dut/presyn_neuron_id">
+         <obj_property name="ElementShortName">presyn_neuron_id[7:0]</obj_property>
+         <obj_property name="ObjectShortName">presyn_neuron_id[7:0]</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/tb_fifo/dut/postsyn_counter">
+         <obj_property name="ElementShortName">postsyn_counter[7:0]</obj_property>
+         <obj_property name="ObjectShortName">postsyn_counter[7:0]</obj_property>
+         <obj_property name="Radix">SIGNEDDECRADIX</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/tb_fifo/dut/src_neuron_id">
+         <obj_property name="ElementShortName">src_neuron_id[7:0]</obj_property>
+         <obj_property name="ObjectShortName">src_neuron_id[7:0]</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/tb_fifo/dut/membrane_potential_memory">
+         <obj_property name="ElementShortName">membrane_potential_memory[31:0][7:0]</obj_property>
+         <obj_property name="ObjectShortName">membrane_potential_memory[31:0][7:0]</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/tb_fifo/dut/upd_membrane_potential_memory">
+         <obj_property name="ElementShortName">upd_membrane_potential_memory[31:0][7:0]</obj_property>
+         <obj_property name="ObjectShortName">upd_membrane_potential_memory[31:0][7:0]</obj_property>
+         <wvobject type="array" fp_name="/tb_fifo/dut/upd_membrane_potential_memory[31]">
+            <obj_property name="ElementShortName">[31][7:0]</obj_property>
+            <obj_property name="ObjectShortName">[31][7:0]</obj_property>
+            <obj_property name="Radix">SIGNEDDECRADIX</obj_property>
+         </wvobject>
+         <wvobject type="array" fp_name="/tb_fifo/dut/upd_membrane_potential_memory[30]">
+            <obj_property name="ElementShortName">[30][7:0]</obj_property>
+            <obj_property name="ObjectShortName">[30][7:0]</obj_property>
+            <obj_property name="Radix">SIGNEDDECRADIX</obj_property>
+         </wvobject>
+         <wvobject type="array" fp_name="/tb_fifo/dut/upd_membrane_potential_memory[29]">
+            <obj_property name="ElementShortName">[29][7:0]</obj_property>
+            <obj_property name="ObjectShortName">[29][7:0]</obj_property>
+            <obj_property name="Radix">SIGNEDDECRADIX</obj_property>
+         </wvobject>
+         <wvobject type="array" fp_name="/tb_fifo/dut/upd_membrane_potential_memory[28]">
+            <obj_property name="ElementShortName">[28][7:0]</obj_property>
+            <obj_property name="ObjectShortName">[28][7:0]</obj_property>
+            <obj_property name="Radix">SIGNEDDECRADIX</obj_property>
+         </wvobject>
+         <wvobject type="array" fp_name="/tb_fifo/dut/upd_membrane_potential_memory[27]">
+            <obj_property name="ElementShortName">[27][7:0]</obj_property>
+            <obj_property name="ObjectShortName">[27][7:0]</obj_property>
+            <obj_property name="Radix">SIGNEDDECRADIX</obj_property>
+         </wvobject>
+         <wvobject type="array" fp_name="/tb_fifo/dut/upd_membrane_potential_memory[26]">
+            <obj_property name="ElementShortName">[26][7:0]</obj_property>
+            <obj_property name="ObjectShortName">[26][7:0]</obj_property>
+            <obj_property name="Radix">SIGNEDDECRADIX</obj_property>
+         </wvobject>
+         <wvobject type="array" fp_name="/tb_fifo/dut/upd_membrane_potential_memory[25]">
+            <obj_property name="ElementShortName">[25][7:0]</obj_property>
+            <obj_property name="ObjectShortName">[25][7:0]</obj_property>
+            <obj_property name="Radix">SIGNEDDECRADIX</obj_property>
+         </wvobject>
+         <wvobject type="array" fp_name="/tb_fifo/dut/upd_membrane_potential_memory[24]">
+            <obj_property name="ElementShortName">[24][7:0]</obj_property>
+            <obj_property name="ObjectShortName">[24][7:0]</obj_property>
+            <obj_property name="Radix">SIGNEDDECRADIX</obj_property>
+         </wvobject>
+         <wvobject type="array" fp_name="/tb_fifo/dut/upd_membrane_potential_memory[23]">
+            <obj_property name="ElementShortName">[23][7:0]</obj_property>
+            <obj_property name="ObjectShortName">[23][7:0]</obj_property>
+            <obj_property name="Radix">SIGNEDDECRADIX</obj_property>
+         </wvobject>
+         <wvobject type="array" fp_name="/tb_fifo/dut/upd_membrane_potential_memory[22]">
+            <obj_property name="ElementShortName">[22][7:0]</obj_property>
+            <obj_property name="ObjectShortName">[22][7:0]</obj_property>
+            <obj_property name="Radix">SIGNEDDECRADIX</obj_property>
+         </wvobject>
+         <wvobject type="array" fp_name="/tb_fifo/dut/upd_membrane_potential_memory[21]">
+            <obj_property name="ElementShortName">[21][7:0]</obj_property>
+            <obj_property name="ObjectShortName">[21][7:0]</obj_property>
+            <obj_property name="Radix">SIGNEDDECRADIX</obj_property>
+         </wvobject>
+         <wvobject type="array" fp_name="/tb_fifo/dut/upd_membrane_potential_memory[20]">
+            <obj_property name="ElementShortName">[20][7:0]</obj_property>
+            <obj_property name="ObjectShortName">[20][7:0]</obj_property>
+            <obj_property name="Radix">SIGNEDDECRADIX</obj_property>
+         </wvobject>
+         <wvobject type="array" fp_name="/tb_fifo/dut/upd_membrane_potential_memory[19]">
+            <obj_property name="ElementShortName">[19][7:0]</obj_property>
+            <obj_property name="ObjectShortName">[19][7:0]</obj_property>
+            <obj_property name="Radix">SIGNEDDECRADIX</obj_property>
+         </wvobject>
+         <wvobject type="array" fp_name="/tb_fifo/dut/upd_membrane_potential_memory[18]">
+            <obj_property name="ElementShortName">[18][7:0]</obj_property>
+            <obj_property name="ObjectShortName">[18][7:0]</obj_property>
+            <obj_property name="Radix">SIGNEDDECRADIX</obj_property>
+         </wvobject>
+         <wvobject type="array" fp_name="/tb_fifo/dut/upd_membrane_potential_memory[17]">
+            <obj_property name="ElementShortName">[17][7:0]</obj_property>
+            <obj_property name="ObjectShortName">[17][7:0]</obj_property>
+            <obj_property name="Radix">SIGNEDDECRADIX</obj_property>
+         </wvobject>
+         <wvobject type="array" fp_name="/tb_fifo/dut/upd_membrane_potential_memory[16]">
+            <obj_property name="ElementShortName">[16][7:0]</obj_property>
+            <obj_property name="ObjectShortName">[16][7:0]</obj_property>
+            <obj_property name="Radix">SIGNEDDECRADIX</obj_property>
+         </wvobject>
+         <wvobject type="array" fp_name="/tb_fifo/dut/upd_membrane_potential_memory[15]">
+            <obj_property name="ElementShortName">[15][7:0]</obj_property>
+            <obj_property name="ObjectShortName">[15][7:0]</obj_property>
+            <obj_property name="Radix">SIGNEDDECRADIX</obj_property>
+         </wvobject>
+         <wvobject type="array" fp_name="/tb_fifo/dut/upd_membrane_potential_memory[14]">
+            <obj_property name="ElementShortName">[14][7:0]</obj_property>
+            <obj_property name="ObjectShortName">[14][7:0]</obj_property>
+            <obj_property name="Radix">SIGNEDDECRADIX</obj_property>
+         </wvobject>
+         <wvobject type="array" fp_name="/tb_fifo/dut/upd_membrane_potential_memory[13]">
+            <obj_property name="ElementShortName">[13][7:0]</obj_property>
+            <obj_property name="ObjectShortName">[13][7:0]</obj_property>
+            <obj_property name="Radix">SIGNEDDECRADIX</obj_property>
+         </wvobject>
+         <wvobject type="array" fp_name="/tb_fifo/dut/upd_membrane_potential_memory[12]">
+            <obj_property name="ElementShortName">[12][7:0]</obj_property>
+            <obj_property name="ObjectShortName">[12][7:0]</obj_property>
+            <obj_property name="Radix">SIGNEDDECRADIX</obj_property>
+         </wvobject>
+         <wvobject type="array" fp_name="/tb_fifo/dut/upd_membrane_potential_memory[11]">
+            <obj_property name="ElementShortName">[11][7:0]</obj_property>
+            <obj_property name="ObjectShortName">[11][7:0]</obj_property>
+            <obj_property name="Radix">SIGNEDDECRADIX</obj_property>
+         </wvobject>
+         <wvobject type="array" fp_name="/tb_fifo/dut/upd_membrane_potential_memory[10]">
+            <obj_property name="ElementShortName">[10][7:0]</obj_property>
+            <obj_property name="ObjectShortName">[10][7:0]</obj_property>
+            <obj_property name="Radix">SIGNEDDECRADIX</obj_property>
+         </wvobject>
+         <wvobject type="array" fp_name="/tb_fifo/dut/upd_membrane_potential_memory[9]">
+            <obj_property name="ElementShortName">[9][7:0]</obj_property>
+            <obj_property name="ObjectShortName">[9][7:0]</obj_property>
+            <obj_property name="Radix">SIGNEDDECRADIX</obj_property>
+         </wvobject>
+         <wvobject type="array" fp_name="/tb_fifo/dut/upd_membrane_potential_memory[8]">
+            <obj_property name="ElementShortName">[8][7:0]</obj_property>
+            <obj_property name="ObjectShortName">[8][7:0]</obj_property>
+            <obj_property name="Radix">SIGNEDDECRADIX</obj_property>
+         </wvobject>
+         <wvobject type="array" fp_name="/tb_fifo/dut/upd_membrane_potential_memory[7]">
+            <obj_property name="ElementShortName">[7][7:0]</obj_property>
+            <obj_property name="ObjectShortName">[7][7:0]</obj_property>
+            <obj_property name="Radix">SIGNEDDECRADIX</obj_property>
+         </wvobject>
+         <wvobject type="array" fp_name="/tb_fifo/dut/upd_membrane_potential_memory[6]">
+            <obj_property name="ElementShortName">[6][7:0]</obj_property>
+            <obj_property name="ObjectShortName">[6][7:0]</obj_property>
+            <obj_property name="Radix">SIGNEDDECRADIX</obj_property>
+         </wvobject>
+         <wvobject type="array" fp_name="/tb_fifo/dut/upd_membrane_potential_memory[5]">
+            <obj_property name="ElementShortName">[5][7:0]</obj_property>
+            <obj_property name="ObjectShortName">[5][7:0]</obj_property>
+            <obj_property name="Radix">SIGNEDDECRADIX</obj_property>
+         </wvobject>
+         <wvobject type="array" fp_name="/tb_fifo/dut/upd_membrane_potential_memory[4]">
+            <obj_property name="ElementShortName">[4][7:0]</obj_property>
+            <obj_property name="ObjectShortName">[4][7:0]</obj_property>
+            <obj_property name="Radix">SIGNEDDECRADIX</obj_property>
+         </wvobject>
+         <wvobject type="array" fp_name="/tb_fifo/dut/upd_membrane_potential_memory[3]">
+            <obj_property name="ElementShortName">[3][7:0]</obj_property>
+            <obj_property name="ObjectShortName">[3][7:0]</obj_property>
+            <obj_property name="Radix">SIGNEDDECRADIX</obj_property>
+         </wvobject>
+         <wvobject type="array" fp_name="/tb_fifo/dut/upd_membrane_potential_memory[2]">
+            <obj_property name="ElementShortName">[2][7:0]</obj_property>
+            <obj_property name="ObjectShortName">[2][7:0]</obj_property>
+            <obj_property name="Radix">SIGNEDDECRADIX</obj_property>
+         </wvobject>
+         <wvobject type="array" fp_name="/tb_fifo/dut/upd_membrane_potential_memory[1]">
+            <obj_property name="ElementShortName">[1][7:0]</obj_property>
+            <obj_property name="ObjectShortName">[1][7:0]</obj_property>
+            <obj_property name="Radix">SIGNEDDECRADIX</obj_property>
+         </wvobject>
+         <wvobject type="array" fp_name="/tb_fifo/dut/upd_membrane_potential_memory[0]">
+            <obj_property name="ElementShortName">[0][7:0]</obj_property>
+            <obj_property name="ObjectShortName">[0][7:0]</obj_property>
+            <obj_property name="Radix">SIGNEDDECRADIX</obj_property>
+         </wvobject>
+      </wvobject>
+      <wvobject type="array" fp_name="/tb_fifo/dut/weights_mem">
+         <obj_property name="ElementShortName">weights_mem[31:0][31:0][7:0]</obj_property>
+         <obj_property name="ObjectShortName">weights_mem[31:0][31:0][7:0]</obj_property>
+      </wvobject>
+   </wvobject>
+   <wvobject type="group" fp_name="group427">
+      <obj_property name="label">Emission</obj_property>
+      <obj_property name="DisplayName">label</obj_property>
+      <obj_property name="isExpanded"></obj_property>
+      <wvobject type="array" fp_name="/tb_fifo/dut/wr_sig">
+         <obj_property name="ElementShortName">wr_sig[0:0]</obj_property>
+         <obj_property name="ObjectShortName">wr_sig[0:0]</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/tb_fifo/dut/trg_neuron_id">
+         <obj_property name="ElementShortName">trg_neuron_id[7:0]</obj_property>
+         <obj_property name="ObjectShortName">trg_neuron_id[7:0]</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/tb_fifo/dut/reset_r_output_queue">
+         <obj_property name="ElementShortName">reset_r_output_queue[0:0]</obj_property>
+         <obj_property name="ObjectShortName">reset_r_output_queue[0:0]</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/tb_fifo/dut/rd_r_output_queue">
+         <obj_property name="ElementShortName">rd_r_output_queue[0:0]</obj_property>
+         <obj_property name="ObjectShortName">rd_r_output_queue[0:0]</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/tb_fifo/dut/wr_r_output_queue">
+         <obj_property name="ElementShortName">wr_r_output_queue[0:0]</obj_property>
+         <obj_property name="ObjectShortName">wr_r_output_queue[0:0]</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/tb_fifo/dut/w_data_r_output_queue">
+         <obj_property name="ElementShortName">w_data_r_output_queue[7:0]</obj_property>
+         <obj_property name="ObjectShortName">w_data_r_output_queue[7:0]</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/tb_fifo/dut/empty_r_output_queue">
+         <obj_property name="ElementShortName">empty_r_output_queue[0:0]</obj_property>
+         <obj_property name="ObjectShortName">empty_r_output_queue[0:0]</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/tb_fifo/dut/full_r_output_queue">
+         <obj_property name="ElementShortName">full_r_output_queue[0:0]</obj_property>
+         <obj_property name="ObjectShortName">full_r_output_queue[0:0]</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/tb_fifo/dut/r_data_r_output_queue">
+         <obj_property name="ElementShortName">r_data_r_output_queue[7:0]</obj_property>
+         <obj_property name="ObjectShortName">r_data_r_output_queue[7:0]</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/tb_fifo/dut/array_reg_output_queue">
+         <obj_property name="ElementShortName">array_reg_output_queue[32:0][7:0]</obj_property>
+         <obj_property name="ObjectShortName">array_reg_output_queue[32:0][7:0]</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/tb_fifo/dut/w_ptr_reg_output_queue">
+         <obj_property name="ElementShortName">w_ptr_reg_output_queue[6:0]</obj_property>
+         <obj_property name="ObjectShortName">w_ptr_reg_output_queue[6:0]</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/tb_fifo/dut/w_ptr_next_output_queue">
+         <obj_property name="ElementShortName">w_ptr_next_output_queue[6:0]</obj_property>
+         <obj_property name="ObjectShortName">w_ptr_next_output_queue[6:0]</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/tb_fifo/dut/w_ptr_succ_output_queue">
+         <obj_property name="ElementShortName">w_ptr_succ_output_queue[6:0]</obj_property>
+         <obj_property name="ObjectShortName">w_ptr_succ_output_queue[6:0]</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/tb_fifo/dut/r_ptr_reg_output_queue">
+         <obj_property name="ElementShortName">r_ptr_reg_output_queue[6:0]</obj_property>
+         <obj_property name="ObjectShortName">r_ptr_reg_output_queue[6:0]</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/tb_fifo/dut/r_ptr_next_output_queue">
+         <obj_property name="ElementShortName">r_ptr_next_output_queue[6:0]</obj_property>
+         <obj_property name="ObjectShortName">r_ptr_next_output_queue[6:0]</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/tb_fifo/dut/r_ptr_succ_output_queue">
+         <obj_property name="ElementShortName">r_ptr_succ_output_queue[6:0]</obj_property>
+         <obj_property name="ObjectShortName">r_ptr_succ_output_queue[6:0]</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/tb_fifo/dut/full_reg_output_queue">
+         <obj_property name="ElementShortName">full_reg_output_queue[0:0]</obj_property>
+         <obj_property name="ObjectShortName">full_reg_output_queue[0:0]</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/tb_fifo/dut/empty_reg_output_queue">
+         <obj_property name="ElementShortName">empty_reg_output_queue[0:0]</obj_property>
+         <obj_property name="ObjectShortName">empty_reg_output_queue[0:0]</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/tb_fifo/dut/full_next_output_queue">
+         <obj_property name="ElementShortName">full_next_output_queue[0:0]</obj_property>
+         <obj_property name="ObjectShortName">full_next_output_queue[0:0]</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/tb_fifo/dut/empty_next_output_queue">
+         <obj_property name="ElementShortName">empty_next_output_queue[0:0]</obj_property>
+         <obj_property name="ObjectShortName">empty_next_output_queue[0:0]</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/tb_fifo/dut/wr_en_output_queue">
+         <obj_property name="ElementShortName">wr_en_output_queue[0:0]</obj_property>
+         <obj_property name="ObjectShortName">wr_en_output_queue[0:0]</obj_property>
+      </wvobject>
+   </wvobject>
+</wave_config>

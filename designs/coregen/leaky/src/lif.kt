@@ -26,18 +26,18 @@ val OP_123 = hwast.hw_opcode("123")
 
 
 class lif(name : String) : Neuromorphic(name) {
-    val soma = somatic_phase()
-    var somatic_transaction = SomaticTr("soma") //, soma)
-
-    init {
-        val membrane_potential = somatic_transaction.add_field("membrane_potential", 8)
-        val upd_membrane_potential = somatic_transaction.add_field("upd_membrane_potential", 8)
-
-//        soma.begin()
-//        run {
-            soma.accumulate(upd_membrane_potential, membrane_potential)
-//        }
-    }
+//    val soma = somatic_phase()
+//    var somatic_transaction = SomaticTr("soma") //, soma)
+//
+//    init {
+//        val membrane_potential = somatic_transaction.add_field("membrane_potential", 8)
+//        val upd_membrane_potential = somatic_transaction.add_field("upd_membrane_potential", 8)
+//
+////        soma.begin()
+////        run {
+//            soma.accumulate(upd_membrane_potential, membrane_potential)
+////        }
+//    }
 }
 
 // class lif(name : String, snn : LifSnn, tick_timeslot: Int) : Neuromorphic( name, snn, tick_timeslot) {

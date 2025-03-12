@@ -4,3 +4,6 @@ debug_log.txt
 log.txt
 test/
 .idea/
+*.cache/
+*.hw/
+*.sim/
