@@ -24,17 +24,38 @@ wire                full_input_queue;
 logic               en_core;
 logic               rst_i;
 
+// input logic unsigned [0:0] clk_i
+// , input logic unsigned [0:0] rst_i
+// , input logic unsigned [0:0] en_core
+// , input logic unsigned [0:0] reset_L1_input_queue
+// , input logic unsigned [0:0] rd_L1_input_queue
+// , input logic unsigned [0:0] wr_L1_input_queue
+// , input logic unsigned [7:0] w_data_L1_input_queue
+// , output logic unsigned [0:0] empty_L1_input_queue
+// , output logic unsigned [0:0] full_L1_input_queue
+// , output logic unsigned [7:0] r_data_L1_input_queue
+// , output logic unsigned [0:0] empty_L2_buffer
+// , output logic unsigned [0:0] full_L2_buffer
+// , output logic unsigned [7:0] r_data_L2_buffer
+// , input logic unsigned [0:0] reset_L2_output_queue
+// , input logic unsigned [0:0] rd_L2_output_queue
+// , input logic unsigned [0:0] wr_L2_output_queue
+// , input logic unsigned [7:0] w_data_L2_output_queue
+// , output logic unsigned [0:0] empty_L2_output_queue
+// , output logic unsigned [0:0] full_L2_output_queue
+// , output logic unsigned [7:0] r_data_L2_output_queue
+
 // Инстанцирование DUT (Device Under Test)
 n_core dut (
     .clk_i    (clk),
     .rst_i     (rst_i),
-    .reset_input_queue  (reset_input_queue),
-    .rd_input_queue     (rd_input_queue),
-    .wr_input_queue     (wr_input_queue),
-    .w_data_input_queue (w_data_input_queue),
-    .r_data_input_queue (r_data_input_queue),
-    .empty_input_queue  (empty_input_queue),
-    .full_input_queue   (full_input_queue),
+    .reset_L1_input_queue  (reset_input_queue),
+    .rd_L1_input_queue     (rd_input_queue),
+    .wr_L1_input_queue     (wr_input_queue),
+    .w_data_L1_input_queue (w_data_input_queue),
+    .r_data_L1_input_queue (r_data_input_queue),
+    .empty_L1_input_queue  (empty_input_queue),
+    .full_L1_input_queue   (full_input_queue),
     .en_core(en_core)
 );
 
@@ -54,7 +75,7 @@ initial begin
 
     for (i = 0; i < N; i = i + 1) begin
         for (j = 0; j < N; j = j + 1) begin
-            dut.weights_mem[i][j] = (i == j) ? 8'h10 : 8'h05; // Диагональные веса больше
+            dut.l1_weights_mem[i][j] = (i == j) ? 8'h10 : 8'h05; // Диагональные веса больше
         end
     end
 end
