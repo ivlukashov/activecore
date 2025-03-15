@@ -8,9 +8,16 @@
 
 module tb_fifo;
 
+localparam presyn_neurons = 32; // 128;
+localparam postsyn_neurons = 32; // 128;
+
 // Локальные параметры для удобства переопределения
-localparam B = 8;  // ширина данных
-localparam W = 4;  // размер адресных указателей (FIFO глубиной 2^W)
+localparam B = 8;  // ширина данных спайка
+// localparam W = 4;  // размер адресных указателей (FIFO глубиной 2^W)
+
+// localparam N = postsyn_neurons; // Количество нейронов
+localparam width_spike = 8;
+localparam nums_spikes = presyn_neurons;
 
 // Сигналы тестбенча
 logic               clk;
@@ -65,29 +72,26 @@ initial begin
     forever #5 clk = ~clk;  // Период 10 нс
 end
 
-localparam N = 8; // Количество нейронов
-
 // Инициализация памяти weights_mem внутри DUT
 initial begin
     integer i, j;
-    @(posedge reset_input_queue);  // Ждём сброса
-    @(negedge reset_input_queue);  // После снятия reset_input_queue начинаем инициализацию
+    @(posedge rst_i);  // Ждём сброса
+    // @(negedge rst_i);  // После снятия reset_input_queue начинаем инициализацию
 
-    for (i = 0; i < N; i = i + 1) begin
-        for (j = 0; j < N; j = j + 1) begin
-            dut.l1_weights_mem[i][j] = (i == j) ? 8'h10 : 8'h05; // Диагональные веса больше
+    for (i = 0; i < postsyn_neurons; i = i + 1) begin
+        for (j = 0; j < presyn_neurons; j = j + 1) begin
+            dut.l1_weights_mem[i][j] = (i == j) ? 4'b0001 : 4'b0010; // Диагональные веса больше
         end
     end
 end
 
-localparam width_spike = 8;
-localparam nums_spikes = 32;
+
 // Массив входных данных (имитация входного потока спайков)
 logic [width_spike-1:0] input_data_queue [nums_spikes-1:0];
 
 initial begin
     integer i;
-    for (i = 0; i < nums_spikes; i = i+1) begin
+    for (i = 0; i < nums_spikes-1; i = i+1) begin
         input_data_queue[i] = i+1;  // Заполняем тестовыми значениями
     end
 end
@@ -157,7 +161,7 @@ endtask
 task wr_input_queue_data();
     integer i;
     begin
-        for (i = 0; i < N; i = i + 1) begin
+        for (i = 0; i < presyn_neurons-1; i = i + 1) begin
             @(posedge clk);
             w_data_input_queue = input_data_queue[i];
             wr_input_queue     = 1;
