@@ -65,7 +65,7 @@ initial begin
     forever #5 clk = ~clk;  // Период 10 нс
 end
 
-localparam N = 32; // Размерность синаптической памяти
+localparam N = 8; // Количество нейронов
 
 // Инициализация памяти weights_mem внутри DUT
 initial begin
@@ -87,8 +87,8 @@ logic [width_spike-1:0] input_data_queue [nums_spikes-1:0];
 
 initial begin
     integer i;
-    for (i = 0; i < nums_spikes; i = i + 1) begin
-        input_data_queue[i] = i;  // Заполняем тестовыми значениями
+    for (i = 0; i < nums_spikes; i = i+1) begin
+        input_data_queue[i] = i+1;  // Заполняем тестовыми значениями
     end
 end
 
@@ -110,14 +110,6 @@ initial begin
     // Небольшая пауза после снятия reset_input_queue
     #10;
     
-    // Включаем ядро
-    en_core = 1;
-
-    // Пишем входящие спайки спайков в входную очередь
-    // wr_input_queueite_data(8'hAA);
-    // wr_input_queueite_data(8'hBB);
-    // wr_input_queueite_data(8'hCC);
-
     wr_input_queue_data();
     
     // Останавливаем запись
@@ -126,6 +118,16 @@ initial begin
     // Делаем небольшую паузу
     #10;
     
+
+    // Включаем ядро
+    en_core = 1;
+
+    // Пишем входящие спайки спайков в входную очередь
+    // wr_input_queueite_data(8'hAA);
+    // wr_input_queueite_data(8'hBB);
+    // wr_input_queueite_data(8'hCC);
+
+
     // // Считываем значения
     // read_data();
     // read_data();
@@ -135,7 +137,7 @@ initial begin
     // rd_input_queue = 0;
     
     // Завершаем симуляцию
-    #20;
+    #400;
     $finish;
 end
 

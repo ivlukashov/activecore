@@ -195,6 +195,312 @@ open class Neuromorphic(val name : String) : hw_astc_stdif() {
 
     }
 
+    internal fun input_queue_generation_credit_counter(
+        name: String,
+        r_data_if: hw_var,
+        rd_if: hw_var,
+        data_width: Int,
+        pointer_width: Int,
+        depth: Int,
+        tick: hw_var,
+        rd_cnt: hw_var,
+        wr_cnt: hw_var,
+        cyclix_gen: Generic
+    ) {
+        // Внешний сигнал
+        val reset = cyclix_gen.uport("reset_"+name, PORT_DIR.IN, hw_dim_static(1), "0")
+        val reset_r = cyclix_gen.uglobal("reset_r_"+name, hw_dim_static(1), "0")
+//        reset.assign(reset_r)
+
+        val rd = cyclix_gen.uport("rd_"+name, PORT_DIR.IN, hw_dim_static(1), "0")
+        val rd_r = cyclix_gen.uglobal("rd_r_"+name, hw_dim_static(1), "0")
+//        rd.assign(rd_r)
+
+        val wr = cyclix_gen.uport("wr_"+name, PORT_DIR.IN, hw_dim_static(1), "0")
+        val wr_r = cyclix_gen.uglobal("wr_r_"+name, hw_dim_static(1), "0")
+//        wr.assign(wr_r)
+
+        val w_data = cyclix_gen.uport("w_data_"+name, PORT_DIR.IN, hw_dim_static(data_width), "0")
+        val w_data_r = cyclix_gen.uglobal("w_data_r_"+name, hw_dim_static(data_width), "0")
+//        w_data.assign(w_data_r)
+
+        val wr_counter_p = cyclix_gen.uport("wr_counter_p_"+name, PORT_DIR.OUT, hw_dim_static(8), "0")
+        val wr_counter_p_r = cyclix_gen.uglobal("wr_counter_p_r_"+name, hw_dim_static(8), "0")
+        wr_counter_p.assign(wr_counter_p_r)
+        val rd_counter_p = cyclix_gen.uport("rd_counter_p_"+name, PORT_DIR.OUT, hw_dim_static(8), "0")
+        val rd_counter_p_r = cyclix_gen.ulocal("rd_counter_p_r_"+name, hw_dim_static(8), "0")
+        rd_counter_p.assign(rd_counter_p_r)
+
+        rd_cnt.assign(rd_counter_p_r)
+        wr_cnt.assign(wr_counter_p_r)
+
+
+        val empty = cyclix_gen.uport("empty_"+name, PORT_DIR.OUT, hw_dim_static(1), "0")
+        val empty_r = cyclix_gen.uglobal("empty_r_"+name, hw_dim_static(1), "0")
+        empty.assign(empty_r)
+
+        val full = cyclix_gen.uport("full_"+name, PORT_DIR.OUT, hw_dim_static(1), "0")
+        val full_r = cyclix_gen.uglobal("full_r_"+name, hw_dim_static(1), "0")
+        full_r.assign(full)
+
+        val r_data = cyclix_gen.uport("r_data_"+name, PORT_DIR.OUT, hw_dim_static(data_width), "0")
+        val r_data_r = cyclix_gen.uglobal("r_data_r_"+name, hw_dim_static(data_width), "0")
+        r_data_r.assign(r_data)
+
+        val array_reg_dim = hw_dim_static(data_width)
+        array_reg_dim.add(depth, 0)
+        var array_reg = cyclix_gen.uglobal("array_reg_"+name, array_reg_dim, "0")
+
+        val w_ptr_reg = cyclix_gen.uglobal("w_ptr_reg_"+name, hw_dim_static(data_width-1), "0")
+        val w_ptr_next = cyclix_gen.uglobal("w_ptr_next_"+name, hw_dim_static(data_width-1), "0")
+        val w_ptr_succ = cyclix_gen.uglobal("w_ptr_succ_"+name, hw_dim_static(data_width-1), "0")
+
+        val r_ptr_reg = cyclix_gen.uglobal("r_ptr_reg_"+name, hw_dim_static(data_width-1), "0")
+        val r_ptr_next = cyclix_gen.uglobal("r_ptr_next_"+name, hw_dim_static(data_width-1), "0")
+        val r_ptr_succ = cyclix_gen.uglobal("r_ptr_succ_"+name, hw_dim_static(data_width-1), "0")
+
+        val full_reg = cyclix_gen.uglobal("full_reg_"+name, hw_dim_static(1), "0")
+        val empty_reg = cyclix_gen.uglobal("empty_reg_"+name, hw_dim_static(1), "1")
+        val full_next = cyclix_gen.uglobal("full_next_"+name, hw_dim_static(1), "0")
+        val empty_next = cyclix_gen.uglobal("empty_next_"+name, hw_dim_static(1), "0")
+
+        val wr_en = cyclix_gen.uglobal("wr_en_"+name, hw_dim_static(1), "0")
+
+        val credit_counter_dim = hw_dim_static(8)
+        credit_counter_dim.add(1,0)
+        val credit_counter = cyclix_gen.uglobal("credit_counter_"+name, credit_counter_dim, "0")
+
+        val act_counter = cyclix_gen.uglobal("act_counter"+name, hw_dim_static(0, 0), "0")
+
+        cyclix_gen.begif(cyclix_gen.eq2(reset_r, 1))
+        run{
+            act_counter.assign(0)
+        }; cyclix_gen.endif()
+
+        cyclix_gen.begif(cyclix_gen.eq2(tick, 1))
+        run{
+            act_counter.assign(cyclix_gen.bnot(act_counter))
+        }; cyclix_gen.endif()
+
+
+        cyclix_gen.begif(cyclix_gen.eq2(wr_en, 1))
+        run{
+            array_reg[w_ptr_reg].assign(w_data_r)
+            credit_counter[act_counter].assign(credit_counter[act_counter].plus(1))
+        }; cyclix_gen.endif()
+
+        wr_counter_p_r.assign(credit_counter[act_counter])
+        rd_counter_p_r.assign(credit_counter[cyclix_gen.bnot(act_counter)])
+
+        r_data_r.assign(array_reg[r_ptr_reg])
+
+        wr_en.assign(cyclix_gen.land(wr_r, cyclix_gen.bnot(full_reg)))
+
+        cyclix_gen.begif(cyclix_gen.eq2(reset_r, 1))
+        run{
+            w_ptr_reg.assign(0)
+            r_ptr_reg.assign(0)
+            full_reg.assign(0)
+            empty_reg.assign(1)
+        }; cyclix_gen.endif()
+        cyclix_gen.begelse()
+        run{
+            w_ptr_reg.assign(w_ptr_next)
+            r_ptr_reg.assign(r_ptr_next)
+            full_reg.assign(full_next)
+            empty_reg.assign(empty_next)
+        }; cyclix_gen.endif()
+
+        w_ptr_succ.assign(w_ptr_reg.plus(1))
+        r_ptr_succ.assign(r_ptr_reg.plus(1))
+        w_ptr_next.assign(w_ptr_reg)
+        r_ptr_next.assign(r_ptr_reg)
+        full_next.assign(full_reg)
+        empty_next.assign(empty_reg)
+
+        cyclix_gen.begcase(cyclix_gen.cnct(wr_r, rd_r))
+        run{
+            cyclix_gen.begbranch(1)  // 2'b01
+            run {
+                cyclix_gen.begif(cyclix_gen.bnot(empty_reg))
+                run{
+                    r_ptr_next.assign(r_ptr_succ)
+                    full_next.assign(0)
+
+                    credit_counter[cyclix_gen.bnot(act_counter)].assign(credit_counter[cyclix_gen.bnot(act_counter)].minus(1))
+
+                    cyclix_gen.begif(cyclix_gen.eq2(r_ptr_succ, w_ptr_reg))
+                    run{
+                        empty_next.assign(1)
+                    }; cyclix_gen.endif()
+                }; cyclix_gen.endif()
+            }; cyclix_gen.endbranch()
+
+            cyclix_gen.begbranch(2)  // 2'b10
+            run {
+                cyclix_gen.begif(cyclix_gen.bnot(full_reg))
+                run{
+                    w_ptr_next.assign(w_ptr_succ)
+                    empty_next.assign(0)
+                    cyclix_gen.begif(cyclix_gen.eq2(w_ptr_succ, r_ptr_reg))
+                    run{
+                        full_next.assign(1)
+                    }; cyclix_gen.endif()
+                }; cyclix_gen.endif()
+            }; cyclix_gen.endbranch()
+
+            cyclix_gen.begbranch(3)  // 2'b11
+            run {
+                w_ptr_next.assign(w_ptr_succ)
+                r_ptr_next.assign(r_ptr_succ)
+            }; cyclix_gen.endbranch()
+        }; cyclix_gen.endcase()
+
+        full_r.assign(full_reg)
+        empty_r.assign(empty_reg)
+
+        r_data_if.assign(r_data_r)
+        rd_r.assign(rd_if)
+    }
+
+
+    internal fun input_queue_generation_ext_buf(
+        name: String,
+        r_data_if: hw_var,
+        rd_if: hw_var,
+        data_width: Int,
+        pointer_width: Int,
+        depth: Int,
+        cntxt: hw_var,
+        buf: hw_var,
+        cyclix_gen: Generic
+    ) {
+        // Внешний сигнал
+        val reset = cyclix_gen.uport("reset_"+name, PORT_DIR.IN, hw_dim_static(1), "0")
+        val reset_r = cyclix_gen.uglobal("reset_r_"+name, hw_dim_static(1), "0")
+//        reset.assign(reset_r)
+
+        val rd = cyclix_gen.uport("rd_"+name, PORT_DIR.IN, hw_dim_static(1), "0")
+        val rd_r = cyclix_gen.uglobal("rd_r_"+name, hw_dim_static(1), "0")
+//        rd.assign(rd_r)
+
+        val wr = cyclix_gen.uport("wr_"+name, PORT_DIR.IN, hw_dim_static(1), "0")
+        val wr_r = cyclix_gen.uglobal("wr_r_"+name, hw_dim_static(1), "0")
+//        wr.assign(wr_r)
+
+        val w_data = cyclix_gen.uport("w_data_"+name, PORT_DIR.IN, hw_dim_static(data_width), "0")
+        val w_data_r = cyclix_gen.uglobal("w_data_r_"+name, hw_dim_static(data_width), "0")
+//        w_data.assign(w_data_r)
+
+        val empty = cyclix_gen.uport("empty_"+name, PORT_DIR.OUT, hw_dim_static(1), "0")
+        val empty_r = cyclix_gen.uglobal("empty_r_"+name, hw_dim_static(1), "0")
+        empty.assign(empty_r)
+
+        val full = cyclix_gen.uport("full_"+name, PORT_DIR.OUT, hw_dim_static(1), "0")
+        val full_r = cyclix_gen.uglobal("full_r_"+name, hw_dim_static(1), "0")
+        full_r.assign(full)
+
+        val r_data = cyclix_gen.uport("r_data_"+name, PORT_DIR.OUT, hw_dim_static(data_width), "0")
+        val r_data_r = cyclix_gen.uglobal("r_data_r_"+name, hw_dim_static(data_width), "0")
+        r_data_r.assign(r_data)
+
+        val array_reg_dim = hw_dim_static(data_width)
+        array_reg_dim.add(0, 0)
+        array_reg_dim.add(depth, 0)
+        var array_reg = cyclix_gen.uglobal("array_reg_"+name, array_reg_dim, "0")
+
+
+
+        val w_ptr_reg = cyclix_gen.uglobal("w_ptr_reg_"+name, hw_dim_static(data_width-1), "0")
+        val w_ptr_next = cyclix_gen.uglobal("w_ptr_next_"+name, hw_dim_static(data_width-1), "0")
+        val w_ptr_succ = cyclix_gen.uglobal("w_ptr_succ_"+name, hw_dim_static(data_width-1), "0")
+
+        val r_ptr_reg = cyclix_gen.uglobal("r_ptr_reg_"+name, hw_dim_static(data_width-1), "0")
+        val r_ptr_next = cyclix_gen.uglobal("r_ptr_next_"+name, hw_dim_static(data_width-1), "0")
+        val r_ptr_succ = cyclix_gen.uglobal("r_ptr_succ_"+name, hw_dim_static(data_width-1), "0")
+
+        val full_reg = cyclix_gen.uglobal("full_reg_"+name, hw_dim_static(1), "0")
+        val empty_reg = cyclix_gen.uglobal("empty_reg_"+name, hw_dim_static(1), "1")
+        val full_next = cyclix_gen.uglobal("full_next_"+name, hw_dim_static(1), "0")
+        val empty_next = cyclix_gen.uglobal("empty_next_"+name, hw_dim_static(1), "0")
+
+        val wr_en = cyclix_gen.uglobal("wr_en_"+name, hw_dim_static(1), "0")
+
+        cyclix_gen.begif(cyclix_gen.eq2(wr_en, 1))
+        run{
+            array_reg[cntxt][w_ptr_reg].assign(w_data_r)
+        }; cyclix_gen.endif()
+
+        r_data_r.assign(array_reg[cyclix_gen.bnot(cntxt)][r_ptr_reg])
+        buf.assign(array_reg[cyclix_gen.bnot(cntxt)])
+
+        wr_en.assign(cyclix_gen.land(wr_r, cyclix_gen.bnot(full_reg)))
+
+        cyclix_gen.begif(cyclix_gen.eq2(reset_r, 1))
+        run{
+            w_ptr_reg.assign(0)
+            r_ptr_reg.assign(0)
+            full_reg.assign(0)
+            empty_reg.assign(1)
+        }; cyclix_gen.endif()
+        cyclix_gen.begelse()
+        run{
+            w_ptr_reg.assign(w_ptr_next)
+            r_ptr_reg.assign(r_ptr_next)
+            full_reg.assign(full_next)
+            empty_reg.assign(empty_next)
+        }; cyclix_gen.endif()
+
+        w_ptr_succ.assign(w_ptr_reg.plus(1))
+        r_ptr_succ.assign(r_ptr_reg.plus(1))
+        w_ptr_next.assign(w_ptr_reg)
+        r_ptr_next.assign(r_ptr_reg)
+        full_next.assign(full_reg)
+        empty_next.assign(empty_reg)
+
+        cyclix_gen.begcase(cyclix_gen.cnct(wr_r, rd_r))
+        run{
+            cyclix_gen.begbranch(1)  // 2'b01
+            run {
+                cyclix_gen.begif(cyclix_gen.bnot(empty_reg))
+                run{
+                    r_ptr_next.assign(r_ptr_succ)
+                    full_next.assign(0)
+                    cyclix_gen.begif(cyclix_gen.eq2(r_ptr_succ, w_ptr_reg))
+                    run{
+                        empty_next.assign(1)
+                    }; cyclix_gen.endif()
+                }; cyclix_gen.endif()
+            }; cyclix_gen.endbranch()
+
+            cyclix_gen.begbranch(2)  // 2'b10
+            run {
+                cyclix_gen.begif(cyclix_gen.bnot(full_reg))
+                run{
+                    w_ptr_next.assign(w_ptr_succ)
+                    empty_next.assign(0)
+                    cyclix_gen.begif(cyclix_gen.eq2(w_ptr_succ, r_ptr_reg))
+                    run{
+                        full_next.assign(1)
+                    }; cyclix_gen.endif()
+                }; cyclix_gen.endif()
+            }; cyclix_gen.endbranch()
+
+            cyclix_gen.begbranch(3)  // 2'b11
+            run {
+                w_ptr_next.assign(w_ptr_succ)
+                r_ptr_next.assign(r_ptr_succ)
+            }; cyclix_gen.endbranch()
+        }; cyclix_gen.endcase()
+
+        full_r.assign(full_reg)
+        empty_r.assign(empty_reg)
+
+        r_data_if.assign(r_data_r)
+        rd_r.assign(rd_if)
+
+    }
+
     internal fun output_queue_generation(
         name: String,
         w_data_if: hw_var,
@@ -315,6 +621,174 @@ open class Neuromorphic(val name : String) : hw_astc_stdif() {
             }; cyclix_gen.endbranch()
 
             cyclix_gen.begbranch(3)  // 2'b10
+            run {
+                w_ptr_next.assign(w_ptr_succ)
+                r_ptr_next.assign(r_ptr_succ)
+            }; cyclix_gen.endbranch()
+        }; cyclix_gen.endcase()
+
+        full_r.assign(full_reg)
+        empty_r.assign(empty_reg)
+
+        w_data_r.assign(w_data_if)
+        wr_r.assign(wr_if)
+    }
+
+    internal fun output_queue_generation_credit_counter(
+        name: String,
+        w_data_if: hw_var,
+        wr_if: hw_var,
+        data_width: Int,
+        pointer_width: Int,
+        depth: Int,
+        tick: hw_var,
+        rd_cnt: hw_var,
+        wr_cnt: hw_var,
+        cyclix_gen: Generic
+    ) {
+        // Внешний сигнал
+        val reset = cyclix_gen.uport("reset_"+name, PORT_DIR.IN, hw_dim_static(1), "0")
+        val reset_r = cyclix_gen.uglobal("reset_r_"+name, hw_dim_static(1), "0")
+//        reset.assign(reset_r)
+
+        val rd = cyclix_gen.uport("rd_"+name, PORT_DIR.IN, hw_dim_static(1), "0")
+        val rd_r = cyclix_gen.uglobal("rd_r_"+name, hw_dim_static(1), "0")
+//        rd.assign(rd_r)
+
+        val wr = cyclix_gen.uport("wr_"+name, PORT_DIR.IN, hw_dim_static(1), "0")
+        val wr_r = cyclix_gen.uglobal("wr_r_"+name, hw_dim_static(1), "0")
+//        wr.assign(wr_r)
+
+        val w_data = cyclix_gen.uport("w_data_"+name, PORT_DIR.IN, hw_dim_static(data_width), "0")
+        val w_data_r = cyclix_gen.uglobal("w_data_r_"+name, hw_dim_static(data_width), "0")
+//        w_data.assign(w_data_r)
+
+        val wr_counter_p = cyclix_gen.uport("wr_counter_p_"+name, PORT_DIR.OUT, hw_dim_static(8), "0")
+        val wr_counter_p_r = cyclix_gen.uglobal("wr_counter_p_r_"+name, hw_dim_static(8), "0")
+        wr_counter_p.assign(wr_counter_p_r)
+        val rd_counter_p = cyclix_gen.uport("rd_counter_p_"+name, PORT_DIR.OUT, hw_dim_static(8), "0")
+        val rd_counter_p_r = cyclix_gen.ulocal("rd_counter_p_r_"+name, hw_dim_static(8), "0")
+        rd_counter_p.assign(rd_counter_p_r)
+
+        rd_cnt.assign(rd_counter_p_r)
+        wr_cnt.assign(wr_counter_p_r)
+
+
+        val empty = cyclix_gen.uport("empty_"+name, PORT_DIR.OUT, hw_dim_static(1), "0")
+        val empty_r = cyclix_gen.uglobal("empty_r_"+name, hw_dim_static(1), "0")
+        empty.assign(empty_r)
+
+        val full = cyclix_gen.uport("full_"+name, PORT_DIR.OUT, hw_dim_static(1), "0")
+        val full_r = cyclix_gen.uglobal("full_r_"+name, hw_dim_static(1), "0")
+        full_r.assign(full)
+
+        val r_data = cyclix_gen.uport("r_data_"+name, PORT_DIR.OUT, hw_dim_static(data_width), "0")
+        val r_data_r = cyclix_gen.uglobal("r_data_r_"+name, hw_dim_static(data_width), "0")
+        r_data_r.assign(r_data)
+
+        val array_reg_dim = hw_dim_static(data_width)
+        array_reg_dim.add(depth, 0)
+        var array_reg = cyclix_gen.uglobal("array_reg_"+name, array_reg_dim, "0")
+
+        val w_ptr_reg = cyclix_gen.uglobal("w_ptr_reg_"+name, hw_dim_static(data_width-1), "0")
+        val w_ptr_next = cyclix_gen.uglobal("w_ptr_next_"+name, hw_dim_static(data_width-1), "0")
+        val w_ptr_succ = cyclix_gen.uglobal("w_ptr_succ_"+name, hw_dim_static(data_width-1), "0")
+
+        val r_ptr_reg = cyclix_gen.uglobal("r_ptr_reg_"+name, hw_dim_static(data_width-1), "0")
+        val r_ptr_next = cyclix_gen.uglobal("r_ptr_next_"+name, hw_dim_static(data_width-1), "0")
+        val r_ptr_succ = cyclix_gen.uglobal("r_ptr_succ_"+name, hw_dim_static(data_width-1), "0")
+
+        val full_reg = cyclix_gen.uglobal("full_reg_"+name, hw_dim_static(1), "0")
+        val empty_reg = cyclix_gen.uglobal("empty_reg_"+name, hw_dim_static(1), "1")
+        val full_next = cyclix_gen.uglobal("full_next_"+name, hw_dim_static(1), "0")
+        val empty_next = cyclix_gen.uglobal("empty_next_"+name, hw_dim_static(1), "0")
+
+        val wr_en = cyclix_gen.uglobal("wr_en_"+name, hw_dim_static(1), "0")
+
+        val credit_counter_dim = hw_dim_static(8)
+        credit_counter_dim.add(1,0)
+        val credit_counter = cyclix_gen.uglobal("credit_counter_"+name, credit_counter_dim, "0")
+
+        val act_counter = cyclix_gen.uglobal("act_counter"+name, hw_dim_static(0, 0), "0")
+
+        cyclix_gen.begif(cyclix_gen.eq2(reset_r, 1))
+        run{
+            act_counter.assign(0)
+        }; cyclix_gen.endif()
+
+        cyclix_gen.begif(cyclix_gen.eq2(tick, 1))
+        run{
+            act_counter.assign(cyclix_gen.bnot(act_counter))
+        }; cyclix_gen.endif()
+
+
+        cyclix_gen.begif(cyclix_gen.eq2(wr_en, 1))
+        run{
+            array_reg[w_ptr_reg].assign(w_data_r)
+            credit_counter[act_counter].assign(credit_counter[act_counter].plus(1))
+        }; cyclix_gen.endif()
+
+        wr_counter_p_r.assign(credit_counter[act_counter])
+        rd_counter_p_r.assign(credit_counter[cyclix_gen.bnot(act_counter)])
+
+        r_data_r.assign(array_reg[r_ptr_reg])
+
+        wr_en.assign(cyclix_gen.land(wr_r, cyclix_gen.bnot(full_reg)))
+
+        cyclix_gen.begif(cyclix_gen.eq2(reset_r, 1))
+        run{
+            w_ptr_reg.assign(0)
+            r_ptr_reg.assign(0)
+            full_reg.assign(0)
+            empty_reg.assign(1)
+        }; cyclix_gen.endif()
+        cyclix_gen.begelse()
+        run{
+            w_ptr_reg.assign(w_ptr_next)
+            r_ptr_reg.assign(r_ptr_next)
+            full_reg.assign(full_next)
+            empty_reg.assign(empty_next)
+        }; cyclix_gen.endif()
+
+        w_ptr_succ.assign(w_ptr_reg.plus(1))
+        r_ptr_succ.assign(r_ptr_reg.plus(1))
+        w_ptr_next.assign(w_ptr_reg)
+        r_ptr_next.assign(r_ptr_reg)
+        full_next.assign(full_reg)
+        empty_next.assign(empty_reg)
+
+        cyclix_gen.begcase(cyclix_gen.cnct(wr_r, rd_r))
+        run{
+            cyclix_gen.begbranch(1)  // 2'b01
+            run {
+                cyclix_gen.begif(cyclix_gen.bnot(empty_reg))
+                run{
+                    r_ptr_next.assign(r_ptr_succ)
+                    full_next.assign(0)
+
+                    credit_counter[cyclix_gen.bnot(act_counter)].assign(credit_counter[cyclix_gen.bnot(act_counter)].minus(1))
+
+                    cyclix_gen.begif(cyclix_gen.eq2(r_ptr_succ, w_ptr_reg))
+                    run{
+                        empty_next.assign(1)
+                    }; cyclix_gen.endif()
+                }; cyclix_gen.endif()
+            }; cyclix_gen.endbranch()
+
+            cyclix_gen.begbranch(2)  // 2'b10
+            run {
+                cyclix_gen.begif(cyclix_gen.bnot(full_reg))
+                run{
+                    w_ptr_next.assign(w_ptr_succ)
+                    empty_next.assign(0)
+                    cyclix_gen.begif(cyclix_gen.eq2(w_ptr_succ, r_ptr_reg))
+                    run{
+                        full_next.assign(1)
+                    }; cyclix_gen.endif()
+                }; cyclix_gen.endif()
+            }; cyclix_gen.endbranch()
+
+            cyclix_gen.begbranch(3)  // 2'b11
             run {
                 w_ptr_next.assign(w_ptr_succ)
                 r_ptr_next.assign(r_ptr_succ)
@@ -764,12 +1238,70 @@ open class Neuromorphic(val name : String) : hw_astc_stdif() {
 
         val presyn_neurons = 128
         val postsyn_neurons = 128
-        val weight_width = 8
-        val potential_width = 8
+        val weight_width = 4
+        val potential_width = 4
         val threshold = 1
         val leak = 3
         val reset_voltage = 0
         MSG(""+presyn_neurons+postsyn_neurons+weight_width+potential_width)
+
+        //  generation tick
+        var tick =  cyclix_gen.uglobal("tick", "0")
+        tick_generation(tick, 2, "ns", 10, cyclix_gen)
+
+        val l1_rd_sig = cyclix_gen.uglobal("l1_rd_sig", hw_dim_static(1), "0")
+        val l1_src_neuron_id = cyclix_gen.uglobal("l1_src_neuron_id", hw_dim_static(8), "0")
+
+//        val l1_queue_array_dim = hw_dim_static(8)
+//        l1_queue_array_dim.add(presyn_neurons, 0)
+//        var l1_array_reg = cyclix_gen.uglobal("l1_array_reg_"+name, l1_queue_array_dim, "0")
+
+//        input_queue_generation_ext_buf(
+//            "L1_input_queue",
+//            l1_src_neuron_id,
+//            l1_rd_sig,
+//            8,
+//            4,
+//            presyn_neurons,
+//            queue_cntx,
+//            l1_array_reg,
+//            cyclix_gen
+//        )
+
+        val queue_wr_cnt = cyclix_gen.uglobal("queue_wr_cnt_"+name, hw_dim_static(8), "0")
+        val queue_rd_cnt = cyclix_gen.uglobal("queue_rd_cnt_"+name, hw_dim_static(8), "0")
+        val queue_wr_output_counter = cyclix_gen.uglobal("queue_wr_output_counter_"+name, hw_dim_static(8), "0")
+        val queue_rd_output_counter = cyclix_gen.uglobal("queue_rd_output_counter_"+name, hw_dim_static(8), "0")
+
+        val l1_wr_sig = cyclix_gen.uglobal("l1_wr_sig", hw_dim_static(1), "0")
+        val l1_trg_neuron_id = cyclix_gen.uglobal("l1_trg_neuron_id", hw_dim_static(8), "0")
+
+        input_queue_generation_credit_counter(
+            "L1_input_queue",
+            l1_src_neuron_id,
+            l1_rd_sig,
+            8,
+            4,
+            presyn_neurons,
+            tick,
+            queue_rd_cnt,
+            queue_wr_cnt,
+            cyclix_gen
+        )
+
+        output_queue_generation_credit_counter(
+            "l1_output_queue",
+            l1_trg_neuron_id,
+            l1_wr_sig,
+            8,
+            4,
+            postsyn_neurons,
+            tick,
+            queue_rd_output_counter,
+            queue_wr_output_counter,
+            cyclix_gen
+        )
+
 
         // Память весов
         var l1_weights_mem_dim = hw_dim_static(weight_width)
@@ -777,56 +1309,25 @@ open class Neuromorphic(val name : String) : hw_astc_stdif() {
         l1_weights_mem_dim.add(postsyn_neurons-1, 0)  // 256
         var l1_weight_memory = cyclix_gen.sglobal("l1_weights_mem", l1_weights_mem_dim, "0")
 
-        // Память весов
-        var l2_weights_mem_dim = hw_dim_static(weight_width)
-        l2_weights_mem_dim.add(presyn_neurons-1, 0)  // разрядность веса
-        l2_weights_mem_dim.add(postsyn_neurons-1, 0)  // 256
-        var l2_weight_memory = cyclix_gen.sglobal("l2_weights_mem", l2_weights_mem_dim, "0")
-
         // Память статических параметров
         var l1_membrane_potential_mem_dim = hw_dim_static(potential_width)
-//        membrane_potential_mem_dim.add(0, 0)
         l1_membrane_potential_mem_dim.add(postsyn_neurons-1, 0)   // 256
         var l1_membrane_potential_memory = cyclix_gen.uglobal("l1_membrane_potential_memory", l1_membrane_potential_mem_dim, "0")
 
-        // Память статических параметров
-        var l2_membrane_potential_mem_dim = hw_dim_static(potential_width)
-//        membrane_potential_mem_dim.add(0, 0)
-        l2_membrane_potential_mem_dim.add(postsyn_neurons-1, 0)   // 256
-        var l2_membrane_potential_memory = cyclix_gen.uglobal("l2_membrane_potential_memory", l2_membrane_potential_mem_dim, "0")
+//        // Память статических параметров
+//        var l1_membrane_potential_mem_dim_upd = hw_dim_static(potential_width)
+//        l1_membrane_potential_mem_dim_upd.add(postsyn_neurons-1, 0)   // 256
+//        var l1_membrane_potential_memory_upd = cyclix_gen.uglobal("l1_membrane_potential_memory_upd", l1_membrane_potential_mem_dim_upd, "0")
 
-//        var upd_membrane_potential_mem_dim = hw_dim_static(potential_width)
-//        upd_membrane_potential_mem_dim.add(postsyn_neurons-1, 0)   // 256
-//        var upd_membrane_potential_memory = cyclix_gen.uglobal("upd_membrane_potential_memory", upd_membrane_potential_mem_dim, "0")
-
-        // Состояние буферизации спайков
-        // if tick -->
-
-        // Состояние обработки синаптических операций
-        // neuron_id=read_fifo,
-                // for each in postsyn_neurons
-                // {membr+=syn[neuron_id][post_syn_cnt]}
-                // if fifo==empty && post_syn_cnt == postsyn_neurons_len --> next_state = somatic
-
-        // Состояние обработки соматических операций
-        // for each in postsyn_neurons
-            // {membr-=leakage}
-        // next_state=emission
-        // Эмиссия спайков
-        // for each in postsyn_neurons
-            // if membr<threshold {output_fifo = postsyn_id}
 
         // Контроллер
         val en_core = cyclix_gen.uport("en_core", PORT_DIR.IN, hw_dim_static(1), "0")
         val reg_en_core = cyclix_gen.uglobal("reg_en_core", hw_dim_static(1), "0")
         reg_en_core.assign(en_core) // todo: заменить в сгенерированном верилоге
 
-        val LAYER_1_idx = 0
-        val LAYER_2_idx = 1
-
         // Состояния контроллера для одного слоя
         val STATE_IDLE = 0
-        val STATE_BUFFERING = 1
+        val STATE_READ_IN_SPK = 1
         val STATE_SYNAPTIC = 2
         val STATE_SOMATIC = 3
         val STATE_EMISSION = 4
@@ -834,189 +1335,76 @@ open class Neuromorphic(val name : String) : hw_astc_stdif() {
         // Переменная для отслеживания состояния обработки
         val current_state = cyclix_gen.uglobal("current_state", hw_dim_static(2, 0), "0")
         val next_state = cyclix_gen.uglobal("next_state", hw_dim_static(2, 0), "0")
-
         current_state.assign(next_state)
 
         val postsyn_counter = cyclix_gen.uglobal("postsyn_counter", hw_dim_static(8), "0")  // Параметризировать разрядность
         val l1_presyn_neuron_id = cyclix_gen.uglobal("l1_presyn_neuron_id", hw_dim_static(8), "0")
-        val l2_presyn_neuron_id = cyclix_gen.uglobal("l2_presyn_neuron_id", hw_dim_static(8), "0")
 
-        //  generation tick
-        var tick =  cyclix_gen.uglobal("tick", "0")
-        tick_generation(tick, 4, "ns", 10, cyclix_gen)
-
-        // Переключение контекста для обработки очередей
-        var queue_cntx =  cyclix_gen.uglobal("queue_cntx", hw_dim_static(1),"0")
-        cyclix_gen.begif(cyclix_gen.eq2(tick, 1))
-        run {
-            queue_cntx.assign(cyclix_gen.bnot(queue_cntx))
-        }; cyclix_gen.endif()
-
-        val l1_rd_sig = cyclix_gen.uglobal("l1_rd_sig", hw_dim_static(1), "0")
-        val l1_src_neuron_id = cyclix_gen.uglobal("l1_src_neuron_id", hw_dim_static(8), "0")
-        input_queue_generation(
-            "L1_input_queue",
-            l1_src_neuron_id,
-            l1_rd_sig,
-            8,
-            4,
-            presyn_neurons,
-            queue_cntx,
-            cyclix_gen
-        )
+        val presyn_cnt = cyclix_gen.uglobal("presyn_cnt", hw_dim_static(8), "0")
 
 
-        val l1_wr_sig = cyclix_gen.uglobal("l1_wr_sig", hw_dim_static(1), "0")
-        val l1_trg_neuron_id = cyclix_gen.uglobal("l1_trg_neuron_id", hw_dim_static(8), "0")
-        val l2_rd_sig = cyclix_gen.uglobal("l2_rd_sig", hw_dim_static(1), "0")
-        val l2_src_neuron_id = cyclix_gen.uglobal("l2_src_neuron_id", hw_dim_static(8), "0")
-
-        internal_spike_buffer_generation(
-            "L2_buffer",
-            l1_trg_neuron_id,
-            l1_wr_sig,
-            l2_src_neuron_id,
-            l2_rd_sig,
-            8,
-            4,
-            presyn_neurons,
-            queue_cntx,
-            cyclix_gen
-        )
-
-        val l2_wr_sig = cyclix_gen.uglobal("l2_wr_sig", hw_dim_static(1), "0")
-        val l2_trg_neuron_id = cyclix_gen.uglobal("l2_trg_neuron_id", hw_dim_static(8), "0")
-
-        output_queue_generation(
-            "L2_output_queue",
-            l2_trg_neuron_id,
-            l2_wr_sig,
-            8,
-            4,
-            32,
-            queue_cntx,
-            cyclix_gen
-        )
-
+//        // Память весов
+//        var l1_weights_mem_ext_dim = hw_dim_static(weight_width)
+//        l1_weights_mem_dim.add(postsyn_neurons-1, 0)  // 256
+//        var l1_weights_mem_ext = cyclix_gen.sglobal("l1_weights_mem_ext", l1_weights_mem_ext_dim, "0")
+//
         // Логика контроллера
         cyclix_gen.begif(cyclix_gen.eq2(reg_en_core, 1))  // Если старт обработки активен
         run {
             cyclix_gen.begif(cyclix_gen.eq2(current_state, STATE_IDLE))  // Состояние "идл"
             run {
                 l1_rd_sig.assign(0)
-                l1_wr_sig.assign(0)
-                postsyn_counter.assign(0)
+                presyn_cnt.assign(0)
                 l1_presyn_neuron_id.assign(0)
-                l2_presyn_neuron_id.assign(0)
-                l2_rd_sig.assign(0)
-                l2_wr_sig.assign(0)
+                postsyn_counter.assign(0)
 
-                next_state.assign(STATE_SYNAPTIC)
+                next_state.assign(STATE_READ_IN_SPK)
             }; cyclix_gen.endif()
 
-//            // Обработка вхолящей очереди
-//            cyclix_gen.begif(cyclix_gen.eq2(current_state, STATE_BUFFERING))
-//            run {
-//                cyclix_gen.begif(cyclix_gen.eq2(tick, 1))
-//                run {
-//                    l1_rd_sig.assign(1)
-//                    next_state.assign(STATE_SYNAPTIC)
-//                }; cyclix_gen.endif()
-//
-//            }; cyclix_gen.endif() // cyclix_gen.begif(cyclix_gen.eq2(current_state, STATE_BUFFERING))
+            cyclix_gen.begif(cyclix_gen.eq2(current_state, STATE_READ_IN_SPK))
+            run {
+                cyclix_gen.begif(cyclix_gen.eq2(tick, 1))
+                run {
+                    l1_rd_sig.assign(1)
+                    next_state.assign(STATE_SYNAPTIC)
+                }; cyclix_gen.endif()
+            }; cyclix_gen.endif()
 
             // Обработка пресинаптического счётчика
             cyclix_gen.begif(cyclix_gen.eq2(current_state, STATE_SYNAPTIC))
             run {
-
-                // ==== Layer 1 ==== //
-                l1_rd_sig.assign(1)
-                l1_presyn_neuron_id.assign(l1_src_neuron_id)
-
-                cyclix_gen.begif(cyclix_gen.less(postsyn_counter, postsyn_neurons))
+//                l1_rd_sig.assign(1)
+//                l1_presyn_neuron_id.assign(l1_src_neuron_id)
+                cyclix_gen.begif(cyclix_gen.neq2(queue_rd_cnt, presyn_cnt))
                 run {
-                    l1_membrane_potential_memory[postsyn_counter].assign(
-                        l1_weight_memory[l1_presyn_neuron_id][postsyn_counter].plus(
-                            l1_membrane_potential_memory[postsyn_counter]
-                        )
-                    )
-                    postsyn_counter.assign(postsyn_counter.plus(1))
-                }; cyclix_gen.endif()
-
-                cyclix_gen.begif(cyclix_gen.eq2(postsyn_counter, postsyn_neurons-1))
-                run{
-                    l1_rd_sig.assign(0)
-                    postsyn_counter.assign(0)
+                    for (i in 0..postsyn_neurons - 1) {
+                        //                l1_weights_mem_ext.assign(l1_weight_memory[l1_presyn_neuron_id][i])
+                        l1_membrane_potential_memory[i].assign(l1_membrane_potential_memory[i].plus(l1_weight_memory[l1_src_neuron_id][i]))
+                    }
+                };cyclix_gen.endif()
+//            }; cyclix_gen.endif()
+                cyclix_gen.begelse()
+                run {
                     next_state.assign(STATE_SOMATIC)
-                };cyclix_gen.endif()
-
-                // ==== Layer 2 ==== //
-                l2_rd_sig.assign(1)
-                l2_presyn_neuron_id.assign(l2_src_neuron_id)
-
-                cyclix_gen.begif(cyclix_gen.less(postsyn_counter, postsyn_neurons))
-                run {
-                    l2_membrane_potential_memory[postsyn_counter].assign(
-                        l2_weight_memory[l2_presyn_neuron_id][postsyn_counter].plus(
-                            l2_membrane_potential_memory[postsyn_counter]
-                        )
-                    )
-                    postsyn_counter.assign(postsyn_counter.plus(1))
                 }; cyclix_gen.endif()
 
-                cyclix_gen.begif(cyclix_gen.eq2(postsyn_counter, postsyn_neurons-1))
-                run{
-                    l2_rd_sig.assign(0)
-                    postsyn_counter.assign(0)
-                    next_state.assign(STATE_SOMATIC)
-                };cyclix_gen.endif()
-                // ================ //
-
-            }; cyclix_gen.endif() // cyclix_gen.begif(cyclix_gen.eq2(current_state, STATE_SYNAPTIC))
-
-            // Обработка пресинаптического счётчика
-            cyclix_gen.begif(cyclix_gen.eq2(current_state, STATE_SOMATIC))
-            run {
-
-                // ==== Layer 1 ==== //
-                cyclix_gen.begif(cyclix_gen.less(postsyn_counter, postsyn_neurons))
-                run {
-                    l1_membrane_potential_memory[postsyn_counter].assign(cyclix_gen.srl(l1_membrane_potential_memory[postsyn_counter], 1))  // *0,5
-                    postsyn_counter.assign(postsyn_counter.plus(1))
-                }; cyclix_gen.endif()
-
-//                upd_membrane_potential_memory[postsyn_counter].assign(cyclix_gen.srl(membrane_potential_memory[postsyn_counter], 1))  // *0,5
-//                postsyn_counter.assign(1)
-
-                cyclix_gen.begif(cyclix_gen.eq2(postsyn_counter, postsyn_neurons-1))
-                run{
-                    postsyn_counter.assign(0)
-                    next_state.assign(STATE_EMISSION)
-                };cyclix_gen.endif()
-//            }; cyclix_gen.endif() // cyclix_gen.begif(cyclix_gen.eq2(current_state, STATE_SOMATIC))
-
-            // ==== Layer 2 ==== //
-            cyclix_gen.begif(cyclix_gen.less(postsyn_counter, postsyn_neurons))
-            run {
-                l2_membrane_potential_memory[postsyn_counter].assign(cyclix_gen.srl(l2_membrane_potential_memory[postsyn_counter], 1))  // *0,5
-                postsyn_counter.assign(postsyn_counter.plus(1))
             }; cyclix_gen.endif()
 
-//                upd_membrane_potential_memory[postsyn_counter].assign(cyclix_gen.srl(membrane_potential_memory[postsyn_counter], 1))  // *0,5
-//                postsyn_counter.assign(1)
+            cyclix_gen.begif(cyclix_gen.eq2(current_state, STATE_SOMATIC))
+            run {
+                for (i in 0..postsyn_neurons - 1) {
+                    //                l1_weights_mem_ext.assign(l1_weight_memory[l1_presyn_neuron_id][i])
+                    l1_membrane_potential_memory[i].assign(cyclix_gen.srl(l1_membrane_potential_memory[i], leak))
+                }
 
-            cyclix_gen.begif(cyclix_gen.eq2(postsyn_counter, postsyn_neurons-1))
-            run{
                 postsyn_counter.assign(0)
+//                    next_state.assign(STATE_EMISSION)
                 next_state.assign(STATE_EMISSION)
-            };cyclix_gen.endif()
-        }; cyclix_gen.endif() // cyclix_gen.begif(cyclix_gen.eq2(current_state, STATE_SOMATIC))
+            }; cyclix_gen.endif()
 
-            // Обработка эммисии
             cyclix_gen.begif(cyclix_gen.eq2(current_state, STATE_EMISSION))
             run {
 
-                // ==== Layer 1 ==== //
                 cyclix_gen.begif(cyclix_gen.less(postsyn_counter, postsyn_neurons))
                 run {
                     cyclix_gen.begif(cyclix_gen.geq(l1_membrane_potential_memory[postsyn_counter], threshold))
@@ -1039,35 +1427,313 @@ open class Neuromorphic(val name : String) : hw_astc_stdif() {
                     postsyn_counter.assign(0)
                     next_state.assign(STATE_IDLE)
                 };cyclix_gen.endif()
-
-                // ==== Layer 2 ==== //
-                cyclix_gen.begif(cyclix_gen.less(postsyn_counter, postsyn_neurons))
-                run {
-                    cyclix_gen.begif(cyclix_gen.geq(l2_membrane_potential_memory[postsyn_counter], threshold))
-                    run {
-                        l2_wr_sig.assign(1)
-                        l2_trg_neuron_id.assign(postsyn_counter)
-                        l2_membrane_potential_memory[postsyn_counter].assign(reset_voltage)
-                    }; cyclix_gen.endif()
-                    cyclix_gen.begelse()
-                    run{
-                        l2_wr_sig.assign(0)
-                    };cyclix_gen.endif()
-//                    postsyn_counter.assign(1)
-
-                    postsyn_counter.assign(postsyn_counter.plus(1))
-                }; cyclix_gen.endif()
-
-                cyclix_gen.begif(cyclix_gen.eq2(postsyn_counter, postsyn_neurons-1))
-                run{
-                    postsyn_counter.assign(0)
-                    next_state.assign(STATE_IDLE)
-                };cyclix_gen.endif()
-
-
             }; cyclix_gen.endif() // cyclix_gen.begif(cyclix_gen.eq2(current_state, STATE_EMISSION))
 
-        }; cyclix_gen.endif()  // cyclix_gen.begif(cyclix_gen.eq2(reg_en_core, 1))
+            }; cyclix_gen.endif()
+
+
+
+
+
+//        // Память весов
+//        var l1_weights_mem_dim = hw_dim_static(weight_width)
+//        l1_weights_mem_dim.add(presyn_neurons-1, 0)  // разрядность веса
+//        l1_weights_mem_dim.add(postsyn_neurons-1, 0)  // 256
+//        var l1_weight_memory = cyclix_gen.sglobal("l1_weights_mem", l1_weights_mem_dim, "0")
+//
+//        // Память весов
+//        var l2_weights_mem_dim = hw_dim_static(weight_width)
+//        l2_weights_mem_dim.add(presyn_neurons-1, 0)  // разрядность веса
+//        l2_weights_mem_dim.add(postsyn_neurons-1, 0)  // 256
+//        var l2_weight_memory = cyclix_gen.sglobal("l2_weights_mem", l2_weights_mem_dim, "0")
+//
+//        // Память статических параметров
+//        var l1_membrane_potential_mem_dim = hw_dim_static(potential_width)
+////        membrane_potential_mem_dim.add(0, 0)
+//        l1_membrane_potential_mem_dim.add(postsyn_neurons-1, 0)   // 256
+//        var l1_membrane_potential_memory = cyclix_gen.uglobal("l1_membrane_potential_memory", l1_membrane_potential_mem_dim, "0")
+//
+//        // Память статических параметров
+//        var l2_membrane_potential_mem_dim = hw_dim_static(potential_width)
+////        membrane_potential_mem_dim.add(0, 0)
+//        l2_membrane_potential_mem_dim.add(postsyn_neurons-1, 0)   // 256
+//        var l2_membrane_potential_memory = cyclix_gen.uglobal("l2_membrane_potential_memory", l2_membrane_potential_mem_dim, "0")
+//
+////        var upd_membrane_potential_mem_dim = hw_dim_static(potential_width)
+////        upd_membrane_potential_mem_dim.add(postsyn_neurons-1, 0)   // 256
+////        var upd_membrane_potential_memory = cyclix_gen.uglobal("upd_membrane_potential_memory", upd_membrane_potential_mem_dim, "0")
+//
+//        // Состояние буферизации спайков
+//        // if tick -->
+//
+//        // Состояние обработки синаптических операций
+//        // neuron_id=read_fifo,
+//                // for each in postsyn_neurons
+//                // {membr+=syn[neuron_id][post_syn_cnt]}
+//                // if fifo==empty && post_syn_cnt == postsyn_neurons_len --> next_state = somatic
+//
+//        // Состояние обработки соматических операций
+//        // for each in postsyn_neurons
+//            // {membr-=leakage}
+//        // next_state=emission
+//        // Эмиссия спайков
+//        // for each in postsyn_neurons
+//            // if membr<threshold {output_fifo = postsyn_id}
+//
+//        // Контроллер
+//        val en_core = cyclix_gen.uport("en_core", PORT_DIR.IN, hw_dim_static(1), "0")
+//        val reg_en_core = cyclix_gen.uglobal("reg_en_core", hw_dim_static(1), "0")
+//        reg_en_core.assign(en_core) // todo: заменить в сгенерированном верилоге
+//
+//        val LAYER_1_idx = 0
+//        val LAYER_2_idx = 1
+//
+//        // Состояния контроллера для одного слоя
+//        val STATE_IDLE = 0
+//        val STATE_BUFFERING = 1
+//        val STATE_SYNAPTIC = 2
+//        val STATE_SOMATIC = 3
+//        val STATE_EMISSION = 4
+//
+//        // Переменная для отслеживания состояния обработки
+//        val current_state = cyclix_gen.uglobal("current_state", hw_dim_static(2, 0), "0")
+//        val next_state = cyclix_gen.uglobal("next_state", hw_dim_static(2, 0), "0")
+//
+//        current_state.assign(next_state)
+//
+//        val postsyn_counter = cyclix_gen.uglobal("postsyn_counter", hw_dim_static(8), "0")  // Параметризировать разрядность
+//        val l1_presyn_neuron_id = cyclix_gen.uglobal("l1_presyn_neuron_id", hw_dim_static(8), "0")
+//        val l2_presyn_neuron_id = cyclix_gen.uglobal("l2_presyn_neuron_id", hw_dim_static(8), "0")
+//
+//        //  generation tick
+//        var tick =  cyclix_gen.uglobal("tick", "0")
+//        tick_generation(tick, 4, "ns", 10, cyclix_gen)
+//
+//        // Переключение контекста для обработки очередей
+//        var queue_cntx =  cyclix_gen.uglobal("queue_cntx", hw_dim_static(1),"0")
+//        cyclix_gen.begif(cyclix_gen.eq2(tick, 1))
+//        run {
+//            queue_cntx.assign(cyclix_gen.bnot(queue_cntx))
+//        }; cyclix_gen.endif()
+//
+//        val l1_rd_sig = cyclix_gen.uglobal("l1_rd_sig", hw_dim_static(1), "0")
+//        val l1_src_neuron_id = cyclix_gen.uglobal("l1_src_neuron_id", hw_dim_static(8), "0")
+//        input_queue_generation(
+//            "L1_input_queue",
+//            l1_src_neuron_id,
+//            l1_rd_sig,
+//            8,
+//            4,
+//            presyn_neurons,
+//            queue_cntx,
+//            cyclix_gen
+//        )
+//
+//
+//        val l1_wr_sig = cyclix_gen.uglobal("l1_wr_sig", hw_dim_static(1), "0")
+//        val l1_trg_neuron_id = cyclix_gen.uglobal("l1_trg_neuron_id", hw_dim_static(8), "0")
+//        val l2_rd_sig = cyclix_gen.uglobal("l2_rd_sig", hw_dim_static(1), "0")
+//        val l2_src_neuron_id = cyclix_gen.uglobal("l2_src_neuron_id", hw_dim_static(8), "0")
+//
+//        internal_spike_buffer_generation(
+//            "L2_buffer",
+//            l1_trg_neuron_id,
+//            l1_wr_sig,
+//            l2_src_neuron_id,
+//            l2_rd_sig,
+//            8,
+//            4,
+//            presyn_neurons,
+//            queue_cntx,
+//            cyclix_gen
+//        )
+//
+//        val l2_wr_sig = cyclix_gen.uglobal("l2_wr_sig", hw_dim_static(1), "0")
+//        val l2_trg_neuron_id = cyclix_gen.uglobal("l2_trg_neuron_id", hw_dim_static(8), "0")
+//
+//        output_queue_generation(
+//            "L2_output_queue",
+//            l2_trg_neuron_id,
+//            l2_wr_sig,
+//            8,
+//            4,
+//            32,
+//            queue_cntx,
+//            cyclix_gen
+//        )
+
+
+
+//        // Логика контроллера
+//        cyclix_gen.begif(cyclix_gen.eq2(reg_en_core, 1))  // Если старт обработки активен
+//        run {
+//            cyclix_gen.begif(cyclix_gen.eq2(current_state, STATE_IDLE))  // Состояние "идл"
+//            run {
+//                l1_rd_sig.assign(0)
+//                l1_wr_sig.assign(0)
+//                postsyn_counter.assign(0)
+//                l1_presyn_neuron_id.assign(0)
+//                l2_presyn_neuron_id.assign(0)
+//                l2_rd_sig.assign(0)
+//                l2_wr_sig.assign(0)
+//
+//                next_state.assign(STATE_SYNAPTIC)
+//            }; cyclix_gen.endif()
+//
+////            // Обработка вхолящей очереди
+////            cyclix_gen.begif(cyclix_gen.eq2(current_state, STATE_BUFFERING))
+////            run {
+////                cyclix_gen.begif(cyclix_gen.eq2(tick, 1))
+////                run {
+////                    l1_rd_sig.assign(1)
+////                    next_state.assign(STATE_SYNAPTIC)
+////                }; cyclix_gen.endif()
+////
+////            }; cyclix_gen.endif() // cyclix_gen.begif(cyclix_gen.eq2(current_state, STATE_BUFFERING))
+//
+//            // Обработка пресинаптического счётчика
+//            cyclix_gen.begif(cyclix_gen.eq2(current_state, STATE_SYNAPTIC))
+//            run {
+//
+//                // ==== Layer 1 ==== //
+//                l1_rd_sig.assign(1)
+//                l1_presyn_neuron_id.assign(l1_src_neuron_id)
+//
+//                cyclix_gen.begif(cyclix_gen.less(postsyn_counter, postsyn_neurons))
+//                run {
+//                    l1_membrane_potential_memory[postsyn_counter].assign(
+//                        l1_weight_memory[l1_presyn_neuron_id][postsyn_counter].plus(
+//                            l1_membrane_potential_memory[postsyn_counter]
+//                        )
+//                    )
+//                    postsyn_counter.assign(postsyn_counter.plus(1))
+//                }; cyclix_gen.endif()
+//
+//                cyclix_gen.begif(cyclix_gen.eq2(postsyn_counter, postsyn_neurons-1))
+//                run{
+//                    l1_rd_sig.assign(0)
+//                    postsyn_counter.assign(0)
+//                    next_state.assign(STATE_SOMATIC)
+//                };cyclix_gen.endif()
+//
+//                // ==== Layer 2 ==== //
+//                l2_rd_sig.assign(1)
+//                l2_presyn_neuron_id.assign(l2_src_neuron_id)
+//
+//                cyclix_gen.begif(cyclix_gen.less(postsyn_counter, postsyn_neurons))
+//                run {
+//                    l2_membrane_potential_memory[postsyn_counter].assign(
+//                        l2_weight_memory[l2_presyn_neuron_id][postsyn_counter].plus(
+//                            l2_membrane_potential_memory[postsyn_counter]
+//                        )
+//                    )
+//                    postsyn_counter.assign(postsyn_counter.plus(1))
+//                }; cyclix_gen.endif()
+//
+//                cyclix_gen.begif(cyclix_gen.eq2(postsyn_counter, postsyn_neurons-1))
+//                run{
+//                    l2_rd_sig.assign(0)
+//                    postsyn_counter.assign(0)
+//                    next_state.assign(STATE_SOMATIC)
+//                };cyclix_gen.endif()
+//                // ================ //
+//
+//            }; cyclix_gen.endif() // cyclix_gen.begif(cyclix_gen.eq2(current_state, STATE_SYNAPTIC))
+//
+//            // Обработка пресинаптического счётчика
+//            cyclix_gen.begif(cyclix_gen.eq2(current_state, STATE_SOMATIC))
+//            run {
+//
+//                // ==== Layer 1 ==== //
+//                cyclix_gen.begif(cyclix_gen.less(postsyn_counter, postsyn_neurons))
+//                run {
+//                    l1_membrane_potential_memory[postsyn_counter].assign(cyclix_gen.srl(l1_membrane_potential_memory[postsyn_counter], 1))  // *0,5
+//                    postsyn_counter.assign(postsyn_counter.plus(1))
+//                }; cyclix_gen.endif()
+//
+////                upd_membrane_potential_memory[postsyn_counter].assign(cyclix_gen.srl(membrane_potential_memory[postsyn_counter], 1))  // *0,5
+////                postsyn_counter.assign(1)
+//
+//                cyclix_gen.begif(cyclix_gen.eq2(postsyn_counter, postsyn_neurons-1))
+//                run{
+//                    postsyn_counter.assign(0)
+//                    next_state.assign(STATE_EMISSION)
+//                };cyclix_gen.endif()
+////            }; cyclix_gen.endif() // cyclix_gen.begif(cyclix_gen.eq2(current_state, STATE_SOMATIC))
+//
+//            // ==== Layer 2 ==== //
+//            cyclix_gen.begif(cyclix_gen.less(postsyn_counter, postsyn_neurons))
+//            run {
+//                l2_membrane_potential_memory[postsyn_counter].assign(cyclix_gen.srl(l2_membrane_potential_memory[postsyn_counter], 1))  // *0,5
+//                postsyn_counter.assign(postsyn_counter.plus(1))
+//            }; cyclix_gen.endif()
+//
+////                upd_membrane_potential_memory[postsyn_counter].assign(cyclix_gen.srl(membrane_potential_memory[postsyn_counter], 1))  // *0,5
+////                postsyn_counter.assign(1)
+//
+//            cyclix_gen.begif(cyclix_gen.eq2(postsyn_counter, postsyn_neurons-1))
+//            run{
+//                postsyn_counter.assign(0)
+//                next_state.assign(STATE_EMISSION)
+//            };cyclix_gen.endif()
+//        }; cyclix_gen.endif() // cyclix_gen.begif(cyclix_gen.eq2(current_state, STATE_SOMATIC))
+//
+//            // Обработка эммисии
+//            cyclix_gen.begif(cyclix_gen.eq2(current_state, STATE_EMISSION))
+//            run {
+//
+//                // ==== Layer 1 ==== //
+//                cyclix_gen.begif(cyclix_gen.less(postsyn_counter, postsyn_neurons))
+//                run {
+//                    cyclix_gen.begif(cyclix_gen.geq(l1_membrane_potential_memory[postsyn_counter], threshold))
+//                    run {
+//                        l1_wr_sig.assign(1)
+//                        l1_trg_neuron_id.assign(postsyn_counter)
+//                        l1_membrane_potential_memory[postsyn_counter].assign(reset_voltage)
+//                    }; cyclix_gen.endif()
+//                    cyclix_gen.begelse()
+//                    run{
+//                        l1_wr_sig.assign(0)
+//                    };cyclix_gen.endif()
+////                    postsyn_counter.assign(1)
+//
+//                    postsyn_counter.assign(postsyn_counter.plus(1))
+//                }; cyclix_gen.endif()
+//
+//                cyclix_gen.begif(cyclix_gen.eq2(postsyn_counter, postsyn_neurons-1))
+//                run{
+//                    postsyn_counter.assign(0)
+//                    next_state.assign(STATE_IDLE)
+//                };cyclix_gen.endif()
+//
+//                // ==== Layer 2 ==== //
+//                cyclix_gen.begif(cyclix_gen.less(postsyn_counter, postsyn_neurons))
+//                run {
+//                    cyclix_gen.begif(cyclix_gen.geq(l2_membrane_potential_memory[postsyn_counter], threshold))
+//                    run {
+//                        l2_wr_sig.assign(1)
+//                        l2_trg_neuron_id.assign(postsyn_counter)
+//                        l2_membrane_potential_memory[postsyn_counter].assign(reset_voltage)
+//                    }; cyclix_gen.endif()
+//                    cyclix_gen.begelse()
+//                    run{
+//                        l2_wr_sig.assign(0)
+//                    };cyclix_gen.endif()
+////                    postsyn_counter.assign(1)
+//
+//                    postsyn_counter.assign(postsyn_counter.plus(1))
+//                }; cyclix_gen.endif()
+//
+//                cyclix_gen.begif(cyclix_gen.eq2(postsyn_counter, postsyn_neurons-1))
+//                run{
+//                    postsyn_counter.assign(0)
+//                    next_state.assign(STATE_IDLE)
+//                };cyclix_gen.endif()
+//
+//
+//            }; cyclix_gen.endif() // cyclix_gen.begif(cyclix_gen.eq2(current_state, STATE_EMISSION))
+//
+//        }; cyclix_gen.endif()  // cyclix_gen.begif(cyclix_gen.eq2(reg_en_core, 1))
 
 
 
@@ -1174,7 +1840,7 @@ open class Neuromorphic(val name : String) : hw_astc_stdif() {
 
     // Добавить входящую очередь с интерфейсом фифо
         //  добавить исходящую очередь с интерфейсом fifo
-        
+
 
 
 
