@@ -6,7 +6,7 @@ import hwast.*
 fun main(args: Array<String>) {
     println("Generation LIF accelerator")
 
-    var lif_core = lif("n_core")
+    var lif_core = LIF("n_core")
     var cyclix_ast = lif_core.translate(DEBUG_LEVEL.FULL)
 
     var dirname = "n_core/"
@@ -18,20 +18,3 @@ fun main(args: Array<String>) {
     var lif_rtl = cyclix_ast.export_to_rtl(DEBUG_LEVEL.FULL)
     lif_rtl.export_to_sv(dirname + "sverilog", DEBUG_LEVEL.FULL)
 }
-
-//fun main(args: Array<String>) {
-//    println("Generation LIF accelerator")
-//
-//    var lif_nn_model = LifSnn("lif_accs", 10, 10, 16, 16)
-//    var lif_accelerator = lif("lif_accelerator", lif_nn_model)
-//    var cyclix_ast = lif_accelerator.translate(DEBUG_LEVEL.FULL)
-//
-//    var Dbg = HwDebugWriter("debug_log.txt")
-//    Dbg.WriteExec(cyclix_ast.proc)
-//    Dbg.Close()
-//
-//    var lif_rtl = cyclix_ast.export_to_rtl(DEBUG_LEVEL.FULL)
-//    var dirname = "LIF_acceleralor_255/"
-//    lif_rtl.export_to_sv(dirname + "sverilog", DEBUG_LEVEL.FULL)
-//
-//}
