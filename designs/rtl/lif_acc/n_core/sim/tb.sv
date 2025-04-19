@@ -1,311 +1,266 @@
 `timescale 1ns/1ps
 
 //==========================================================
-// Testbench для параметризированного FIFO модуля
+// TB для Нейроморфного ядра 
 //==========================================================
 
-// `timescale 1ns/1ps
+module tb;
 
-module tb_fifo;
+  //==================================================
+  // Параметры
+  //==================================================
+  localparam PRESYN_NEURONS    = 16;  // Количество пресинаптических нейронов
+  localparam POSTSYN_NEURONS   = 16;  // Количество постсинаптических нейронов
+  localparam SPIKE_WIDTH       = 4;   
+  localparam NUM_SPIKES        = 10; // (PRESYN_NEURONS - 5);  // Размер входной очереди спайков
 
-localparam presyn_neurons = 32; // 128;
-localparam postsyn_neurons = 32; // 128;
+  localparam WEIGHT_WIDTH      = 8;
+  localparam WEIGHT_ADDR_WIDTH = 8;  // Разрядность адреса памяти весов = {log2(PRESYN_NEURONS), log2(POSTSYN_NEURONS)} = {4,4}
+  localparam WEIGHTS_DEPTH     = PRESYN_NEURONS * POSTSYN_NEURONS;
 
-// Локальные параметры для удобства переопределения
-localparam B = 8;  // ширина данных спайка
-// localparam W = 4;  // размер адресных указателей (FIFO глубиной 2^W)
+  localparam INIT_WEIGHTS_DATA = "/home/yan/activecore/designs/rtl/lif_acc/n_core/sim/weights_data.hex";  // [WEIGHT_WIDTH][WEIGHTS_DEPTH] = [8][1024]
+  // localparam INPUT_SPIKES_DATA = "/home/yan/activecore/designs/rtl/lif_acc/n_core/sim/input_spikes.hex"
+  
+  //==================================================
+  // Параметры целевой модели ИмНС
+  //==================================================
 
-// localparam N = postsyn_neurons; // Количество нейронов
-localparam width_spike = 8;
-localparam nums_spikes = presyn_neurons;
+  localparam kLEAKAGE          = 1;
+  localparam kTHRESHOLD        = 5;
+  localparam kRESET            = 0;
 
-// Сигналы тестбенча
-logic               clk;
-logic               reset_input_queue;
-logic               rd_input_queue;
-logic               wr_input_queue;
-logic [B-1:0]       w_data_input_queue;
-wire [B-1:0]        r_data_input_queue;
-wire                empty_input_queue;
-wire                full_input_queue;
-logic               en_core;
-logic               rst_i;
 
-// input logic unsigned [0:0] clk_i
-// , input logic unsigned [0:0] rst_i
-// , input logic unsigned [0:0] en_core
-// , input logic unsigned [0:0] reset_L1_input_queue
-// , input logic unsigned [0:0] rd_L1_input_queue
-// , input logic unsigned [0:0] wr_L1_input_queue
-// , input logic unsigned [7:0] w_data_L1_input_queue
-// , output logic unsigned [0:0] empty_L1_input_queue
-// , output logic unsigned [0:0] full_L1_input_queue
-// , output logic unsigned [7:0] r_data_L1_input_queue
-// , output logic unsigned [0:0] empty_L2_buffer
-// , output logic unsigned [0:0] full_L2_buffer
-// , output logic unsigned [7:0] r_data_L2_buffer
-// , input logic unsigned [0:0] reset_L2_output_queue
-// , input logic unsigned [0:0] rd_L2_output_queue
-// , input logic unsigned [0:0] wr_L2_output_queue
-// , input logic unsigned [7:0] w_data_L2_output_queue
-// , output logic unsigned [0:0] empty_L2_output_queue
-// , output logic unsigned [0:0] full_L2_output_queue
-// , output logic unsigned [7:0] r_data_L2_output_queue
+  //==================================================
+  // Объявление сигналов тестбенча
+  //==================================================
+  logic clk;
+  logic rst_i;
+  logic wr_input_queue;
+  logic [3:0] w_data_input_queue;
+  logic [SPIKE_WIDTH-1:0] r_data_input_queue;
+  logic rd_input_queue;
+  logic [3:0] rd_data_output_queue;
+  logic empty_input_queue;
+  logic empty_output_queue;
+  logic full_input_queue;
+  logic en_core;
 
-// Инстанцирование DUT (Device Under Test)
-n_core dut (
-    .clk_i    (clk),
-    .rst_i     (rst_i),
-    .reset_L1_input_queue  (reset_input_queue),
-    .rd_L1_input_queue     (rd_input_queue),
-    .wr_L1_input_queue     (wr_input_queue),
-    .w_data_L1_input_queue (w_data_input_queue),
-    .r_data_L1_input_queue (r_data_input_queue),
-    .empty_L1_input_queue  (empty_input_queue),
-    .full_L1_input_queue   (full_input_queue),
-    .en_core(en_core)
-);
+  logic [WEIGHT_ADDR_WIDTH-1:0] weight_mem_adr_i;
+  logic [WEIGHT_WIDTH-1:0] weight_mem_dat_o;
 
-// Генератор тактового сигнала
-initial begin
+  //==================================================
+  // Инстанцирование DUT (n_core)
+  //==================================================
+  n_core dut (
+	 .clk_i(clk),
+	 .rst_i(rst_i),
+	 .wr_input_queue(wr_input_queue),
+	 .wr_data_input_queue(w_data_input_queue),
+	 .full_input_queue(full_input_queue),
+	 .rd_output_queue(rd_output_queue),
+	 .empty_output_queue(empty_output_queue),
+	 .rd_data_output_queue(rd_data_output_queue),
+   .adr_ram_i(weight_mem_adr_i),
+   .dat_ram_o(weight_mem_dat_o),
+	 .en_core(en_core)
+  );
+
+  //==================================================
+  // Инстанцирование RAM для весов
+  //==================================================
+
+  ram #(  // Модуль RAM на Verilog
+    WEIGHT_WIDTH,   // Ширина данных
+    WEIGHT_ADDR_WIDTH,   // Ширина адреса
+    WEIGHTS_DEPTH  // Размер памяти
+  ) ram_weights (
+    .adr_i (weight_mem_adr_i), // Адрес
+    .we_i  (1'b0),            // Запись отключена
+    .dat_o (weight_mem_dat_o),// Выход данных
+    .clk   (clk)
+  );
+
+  //==================================================
+  // Генератор тактового сигнала
+  //==================================================
+  initial begin
     clk = 1'b0;
-    forever #5 clk = ~clk;  // Период 10 нс
-end
+    forever #5 clk = ~clk; // 5 ns 
+  end
 
-// Инициализация памяти weights_mem внутри DUT
-initial begin
-    integer i, j;
-    @(posedge rst_i);  // Ждём сброса
-    // @(negedge rst_i);  // После снятия reset_input_queue начинаем инициализацию
+  //==================================================
+  // Инициализация памяти весов внутри DUT
+  //==================================================
+  initial begin
+    $readmemh(INIT_WEIGHTS_DATA, ram_weights.ram, 0);
+  end
 
-    for (i = 0; i < postsyn_neurons; i = i + 1) begin
-        for (j = 0; j < presyn_neurons; j = j + 1) begin
-            dut.l1_weights_mem[i][j] = (i == j) ? 4'b0001 : 4'b0010; // Диагональные веса больше
-        end
-    end
-end
+  //==================================================
+  // Инициализация массива входных данных (имитация потока спайков)
+  //==================================================
+  logic [SPIKE_WIDTH-1:0] input_data_queue [NUM_SPIKES-1:0];
 
-
-// Массив входных данных (имитация входного потока спайков)
-logic [width_spike-1:0] input_data_queue [nums_spikes-1:0];
-
-initial begin
+  initial begin
     integer i;
-    for (i = 0; i < nums_spikes-1; i = i+1) begin
-        input_data_queue[i] = i+1;  // Заполняем тестовыми значениями
+    for (i = 0; i < NUM_SPIKES; i = i + 1) begin
+      input_data_queue[i] = 15; // i + 1;  // Заполняем тестовыми значениями
     end
-end
+  end
 
-// Основной блок стимулов
-initial begin
-    // Изначально сбросим все сигналы
-    reset_input_queue = 1;
-    rst_i = 1;
-    en_core = 0;
-    wr_input_queue    = 0;
-    rd_input_queue    = 0;
-    w_data_input_queue = '0;
+  //==================================================
+  // Запись одного байта в FIFO
+  //==================================================
+  task write_single_input_data(input [SPIKE_WIDTH-1:0] data);
+    begin
+      @(posedge clk);
+      w_data_input_queue = data;
+      wr_input_queue     = 1;
+      @(posedge clk);
+      wr_input_queue     = 0;
+    end
+  endtask
+
+  //==================================================
+  // Запись массива данных в FIFO
+  //==================================================
+  task write_input_queue_data(input int nums);
+    integer i;
+    begin
+      wr_input_queue = 0;
+      for (i = 0; i <= nums; i = i + 1) begin
+        w_data_input_queue = input_data_queue[i];
+        wr_input_queue = 1;
+        @(posedge clk);
+        // wr_input_queue     = 1;
+        // @(posedge clk);
+        // wr_input_queue     = 0;
+      end
+      wr_input_queue = 0;
+    end
+  endtask
+
+  //==================================================
+  // Чтение одного байта из FIFO
+  //==================================================
+  task read_data();
+    begin
+      @(posedge clk);
+      rd_input_queue = 1;
+      @(posedge clk);
+      rd_input_queue = 0;
+    end
+  endtask
+
+  //==================================================
+  // Чтение пакета спайков из исходящей очереди
+  //==================================================
+  task read_output_spikes();
+    integer i;
+    i = 0;
+    forever begin
+      if (~empty_output_queue) rd_input_queue = 1;
+      else rd_input_queue = 0;
+      @(posedge clk);
+      // if (!$isunknown(rd_output_queue)) begin
+        $display("%0d. Output Spike: %0d", i, rd_data_output_queue);
+      // end 
+      i += 1;
+      // if (i == POSTSYN_NEURONS) $finish;
+    end
+  endtask
+
+  //==================================================
+  // Инициализация параметров модели
+  //==================================================
+  task init_params(
+      input int postsyn_neurons_num, 
+      input int leakage_cur, 
+      input int threshold_vol, 
+      input int reset_vol
+    );
+    begin
+      dut.PostsynNeuronsNumsParam = postsyn_neurons_num;
+      dut.LeakageParam = leakage_cur;
+      dut.ThresholdParam = threshold_vol;
+      dut.ResetParam = reset_vol;
+    end
+  endtask
+
+  //==================================================
+  // Основные блоки стимулов
+  //==================================================
+  // Процедура записи тестовых пакетов спайков
+  initial begin
+    int spikes;
+    wait (en_core == 1);
+    forever begin
+      spikes = NUM_SPIKES;
+      write_input_queue_data(spikes);
+      spikes = 0;
+      wait (dut.tick == 1);
+      @(posedge clk);
+    end
+  end
+
+  // Монитор мембранных потенциалов
+  initial begin
+    int tick_num;
+    tick_num = 0;
+    forever begin
+      wait (dut.tick == 1);
+      @(posedge clk);
+      $display("Membrane potentials after tick %d:", tick_num);
+      for (int i = 0; i < POSTSYN_NEURONS; i++) begin
+        $display("Neuron %0d: Buf0=%0d, Buf1=%0d", 
+            i, dut.l1_membrane_potential_memory_3d[i][0], 
+            dut.l1_membrane_potential_memory_3d[i][1]);
+      end
+      tick_num += 1;
+    end 
+  end
+
+
+  initial begin
+    // --- Инициализация параметров модели ---
+    init_params(
+        POSTSYN_NEURONS, 
+        kLEAKAGE, 
+        kTHRESHOLD, 
+        kRESET
+      );
+    // --- Инициализация ядра ---
+    rst_i               = 1;
+    en_core             = 0;
+    wr_input_queue      = 0;
+    rd_input_queue      = 0;
+    w_data_input_queue  = 0;
     
-    // Удерживаем reset_input_queue активным некоторое время
     #20;
-    reset_input_queue = 0;
-    rst_i = 0;
-
-    // Небольшая пауза после снятия reset_input_queue
-    #10;
-    
-    wr_input_queue_data();
-    
-    // Останавливаем запись
-    wr_input_queue = 0;
-    
-    // Делаем небольшую паузу
+    rst_i               = 0;
     #10;
     
 
-    // Включаем ядро
+    // // --- Включение ядра ---
     en_core = 1;
 
-    // Пишем входящие спайки спайков в входную очередь
-    // wr_input_queueite_data(8'hAA);
-    // wr_input_queueite_data(8'hBB);
-    // wr_input_queueite_data(8'hCC);
-
-
-    // // Считываем значения
-    // read_data();
-    // read_data();
-    // read_data();
+    // // TODO: Мониторинг выходных данных  
+    // // read_data();
+    // read_output_spikes();
     
-    // // Останавливаем чтение
-    // rd_input_queue = 0;
-    
-    // Завершаем симуляцию
-    #400;
+    // Задержка 
+    #200000;
     $finish;
-end
+  end
 
-// Процедура записи одного байта в FIFO
-task wr_input_queueite_data(input [B-1:0] data);
-    begin
-        @(posedge clk);
-        w_data_input_queue = data;
-        wr_input_queue     = 1;
-        // Гарантированно отправляем хотя бы один такт с установленным wr_input_queue
-        @(posedge clk);
-        wr_input_queue     = 0;
-    end
-endtask
 
-// Процедура записи **массива данных** в FIFO
-task wr_input_queue_data();
-    integer i;
-    begin
-        for (i = 0; i < presyn_neurons-1; i = i + 1) begin
-            @(posedge clk);
-            w_data_input_queue = input_data_queue[i];
-            wr_input_queue     = 1;
-            @(posedge clk);
-            wr_input_queue     = 0;
-        end
-    end
-endtask
-
-// Процедура чтения одного байта из FIFO
-task read_data();
-    begin
-        @(posedge clk);
-        rd_input_queue = 1;
-        // Держим rd_input_queue хотя бы один такт
-        @(posedge clk);
-        rd_input_queue = 0;
-    end
-endtask
-
-// Мониторинг основных сигналов
-always @(posedge clk) begin
-    $display("[%0t] reset_input_queue=%0b, wr_input_queue=%0b, rd_input_queue=%0b, w_data_input_queue=0x%0h, r_data_input_queue=0x%0h, full_input_queue=%0b, empty_input_queue=%0b",
-             $time, reset_input_queue, wr_input_queue, rd_input_queue, w_data_input_queue, r_data_input_queue, full_input_queue, empty_input_queue);
-end
+  //==================================================
+  // Мониторинг сигналов
+  //==================================================
+  // always @(posedge clk) begin
+  //   $display("[%0t] wr_input_queue=%0b, rd_input_queue=%0b, w_data_input_queue=0x%0h, r_data_input_queue=0x%0h, full_input_queue=%0b, empty_input_queue=%0b",
+  //            $time, wr_input_queue, rd_input_queue, 
+  //            w_data_input_queue, r_data_input_queue, full_input_queue, empty_input_queue);
+  // end
 
 endmodule
 
-
-// module Neuromorphic_design_tb;
-
-//     localparam CLK_PERIOD = 10;
-
-//     bit clk;
-//     bit rst;
-//     bit en;
-
-//     // Переменные для преобразованных значений
-//     // real membr_pot_mem_float_0;
-//     // real membr_pot_mem_float_1;
-//     // real membr_pot_mem_float_2;
-//     // real membr_pot_mem_float_3;
-//     // real membr_pot_mem_float_4;
-//     // real membr_pot_mem_float_5;
-//     // real membr_pot_mem_float_6;
-//     // real membr_pot_mem_float_7;
-//     // real membr_pot_mem_float_8;
-//     // real membr_pot_mem_float_9;
-
-//     // real weights_mem_float_0;
-//     // real weights_mem_float_1;
-//     // real weights_mem_float_2;
-//     // real weights_mem_float_3;
-//     // real weights_mem_float_4;
-//     // real weights_mem_float_5;
-//     // real weights_mem_float_6;
-//     // real weights_mem_float_7;
-//     // real weights_mem_float_8;
-//     // real weights_mem_float_9;
-
-
-//     n_core dut (
-//         .clk_i(clk),
-//         .rst_i(rst),
-//         .en_core(en)
-//     );
-
-// //     // Функция для преобразования фиксированной точки в плавающую
-// //     function real fixed_to_float(input signed [15:0] fixed_value);
-// //         begin
-// // //            fixed_to_float = fixed_value / 256.0;  // Преобразуем число с 8-битной дробной частью
-// // //            fixed_to_float = fixed_value / 8192.0;  // Преобразуем число с 8-битной дробной частью
-// //             fixed_to_float = fixed_value / 16384.0;
-
-// //         end
-// //     endfunction
-
-//     // // Преобразование и обновление переменных для мониторинга
-//     // always @(posedge clk) begin
-//     //     membr_pot_mem_float_0 = fixed_to_float(dut.membrane_potential_memory[0]);
-//     //     membr_pot_mem_float_1 = fixed_to_float(dut.membrane_potential_memory[1]);
-//     //     membr_pot_mem_float_2 = fixed_to_float(dut.membrane_potential_memory[2]);
-//     //     membr_pot_mem_float_3 = fixed_to_float(dut.membrane_potential_memory[3]);
-//     //     membr_pot_mem_float_4 = fixed_to_float(dut.membrane_potential_memory[4]);
-//     //     membr_pot_mem_float_5 = fixed_to_float(dut.membrane_potential_memory[5]);
-//     //     membr_pot_mem_float_6 = fixed_to_float(dut.membrane_potential_memory[6]);
-//     //     membr_pot_mem_float_7 = fixed_to_float(dut.membrane_potential_memory[7]);
-//     //     membr_pot_mem_float_8 = fixed_to_float(dut.membrane_potential_memory[8]);
-//     //     membr_pot_mem_float_9 = fixed_to_float(dut.membrane_potential_memory[9]);
-//     // end
-
-//     // always @(posedge clk) begin
-//     //     weights_mem_float_0 = fixed_to_float(dut.weights_mem[0][0]);
-//     //     weights_mem_float_1 = fixed_to_float(dut.weights_mem[0][1]);
-//     //     weights_mem_float_2 = fixed_to_float(dut.weights_mem[0][2]);
-//     //     weights_mem_float_3 = fixed_to_float(dut.weights_mem[0][3]);
-//     //     weights_mem_float_4 = fixed_to_float(dut.weights_mem[0][4]);
-//     //     weights_mem_float_5 = fixed_to_float(dut.weights_mem[0][5]);
-//     //     weights_mem_float_6 = fixed_to_float(dut.weights_mem[0][6]);
-//     //     weights_mem_float_7 = fixed_to_float(dut.weights_mem[0][7]);
-//     //     weights_mem_float_8 = fixed_to_float(dut.weights_mem[0][8]);
-//     //     weights_mem_float_9 = fixed_to_float(dut.weights_mem[0][9]);
-//     // end
-
-//     always #5 clk = ~clk;
-
-//     // initial begin
-//     //     $readmemh("weights.dat", dut.weights_mem);
-//     //     $readmemb("fifo_data.txt", dut.in_fifo);
-
-//     //     @(negedge rst);
-//     // end
-
-
-//     initial begin
-//         clk = 0;
-//         rst = 1;
-//         en = 0;
-
-//         $monitor("Time=%0t | curr_state=%0d", $time, dut.current_state); // Мониторим состояние in_fifo
-
-
-// //        $monitor("Time=%0t | curr_state=%0d | in_spk_num=%0d, membr_pot_mem[0]=%.8f, membr_pot_mem[1]=%.8f, membr_pot_mem[2]=%.8f, membr_pot_mem[3]=%.8f, membr_pot_mem[4]=%.8f, membr_pot_mem[5]=%.8f, membr_pot_mem[6]=%.8f, membr_pot_mem[7]=%.8f, membr_pot_mem[8]=%.8f, membr_pot_mem[9]=%.8f, weight_presyn_idx=%0d | weight_postsyn_idx=%0d | presyn_num=%0d | postsyn_num=%0d | weight_upd=%0d, out=%0d%0d%0d%0d%0d%0d%0d%0d%0d%0d, in=%0d, %0d",
-// //            $time, dut.current_state, dut.input_spike_num,
-// //            membr_pot_mem_float_0, membr_pot_mem_float_1, membr_pot_mem_float_2, membr_pot_mem_float_3, membr_pot_mem_float_4,
-// //            membr_pot_mem_float_5, membr_pot_mem_float_6, membr_pot_mem_float_7, membr_pot_mem_float_8, membr_pot_mem_float_9,
-// //            dut.weight_presyn_idx, dut.weight_postsyn_idx, dut.presynapse_neuron_number, dut.postsynapse_neuron_number,
-// //            dut.weight_upd, dut.out_fifo[0], dut.out_fifo[1], dut.out_fifo[2], dut.out_fifo[3], dut.out_fifo[4], dut.out_fifo[5], dut.out_fifo[6], dut.out_fifo[7], dut.out_fifo[8], dut.out_fifo[9], dut.in_fifo[0], dut.in_fifo[4]); // Мониторим состояние in_fifo
-
-// //        $monitor("Time=%0t | w0=%0d | w1=%0d, w2=%.8f, w3=%.8f, w4=%.8f, w5=%.8f, w6=%.8f, w7=%.8f, w8=%.8f,  w9=%.8f",
-// //            $time,  weights_mem_float_0, weights_mem_float_1, weights_mem_float_2, weights_mem_float_3, weights_mem_float_4, weights_mem_float_5, weights_mem_float_6, weights_mem_float_7, weights_mem_float_8, weights_mem_float_9); // Мониторим состояние in_fifo
-
-
-//         #10 rst = 0;
-//         #20 en = 1;
-//         #150 en = 0;
-//         #1000;
-//         $finish;
-//     end
-
-//     initial begin
-//         $dumpfile("Neuromorphic_design.vcd");
-//         $dumpvars(0, Neuromorphic_design_tb);
-//         // $dumpvars(0, dut.presynapse_neuron_number);
-//     end
-
-// endmodule : Neuromorphic_design_tb

@@ -1,14 +1,18 @@
 import hwast.DEBUG_LEVEL
-import leaky.*
+//import leaky.*
 import neuromorphix.*
 import hwast.*
 
 fun main(args: Array<String>) {
     println("Generation LIF accelerator")
 
-    var lif_core = lif("n_core")
-    var cyclix_ast = lif_core.translate(DEBUG_LEVEL.FULL)
+    val nn_model = SnnArch()
 
+
+    var lif_core =  Neuromorphic("n_core", nn_model)  //  LIF("n_core")
+//    var cyclix_ast = lif_core.translate(DEBUG_LEVEL.FULL)
+//    var cyclix_ast = lif_core.core_generate(DEBUG_LEVEL.FULL, nn_model)
+    var cyclix_ast = lif_core.input_queue_gen(nn_model)
     var dirname = "n_core/"
 
     var Dbg = HwDebugWriter(dirname + "debug_log.txt")
